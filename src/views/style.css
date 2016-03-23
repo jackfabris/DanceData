@@ -1,0 +1,31 @@
+/*
+Color Palette: (darkest to lightest)
+#1c1d21
+#31353d
+#445878
+#92cdcf
+#eeeff7
+*/
+
+.root {
+	-fx-background-color: #eeeff7;
+}
+
+#header-text {
+	-fx-font-size: 32px;
+	-fx-font-family: "Arial Black";
+	-fx-fill: #445878;
+	-fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.15), 1, 0, 2, 2);
+}
+
+#home-button, #search-button, #collection-button {
+	-fx-text-fill: white;
+	-fx-font-weight: bold;
+	-fx-background-color: #92cdcf;
+	-fx-background-radius: 15;
+	-fx-background-inset: 0;
+}
+
+#home-button:hover, #search-button:hover, #collection-button:hover {
+	-fx-background-color: #445878;
+}
