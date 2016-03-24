@@ -40,11 +40,11 @@ public class Home extends Application {
 		grid.add(header, 0, 0);
 		
 		// Navigation buttons
-		Button homeBtn = new Button("Home");
+		final Button homeBtn = new Button("Home");
 		homeBtn.setId("home-button");
-		Button searchBtn = new Button("Search");
+		final Button searchBtn = new Button("Search");
 		searchBtn.setId("search-button");
-		Button collectionBtn = new Button("Collections");
+		final Button collectionBtn = new Button("Collections");
 		collectionBtn.setId("collection-button");
 		
 		HBox navBox = new HBox(10);
@@ -89,11 +89,32 @@ public class Home extends Application {
 		grid.add(howdy, 0, 5);
 		
 		// button logic
+		homeBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				homeBtn.setStyle("-fx-background-color: #445878;;");
+				collectionBtn.setStyle("-fx-background-color: #92cdcf");
+				searchBtn.setStyle("-fx-background-color: #92cdcf;");
+			}
+		});
+		
 		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				resultsBox.managedProperty().bind(resultsBox.visibleProperty());
 				resultsBox.setVisible(!resultsBox.isVisible());
+				homeBtn.setStyle("-fx-background-color: #92cdcf;");
+				searchBtn.setStyle("-fx-background-color: #445878;");
+				collectionBtn.setStyle("-fx-background-color: #92cdcf;");
+			}
+		});
+		
+		collectionBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				homeBtn.setStyle("-fx-background-color: #92cdcf;");
+				collectionBtn.setStyle("-fx-background-color: #445878;");
+				searchBtn.setStyle("-fx-background-color: #92cdcf;");
 			}
 		});
 		
