@@ -20,8 +20,7 @@ public class Home extends Application {
 
 	@Override
 	public void start(Stage stg) throws Exception {
-		stg.setTitle("Ghillie Tracks 2.0");
-		
+		stg.setTitle("Ghillie Tracks 2.0");		
 		// Set up the grid
 		GridPane grid = new GridPane();
 		grid.setHgap(5);
@@ -82,11 +81,6 @@ public class Home extends Application {
 		resultsBox.getChildren().add(table);
 		resultsBox.setHgrow(table, Priority.ALWAYS);
 		grid.add(resultsBox, 0, 4);
-		
-		HBox howdy = new HBox(10);
-		Text test = new Text("howdy");
-		howdy.getChildren().add(test);
-		grid.add(howdy, 0, 5);
 		
 		// button logic
 		homeBtn.setOnAction(new EventHandler<ActionEvent>() {
