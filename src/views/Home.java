@@ -185,9 +185,10 @@ public class Home extends Application {
 		resultsBox.setHgrow(table, Priority.ALWAYS);
 		grid.add(resultsBox, 0, 6);
 		
-		Scene scene = new Scene(grid, 800, 600);
+		Scene scene = new Scene(grid);
 		stg.setScene(scene);
 		scene.getStylesheets().add(Home.class.getResource("style.css").toExternalForm());
+		stg.setMaximized(true);
 		stg.show();
 	}
 	
