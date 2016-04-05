@@ -29,9 +29,13 @@ import javafx.stage.Stage;
 public class Home extends Application {
 	
 	private Database db;
+	private GridPane grid;
+	private int gridY;
 	
 	public Home() throws SQLException {
 		db = new Database();
+		grid = new GridPane();
+		gridY = 0;
 	}
 	
 	public Database getDatabase(){
@@ -40,9 +44,24 @@ public class Home extends Application {
 
 	@Override
 	public void start(Stage stg) throws Exception {
-		stg.setTitle("Ghillie Tracks 2.0");		
+		stg.setTitle("Ghillie Tracks 2.0");
+		
+		setUpGrid();
+		setUpHeader();
+		navigationButtons();
+		setUpSearchBar();
+		radioButtons();
+		searchTables();
+		
+		Scene scene = new Scene(grid);
+		stg.setScene(scene);
+		scene.getStylesheets().add(Home.class.getResource("style.css").toExternalForm());
+		stg.setMaximized(true);
+		stg.show();
+	}
+	
+	public void setUpGrid(){
 		// Set up the grid
-		GridPane grid = new GridPane();
 		grid.setHgap(5);
 		grid.setVgap(5);
 		grid.setPadding(new Insets(10, 10, 10, 10));
@@ -50,14 +69,17 @@ public class Home extends Application {
 		ColumnConstraints c = new ColumnConstraints();
 		c.setPercentWidth(100);
 		grid.getColumnConstraints().add(c);
-		
-		// Header/logo
+	}
+	
+	public void setUpHeader(){
 		Text gtText = new Text("Ghillie Tracks 2.0");
 		gtText.setId("header-text");
 		HBox header = new HBox(10);
 		header.getChildren().add(gtText);
-		grid.add(header, 0, 0);
-		
+		grid.add(header, 0, gridY++);
+	}
+	
+	public void navigationButtons(){
 		// Navigation buttons
 		final Button homeBtn = new Button("Home");
 		homeBtn.setId("home-button");
@@ -70,13 +92,13 @@ public class Home extends Application {
 		navBox.getChildren().add(homeBtn);
 		navBox.getChildren().add(searchBtn);
 		navBox.getChildren().add(collectionBtn);
-		grid.add(navBox, 0, 1);
+		grid.add(navBox, 0, gridY++);
 		
 		Separator sep = new Separator();
 		HBox sepBox = new HBox(10);
 		sepBox.getChildren().add(sep);
 		sepBox.setHgrow(sep, Priority.ALWAYS);
-		grid.add(sepBox, 0, 2);
+		grid.add(sepBox, 0, gridY++);
 		
 		// button logic
 		homeBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -87,7 +109,6 @@ public class Home extends Application {
 				searchBtn.setStyle("-fx-background-color: #92cdcf;");
 			}
 		});
-		
 		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -96,7 +117,6 @@ public class Home extends Application {
 				collectionBtn.setStyle("-fx-background-color: #92cdcf;");
 			}
 		});
-		
 		collectionBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -105,7 +125,9 @@ public class Home extends Application {
 				searchBtn.setStyle("-fx-background-color: #92cdcf;");
 			}
 		});
-		
+	}
+	
+	public void setUpSearchBar(){
 		// Search bar
 		TextField search = new TextField();
 		search.setPrefWidth(300);
@@ -115,8 +137,10 @@ public class Home extends Application {
 		HBox searchBox = new HBox(10);
 		searchBox.getChildren().add(search);
 		searchBox.getChildren().add(searchGoBtn);
-		grid.add(searchBox, 0, 3);
-		
+		grid.add(searchBox, 0, gridY++);
+	}
+	
+	public void radioButtons(){
 		//Radio Buttons
 		HBox radioBtnBox = new HBox(10);
 		RadioButton rb1 = new RadioButton();
@@ -128,7 +152,7 @@ public class Home extends Application {
 		RadioButton rb3 = new RadioButton();
 		rb3.setText("Recording");
 		radioBtnBox.getChildren().add(rb3);
-		grid.add(radioBtnBox, 0, 4);
+		grid.add(radioBtnBox, 0, gridY++);
 		
 		//Search specifics
 		final HBox albumSearchBox = new HBox(10);
@@ -137,7 +161,7 @@ public class Home extends Application {
 		albumSearchBox.getChildren().add(albumSearch);
 		albumSearchBox.managedProperty().bind(albumSearchBox.visibleProperty());
 		albumSearchBox.setVisible(false);
-		grid.add(albumSearchBox, 0, 5);
+		grid.add(albumSearchBox, 0, gridY++);
 		
 		rb1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -145,14 +169,12 @@ public class Home extends Application {
 				albumSearchBox.setVisible(!albumSearchBox.isVisible());
 			}
 		});
-		
+	}
+	
+	public void searchTables() throws SQLException{
 		// Search results
 		TableView<Dance> table = new TableView<Dance>();
 		table.setEditable(false);
-		/*TableColumn c1 = new TableColumn("Column 1");
-		TableColumn c2 = new TableColumn("Column 2");
-		TableColumn c3 = new TableColumn("Column 3");
-		table.getColumns().addAll(c1, c2, c3);*/
 		ResultSet danceSet = db.searchDanceByTitle("");
 		/*ResultSetMetaData rsmd = danceSet.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
@@ -183,18 +205,16 @@ public class Home extends Application {
 		final HBox resultsBox = new HBox(10);
 		resultsBox.getChildren().add(table);
 		resultsBox.setHgrow(table, Priority.ALWAYS);
-		grid.add(resultsBox, 0, 6);
-		
-		Scene scene = new Scene(grid);
-		stg.setScene(scene);
-		scene.getStylesheets().add(Home.class.getResource("style.css").toExternalForm());
-		stg.setMaximized(true);
-		stg.show();
+		grid.add(resultsBox, 0, gridY++);
 	}
 	
 	public static void main(String[] args) throws SQLException, IOException{
 		launch(args);
 	}
+	
+	
+	
+	
 	
 	public static class Dance{
 		//private final SimpleStringProperty id;
