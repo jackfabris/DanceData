@@ -28,6 +28,8 @@ import javafx.stage.Stage;
 
 public class Home extends Application {
 	
+	//THIS IS A TEST
+	
 	private Database db;
 	private GridPane grid;
 	private int gridY;
