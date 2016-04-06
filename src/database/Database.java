@@ -8,6 +8,13 @@ import java.sql.*;
 
 import org.apache.commons.io.FileUtils;
 
+/**
+ * This is the database class. It is a sqlite database that connects to the file
+ * in the database folder called scddata.db. It contains many functions for getting
+ * the required data from the database to be put on screen. It also contains a
+ * function to update the database upon the user request.
+ *
+ */
 public class Database {
 	
 	private Connection connection;
@@ -16,10 +23,19 @@ public class Database {
 		connection = connect();
 	}
 	
+	/** 
+	 * Connect to the local sqlite database and return the connection
+	 * @return
+	 * @throws SQLException
+	 */
 	private Connection connect() throws SQLException {
 		return DriverManager.getConnection("jdbc:sqlite:database/scddata.db");
 	}
 	
+	/**
+	 * Downloads the most recent sqlite db file from the online source
+	 * @return 1 on success; 0 when no internet connection; -1 on another error
+	 */
 	public int update() {
 		try {
 			URL url = new URL("http://media.strathspey.org/scddata/scddata.db");
@@ -33,6 +49,13 @@ public class Database {
 		}
 	}
 	
+	/**
+	 * Gets all information about a person in the database with the given id
+	 * 
+	 * @param id - the person's id in the database
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
 	public ResultSet getPerson(int id) throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(30);
@@ -41,30 +64,28 @@ public class Database {
 		return rs;
 	}
 	
-	public ResultSet searchDanceByName(String searchString) throws SQLException {
+	/**
+	 * Search the table and return all records where name contains the param name
+	 * @param table - the table to search in
+	 * @param name - the name to search for
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
+	public ResultSet searchTableByName(String table, String name) throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(30);
-		String query = "SELECT * FROM dance WHERE name like '%" + searchString + "%'";
+		String query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
 		ResultSet rs = stmt.executeQuery(query);
 		return rs;
 	}
 	
-	public ResultSet searchAlbumByName(String searchString) throws SQLException {
-		Statement stmt = connection.createStatement();
-		stmt.setQueryTimeout(30);
-		String query = "SELECT * FROM album WHERE name like '%" + searchString + "%'";
-		ResultSet rs = stmt.executeQuery(query);
-		return rs;
-	}
-	
-	public ResultSet searchRecordingByName(String searchString) throws SQLException {
-		Statement stmt = connection.createStatement();
-		stmt.setQueryTimeout(30);
-		String query = "SELECT * FROM recording WHERE name like '%" + searchString + "%'";
-		ResultSet rs = stmt.executeQuery(query);
-		return rs;
-	}
-	
+	/**
+	 * Search the given table and return the name of the record with the given id
+	 * @param table - the table to search in
+	 * @param id - the id to find
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
 	public ResultSet getNameByIdFromTable(String table, int id) throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(30);
@@ -73,6 +94,12 @@ public class Database {
 		return rs;
 	}
 	
+	/**
+	 * Get a list of songs on the album with album_id
+	 * @param album_id
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
 	public ResultSet getRecordingsByAlbum(int album_id) throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(30);
@@ -81,6 +108,7 @@ public class Database {
 		return rs;
 	}
 	
+	/* Use for debugging to print the results of a query */
 	public void printResults(ResultSet resultSet) throws SQLException {
 		ResultSetMetaData rsmd = resultSet.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
@@ -118,27 +146,25 @@ public class Database {
 		System.out.println("");
 		
 		/* get info on a person by id number */
-//		System.out.println("Get Person");
+		System.out.println("Get Person");
 		ResultSet resultSet = db.getPerson(2975);
 		db.printResults(resultSet);
 		
-//		System.out.println("");
-//		
+		System.out.println("");
+		
 //		/* Search for dance */
 //		System.out.println("Search dance");
-//		resultSet = db.searchDanceByName("dolphin");
+//		resultSet = db.searchTableByName("dance", "dolphin");
 //		db.printResults(resultSet);
-//		
-//		System.out.println("");
 //		
 //		/* Search for album */
 //		System.out.println("Search album");
-//		resultSet = db.searchAlbumByName("forever");
+//		resultSet = db.searchTableByName("album", "Jimmy");
 //		db.printResults(resultSet);
 //		
 //		/* Search for recording */
 //		System.out.println("Search recording");
-//		resultSet = db.searchRecordingByName("forever");
+//		resultSet = db.searchTableByName("recording", "frog");
 //		db.printResults(resultSet);
 //		
 //		int album_id = 1;

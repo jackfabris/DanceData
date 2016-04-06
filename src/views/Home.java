@@ -177,7 +177,7 @@ public class Home extends Application {
 		// Search results
 		TableView<Dance> table = new TableView<Dance>();
 		table.setEditable(false);
-		ResultSet danceSet = db.searchDanceByName("");
+		ResultSet danceSet = db.searchTableByName("dance","");
 		/*ResultSetMetaData rsmd = danceSet.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
 		for(int i=1; i <= columnsNumber; i++){
