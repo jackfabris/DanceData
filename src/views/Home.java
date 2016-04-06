@@ -18,6 +18,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -27,8 +28,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Home extends Application {
-	
-	//THIS IS A TEST
 	
 	private Database db;
 	private GridPane grid;
@@ -145,14 +144,18 @@ public class Home extends Application {
 	public void radioButtons(){
 		//Radio Buttons
 		HBox radioBtnBox = new HBox(10);
-		RadioButton rb1 = new RadioButton();
+		final ToggleGroup group = new ToggleGroup();
+		final RadioButton rb1 = new RadioButton();
 		rb1.setText("Album");
+		rb1.setToggleGroup(group);
 		radioBtnBox.getChildren().add(rb1);
 		RadioButton rb2 = new RadioButton();
 		rb2.setText("Dance");
+		rb2.setToggleGroup(group);
 		radioBtnBox.getChildren().add(rb2);
 		RadioButton rb3 = new RadioButton();
 		rb3.setText("Recording");
+		rb3.setToggleGroup(group);
 		radioBtnBox.getChildren().add(rb3);
 		grid.add(radioBtnBox, 0, gridY++);
 		
@@ -169,6 +172,18 @@ public class Home extends Application {
 			@Override
 			public void handle(ActionEvent arg0) {
 				albumSearchBox.setVisible(!albumSearchBox.isVisible());
+			}
+		});
+		rb2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				albumSearchBox.setVisible(false);
+			}
+		});
+		rb3.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				albumSearchBox.setVisible(false);
 			}
 		});
 	}
