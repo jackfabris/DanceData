@@ -74,17 +74,22 @@ public class Database {
 	public ResultSet advancedSearch(String[] selections, String[] searchStrings) throws SQLException{
 		Statement stmt = connection.createStatement();
 		stmt.setQueryTimeout(30);
-		int fieldCounter = 0; //used to check if there is more than one field being searched so and is/isn't appended
+		String query = advancedSearchQueryBuild(selections, searchStrings);
+		ResultSet rs = stmt.executeQuery(query);
+		return rs;
+	}
+	public String advancedSearchQueryBuild(String[] selections, String[] searchStrings){
+		int fieldCounter = 0; //used to check if there is more than one field being searched so "AND" is/isn't appended
 		String query = "SELECT  * FROM dance where ";
 		for (int i = 0; i <selections.length; i++){
 			if (!selections[i].isEmpty()){
 				if (fieldCounter > 0)
 					query += " AND ";
-				query += selections[i] + " like %" + searchStrings[i] + "%";
+				query += selections[i] + " like '%" + searchStrings[i] + "%'";
 				fieldCounter++;
 			}
 		}
-		ResultSet rs = stmt.executeQuery(query);
-		return rs;
+		query += ";";
+		return query;
 	}
 }

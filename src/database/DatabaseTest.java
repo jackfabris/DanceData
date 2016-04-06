@@ -7,11 +7,9 @@ import org.junit.Test;
 public class DatabaseTest {
 
 	@Test
-	public void advancedSearchQueryBuildTest() throws SQLException {
+	public void DatabaseTests() throws SQLException {
 		Database db = new Database();
-		String[] testSelections = {"Album", "Artist", "Year"};
-		String[] testValues = {"", "Mark", "1998"};
-		assertTrue(db.advancedSearchQueryBuild(testSelections, testValues).equals("SELECT  * FROM dance where Artist like 'Mike' AND Year like '1998'"));
+		
 	}
 
 }
