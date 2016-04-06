@@ -18,9 +18,14 @@ import org.apache.commons.io.FileUtils;
 public class Database {
 	
 	private Connection connection;
+	private Statement stmt;
+	private String query;
 	
 	public Database() throws SQLException {
 		connection = connect();
+		stmt = connection.createStatement();
+		stmt.setQueryTimeout(30);
+		query = "";
 	}
 	
 	/** 
@@ -57,11 +62,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getPerson(int id) throws SQLException {
-		Statement stmt = connection.createStatement();
-		stmt.setQueryTimeout(30);
-		String query = "SELECT * FROM person WHERE id="+ id + ";";
-		ResultSet rs = stmt.executeQuery(query);
-		return rs;
+		query = "SELECT * FROM person WHERE id="+ id;
+		return stmt.executeQuery(query);
 	}
 	
 	/**
@@ -72,11 +74,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet searchTableByName(String table, String name) throws SQLException {
-		Statement stmt = connection.createStatement();
-		stmt.setQueryTimeout(30);
-		String query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
-		ResultSet rs = stmt.executeQuery(query);
-		return rs;
+		query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
+		return stmt.executeQuery(query);
 	}
 	
 	/**
@@ -87,11 +86,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getNameByIdFromTable(String table, int id) throws SQLException {
-		Statement stmt = connection.createStatement();
-		stmt.setQueryTimeout(30);
-		String query = "SELECT name FROM '" + table +"' WHERE id=" + id;
-		ResultSet rs = stmt.executeQuery(query);
-		return rs;
+		query = "SELECT name FROM '" + table +"' WHERE id=" + id;
+		return stmt.executeQuery(query);
 	}
 	
 	/**
@@ -101,11 +97,8 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getRecordingsByAlbum(int album_id) throws SQLException {
-		Statement stmt = connection.createStatement();
-		stmt.setQueryTimeout(30);
-		String query = "SELECT r.* FROM recording r JOIN albumsrecordingsmap arm ON r.id=arm.recording_id WHERE arm.album_id=" + album_id +" ORDER BY tracknumber";
-		ResultSet rs = stmt.executeQuery(query);
-		return rs;
+		query = "SELECT r.* FROM recording r JOIN albumsrecordingsmap arm ON r.id=arm.recording_id WHERE arm.album_id=" + album_id +" ORDER BY tracknumber";
+		return stmt.executeQuery(query);
 	}
 	
 	/* Use for debugging to print the results of a query */
@@ -152,31 +145,41 @@ public class Database {
 		
 		System.out.println("");
 		
-//		/* Search for dance */
-//		System.out.println("Search dance");
-//		resultSet = db.searchTableByName("dance", "dolphin");
-//		db.printResults(resultSet);
-//		
-//		/* Search for album */
-//		System.out.println("Search album");
-//		resultSet = db.searchTableByName("album", "Jimmy");
-//		db.printResults(resultSet);
-//		
-//		/* Search for recording */
-//		System.out.println("Search recording");
-//		resultSet = db.searchTableByName("recording", "frog");
-//		db.printResults(resultSet);
-//		
-//		int album_id = 1;
-//
-//		/* Search for name of some table its id */
-//		System.out.println("ALBUM:");
-//		resultSet = db.getNameByIdFromTable("album", album_id);
-//		db.printResults(resultSet);
-//		
-//		/* Search for records by album id */
-//		System.out.println("RECORDINGS:");
-//		resultSet = db.getRecordingsByAlbum(album_id);
-//		db.printResults(resultSet);
+		/* Search for dance */
+		System.out.println("Search dance");
+		resultSet = db.searchTableByName("dance", "dolphin");
+		db.printResults(resultSet);
+		
+		System.out.println("");
+		
+		/* Search for album */
+		System.out.println("Search album");
+		resultSet = db.searchTableByName("album", "Jimmy");
+		db.printResults(resultSet);
+		
+		System.out.println("");
+		
+		/* Search for recording */
+		System.out.println("Search recording");
+		resultSet = db.searchTableByName("recording", "frog");
+		db.printResults(resultSet);
+		
+		System.out.println("");
+		
+		int album_id = 1;
+
+		/* Search for name of some table its id */
+		System.out.println("ALBUM:");
+		resultSet = db.getNameByIdFromTable("album", album_id);
+		db.printResults(resultSet);
+		
+		/* Search for records by album id */
+		System.out.println("RECORDINGS:");
+		resultSet = db.getRecordingsByAlbum(album_id);
+		db.printResults(resultSet);
+		
+		System.out.println("");
+		
+		System.out.println("Last executed query: " + db.query);
 	}
 }
