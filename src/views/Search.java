@@ -18,7 +18,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import views.DanceTable.Dance;
+import tables.DanceTable;
+import tables.DanceTable.Dance;
 
 public class Search {
 	
@@ -35,9 +36,8 @@ public class Search {
 		setUpSearchBar();
 		radioButtons();
 		searchFilters();
-		
 		danceTable = new DanceTable();
-		this.searchVBox.getChildren().add(danceTable.getTable());
+		setUpDanceTable();
 	}
 	
 	public VBox getSearchVBox(){
@@ -100,17 +100,20 @@ public class Search {
 		
 		final RadioButton danceRB = new RadioButton();
 		danceRB.setText("Dance");
+		danceRB.setSelected(true);
 		radioBtnBox.getChildren().add(danceRB);
 		
 		final RadioButton recordingRB = new RadioButton();
 		recordingRB.setText("Recording");
 		radioBtnBox.getChildren().add(recordingRB);
+		
 		this.searchVBox.getChildren().add(radioBtnBox);
 		
 		// Album
 		albumRB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				albumRB.setSelected(true);
 				//unselect other radio buttons
 				danceRB.setSelected(false);
 				recordingRB.setSelected(false);
@@ -124,6 +127,7 @@ public class Search {
 		danceRB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				danceRB.setSelected(true);
 				//unselect other radio buttons
 				albumRB.setSelected(false);
 				recordingRB.setSelected(false);
@@ -137,6 +141,7 @@ public class Search {
 		recordingRB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				recordingRB.setSelected(true);
 				//unselect other radio buttons
 				albumRB.setSelected(false);
 				danceRB.setSelected(false);
@@ -166,5 +171,12 @@ public class Search {
 		this.searchVBox.getChildren().add(albumFiltersVBox);
 		albumFiltersVBox.managedProperty().bind(albumFiltersVBox.visibleProperty());
 		albumFiltersVBox.setVisible(false);
+	}
+	
+	public void setUpDanceTable(){
+		this.searchVBox.getChildren().add(danceTable.getTable());
+		danceTable.getTable().managedProperty().bind(danceTable.getTable().visibleProperty());
+		this.searchVBox.getChildren().add(danceTable.getCellInfo());
+		danceTable.getCellInfo().managedProperty().bind(danceTable.getCellInfo().visibleProperty());
 	}
 }
