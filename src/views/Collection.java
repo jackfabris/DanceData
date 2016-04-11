@@ -6,7 +6,7 @@ import database.Database;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-public class Collection extends VBox {
+public class Collection {
 	
 	private VBox collectionVBox;
 	private Database db;
