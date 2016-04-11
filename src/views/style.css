@@ -29,3 +29,11 @@ Color Palette: (darkest to lightest)
 #home-button:hover, #search-button:hover, #collection-button:hover {
 	-fx-background-color: #445878;
 }
+
+#home-button:selected, #search-button:selected, #collection-button:selected {
+	-fx-background-color: #445878;
+}
+
+#home-button:selected:focused, #search-button:selected:focused, #collection-button:selected:focused {
+	-fx-background-color: #445878;
+}

@@ -2,6 +2,9 @@ package views;
 
 import java.sql.SQLException;
 
+import filters.AlbumFilters;
+import filters.DanceFilters;
+import filters.RecordingFilters;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -16,11 +19,15 @@ public class Search extends VBox {
 	
 	private VBox searchVBox;
 	private DanceTable danceTable;
+	private VBox danceFiltersVBox;
+	private VBox recordingFiltersVBox;
+	private VBox albumFiltersVBox;
 	
 	public Search() throws SQLException {
 		searchVBox = new VBox(10);
 		setUpSearchBar();
 		radioButtons();
+		searchFilters();
 		
 		danceTable = new DanceTable();
 		this.searchVBox.getChildren().add(danceTable.getTable());
@@ -61,32 +68,52 @@ public class Search extends VBox {
 		radioBtnBox.getChildren().add(rb3);
 		this.searchVBox.getChildren().add(radioBtnBox);
 		
-		//Search specifics
-		final HBox albumSearchBox = new HBox(10);
-		Label albumSearch = new Label();
-		albumSearch.setText("Album Search Specifics");
-		albumSearchBox.getChildren().add(albumSearch);
-		albumSearchBox.managedProperty().bind(albumSearchBox.visibleProperty());
-		albumSearchBox.setVisible(false);
-		this.searchVBox.getChildren().add(albumSearchBox);
-		
+		// Album
 		rb1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				albumSearchBox.setVisible(!albumSearchBox.isVisible());
+				albumFiltersVBox.setVisible(true);
+				danceFiltersVBox.setVisible(false);
+				recordingFiltersVBox.setVisible(false);
 			}
 		});
+		// Dance
 		rb2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				albumSearchBox.setVisible(false);
+				albumFiltersVBox.setVisible(false);
+				danceFiltersVBox.setVisible(true);
+				recordingFiltersVBox.setVisible(false);
 			}
 		});
+		// Recording
 		rb3.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				albumSearchBox.setVisible(false);
+				albumFiltersVBox.setVisible(false);
+				danceFiltersVBox.setVisible(false);
+				recordingFiltersVBox.setVisible(true);
 			}
 		});
+	}
+	
+	public void searchFilters() {
+		DanceFilters df = new DanceFilters();
+		danceFiltersVBox = df.getDanceFiltersVBox();
+		this.searchVBox.getChildren().add(danceFiltersVBox);
+		danceFiltersVBox.managedProperty().bind(danceFiltersVBox.visibleProperty());
+		danceFiltersVBox.setVisible(false);
+		
+		RecordingFilters rf = new RecordingFilters();
+		recordingFiltersVBox = rf.getRecordingFiltersVBox();
+		this.searchVBox.getChildren().add(recordingFiltersVBox);
+		recordingFiltersVBox.managedProperty().bind(recordingFiltersVBox.visibleProperty());
+		recordingFiltersVBox.setVisible(false);
+		
+		AlbumFilters af = new AlbumFilters();
+		albumFiltersVBox = af.getAlbumFiltersVBox();
+		this.searchVBox.getChildren().add(albumFiltersVBox);
+		albumFiltersVBox.managedProperty().bind(albumFiltersVBox.visibleProperty());
+		albumFiltersVBox.setVisible(false);
 	}
 }

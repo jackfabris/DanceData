@@ -18,8 +18,10 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -67,6 +69,9 @@ public class Main extends Application {
 		collection.setVisible(false);
 		collection.managedProperty().bind(collection.visibleProperty());
 		
+		// set icon
+		stg.getIcons().add(new Image(Main.class.getResourceAsStream("ghillie.png")));
+		
 		Scene scene = new Scene(grid);
 		stg.setScene(scene);
 		scene.getStylesheets().add(Main.class.getResource("style.css").toExternalForm());
@@ -95,12 +100,16 @@ public class Main extends Application {
 	
 	public void navigationButtons(){
 		// Navigation buttons
-		final Button homeBtn = new Button("Home");
+		ToggleButton homeBtn = new ToggleButton("Home");
 		homeBtn.setId("home-button");
-		final Button searchBtn = new Button("Search");
+		ToggleButton searchBtn = new ToggleButton("Search");
 		searchBtn.setId("search-button");
-		final Button collectionBtn = new Button("Collections");
+		ToggleButton collectionBtn = new ToggleButton("Collections");
 		collectionBtn.setId("collection-button");
+		ToggleGroup navButtons = new ToggleGroup();
+		homeBtn.setToggleGroup(navButtons);
+		searchBtn.setToggleGroup(navButtons);
+		collectionBtn.setToggleGroup(navButtons);
 		
 		HBox navBox = new HBox(10);
 		navBox.getChildren().add(homeBtn);
@@ -118,10 +127,6 @@ public class Main extends Application {
 		homeBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				homeBtn.setStyle("-fx-background-color: #445878;;");
-				collectionBtn.setStyle("-fx-background-color: #92cdcf");
-				searchBtn.setStyle("-fx-background-color: #92cdcf;");
-				
 				home.setVisible(true);
 				search.setVisible(false);
 				collection.setVisible(false);
@@ -129,11 +134,7 @@ public class Main extends Application {
 		});
 		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent arg0) {
-				homeBtn.setStyle("-fx-background-color: #92cdcf;");
-				searchBtn.setStyle("-fx-background-color: #445878;");
-				collectionBtn.setStyle("-fx-background-color: #92cdcf;");
-				
+			public void handle(ActionEvent arg0) {				
 				home.setVisible(false);
 				search.setVisible(true);
 				collection.setVisible(false);
@@ -142,10 +143,6 @@ public class Main extends Application {
 		collectionBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				homeBtn.setStyle("-fx-background-color: #92cdcf;");
-				collectionBtn.setStyle("-fx-background-color: #445878;");
-				searchBtn.setStyle("-fx-background-color: #92cdcf;");
-				
 				home.setVisible(false);
 				search.setVisible(false);
 				collection.setVisible(true);

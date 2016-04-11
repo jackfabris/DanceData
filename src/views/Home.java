@@ -28,14 +28,15 @@ public class Home extends VBox {
 		HBox updateHBox = new HBox(10);
 		//Date String
 		Label date = new Label();
-		Path path = Paths.get("/Users/lisaketcham/git/DanceData/database/scddata.db");
+		String workingDir = System.getProperty("user.dir");
+		Path path = Paths.get(workingDir + "/database/scddata.db");
 		BasicFileAttributes attr;
 		
 		try {
 			attr = Files.readAttributes(path, BasicFileAttributes.class);
 			long difference = System.currentTimeMillis() - attr.creationTime().toMillis();
 			int lastDays = (int) (difference / (1000*60*60*24));
-			date.setText("It has been " + lastDays + " days since the Database was last updated.");
+			date.setText("It has been " + lastDays + " days since the database was last updated.");
 			
 		} catch (IOException e) {
 			System.out.println("Unable to Retrieve Date of Last Update");
