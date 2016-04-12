@@ -82,7 +82,7 @@ public class Search {
 	}
 	
 	public void danceSearch(String title) throws SQLException{
-		ResultSet danceSet = db.searchDanceByTitle(title);
+		ResultSet danceSet = db.searchTableByName("dance",title);
 		ObservableList<Dance> data = FXCollections.observableArrayList();
 		while(danceSet.next()){
 			data.add(new Dance(danceSet.getString(3), danceSet.getString(5), danceSet.getString(6), danceSet.getString(8)));

@@ -36,7 +36,7 @@ public class DanceTable {
 	public void initializeTable() throws SQLException{
 		//Dance Table
 		table.setEditable(false);
-		ResultSet danceSet = db.searchDanceByTitle("");
+		ResultSet danceSet = db.searchTableByName("dance", "");
 
 		TableColumn<Dance, String> nameCol = new TableColumn<Dance, String>("Name");
 		nameCol.setCellValueFactory(new PropertyValueFactory<Dance, String>("name"));
