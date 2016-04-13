@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+
 import database.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,16 +21,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
-public class DanceTable {
+public class RecordingTable {
 	
 	private Database db; 
-	private TableView<Dance> table;
+	private TableView<Recording> table;
 	private VBox cellInfo;
 	private LinkedHashMap<String, String> colNameField;
 	
-	public DanceTable() throws SQLException {
+	public RecordingTable() throws SQLException {
 		db = new Database();
-		table = new TableView<Dance>();
+		table = new TableView<Recording>();
 		cellInfo = new VBox(10);
 		cellInfo.setVisible(false);
 		colNameField = new LinkedHashMap<String, String>();
@@ -38,34 +39,35 @@ public class DanceTable {
 	}
 	
 	public void mapColumnNameToId(){
-		//name, type, bars, publication????, index, “I have”
+		//Recording results: name, type, bars, repetitions, name of Recording, index, “I have”
 		colNameField.put("Name", "name");
-		colNameField.put("Type", "typeid");
+		colNameField.put("Type", "type_id");
+		colNameField.put("Repetitions", "repetitions");
 		colNameField.put("Bars", "barsperrepeat");
 	}
-
+	
 	public void initializeTable() throws SQLException{
-		//Dance Table
+		//Recording Table
 		table.setEditable(false);
-		ResultSet set = db.searchTableByName("dance", "");
+		ResultSet set = db.searchTableByName("recording", "");
 		
 		Iterator<String> i = colNameField.keySet().iterator();
 		while(i.hasNext()){
 			String colName = i.next();
 			String field = colNameField.get(colName);
 			
-			TableColumn<Dance, String> col = new TableColumn<Dance, String>(colName);
-			col.setCellValueFactory(new PropertyValueFactory<Dance, String>(field));
+			TableColumn<Recording, String> col = new TableColumn<Recording, String>(colName);
+			col.setCellValueFactory(new PropertyValueFactory<Recording, String>(field));
 			table.getColumns().add(col);
 		}
-
+		
 		table.setItems(populate(set));
 		
-		final TableColumn<Dance, String> danceCol = (TableColumn<Dance, String>) table.getColumns().get(0);
-		danceCol.setCellFactory(new Callback<TableColumn<Dance, String>, TableCell<Dance, String>>() {
+		final TableColumn<Recording, String> RecordingCol = (TableColumn<Recording, String>) table.getColumns().get(0);
+		RecordingCol.setCellFactory(new Callback<TableColumn<Recording, String>, TableCell<Recording, String>>() {
 			@Override
-		    public TableCell<Dance, String> call(TableColumn<Dance, String> col) {
-		        final TableCell<Dance, String> cell = new TableCell<Dance, String>() {
+		    public TableCell<Recording, String> call(TableColumn<Recording, String> col) {
+		        final TableCell<Recording, String> cell = new TableCell<Recording, String>() {
 		            @Override
 		            public void updateItem(String firstName, boolean empty) {
 		                super.updateItem(firstName, empty);
@@ -93,19 +95,19 @@ public class DanceTable {
 		});
 	}
 	
-	public ObservableList<Dance> populate(ResultSet set) throws SQLException{
-		ObservableList<Dance> data = FXCollections.observableArrayList();
+	public ObservableList<Recording> populate(ResultSet set) throws SQLException{
+		ObservableList<Recording> data = FXCollections.observableArrayList();
 		while(set.next()){
-			data.add(new Dance(set.getString(3), set.getString(6), set.getString(2)));
+			data.add(new Recording(set.getString(2), set.getString(4), set.getString(5), set.getString(6)));
 		}
 		return data;
 	}
 	
-	public void setTableData(ObservableList<Dance> data){
+	public void setTableData(ObservableList<Recording> data){
 		table.setItems(data);
 	}
 	
-	public TableView<Dance> getTable(){
+	public TableView<Recording> getTable(){
 		return table;
 	}
 	
@@ -137,37 +139,36 @@ public class DanceTable {
 		return cellInfo;
 	}
 	
-	public static class Dance{
-		//private final SimpleStringProperty id;
-		private final String barsperrepeat; 			//2
-		private final String name; 						//3
-		//private final SimpleStringProperty ucname;
-		//private final String shapeid; 
-		private final String typeid;					//6
-		//private final SimpleStringProperty couples_id;
-		//private final String devisorid;
-		//private final SimpleStringProperty verified;
-		//private final SimpleStringProperty lastmod;
-		//private final SimpleStringProperty devised;
-		//private final SimpleStringProperty notes;
-		//private final SimpleStringProperty medleytype_id;
-		//private final SimpleStringProperty progression_id;
-		//private final SimpleStringProperty url;
-		//private final SimpleStringProperty creationdate;
+	public static class Recording{
+//		private final String id;
+		private final String name; //2
+//		private final String artist_id;
+		private final String type_id; //4
+		private final String repetitions; //5
+		private final String barsperrepeat; //6
+//		private final String medleytype_id;
+//		private final String phrasing_id;
+//		private final String playingseconds;
+//		private final String twochords;
+//		private final String notes;
 		
-		public Dance(String nameString, String type, String bars){
-			barsperrepeat = bars;
+		public Recording(String nameString, String type, String reps, String bars){
 			name = nameString;
-			typeid = type;
-		}
-		public String getBarsperrepeat() {
-			return barsperrepeat;
+			type_id= type;
+			repetitions = reps;
+			barsperrepeat = bars;
 		}
 		public String getName() {
 			return name;
 		}
-		public String getTypeid() {
-			return typeid;
+		public String getType_id() {
+			return type_id;
+		}
+		public String getRepetitions() {
+			return repetitions;
+		}
+		public String getBarsperrepeat() {
+			return barsperrepeat;
 		}
 	}
 }

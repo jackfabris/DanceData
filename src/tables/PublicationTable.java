@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+
 import database.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,16 +21,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
-public class DanceTable {
+public class PublicationTable {
+	
+	//THIS NEEDS TO CHANGE
 	
 	private Database db; 
-	private TableView<Dance> table;
+	private TableView<Publication> table;
 	private VBox cellInfo;
 	private LinkedHashMap<String, String> colNameField;
 	
-	public DanceTable() throws SQLException {
+	public PublicationTable() throws SQLException {
 		db = new Database();
-		table = new TableView<Dance>();
+		table = new TableView<Publication>();
 		cellInfo = new VBox(10);
 		cellInfo.setVisible(false);
 		colNameField = new LinkedHashMap<String, String>();
@@ -47,25 +50,29 @@ public class DanceTable {
 	public void initializeTable() throws SQLException{
 		//Dance Table
 		table.setEditable(false);
-		ResultSet set = db.searchTableByName("dance", "");
+		ResultSet danceSet = db.searchTableByName("dance", "");
 		
 		Iterator<String> i = colNameField.keySet().iterator();
 		while(i.hasNext()){
 			String colName = i.next();
 			String field = colNameField.get(colName);
 			
-			TableColumn<Dance, String> col = new TableColumn<Dance, String>(colName);
-			col.setCellValueFactory(new PropertyValueFactory<Dance, String>(field));
+			TableColumn<Publication, String> col = new TableColumn<Publication, String>(colName);
+			col.setCellValueFactory(new PropertyValueFactory<Publication, String>(field));
 			table.getColumns().add(col);
 		}
-
-		table.setItems(populate(set));
 		
-		final TableColumn<Dance, String> danceCol = (TableColumn<Dance, String>) table.getColumns().get(0);
-		danceCol.setCellFactory(new Callback<TableColumn<Dance, String>, TableCell<Dance, String>>() {
+		ObservableList<Publication> data = FXCollections.observableArrayList();
+		while(danceSet.next()){
+			data.add(new Publication(danceSet.getString(3), danceSet.getString(6), danceSet.getString(2)));
+		}
+		table.setItems(data);
+		
+		final TableColumn<Publication, String> danceCol = (TableColumn<Publication, String>) table.getColumns().get(0);
+		danceCol.setCellFactory(new Callback<TableColumn<Publication, String>, TableCell<Publication, String>>() {
 			@Override
-		    public TableCell<Dance, String> call(TableColumn<Dance, String> col) {
-		        final TableCell<Dance, String> cell = new TableCell<Dance, String>() {
+		    public TableCell<Publication, String> call(TableColumn<Publication, String> col) {
+		        final TableCell<Publication, String> cell = new TableCell<Publication, String>() {
 		            @Override
 		            public void updateItem(String firstName, boolean empty) {
 		                super.updateItem(firstName, empty);
@@ -93,19 +100,11 @@ public class DanceTable {
 		});
 	}
 	
-	public ObservableList<Dance> populate(ResultSet set) throws SQLException{
-		ObservableList<Dance> data = FXCollections.observableArrayList();
-		while(set.next()){
-			data.add(new Dance(set.getString(3), set.getString(6), set.getString(2)));
-		}
-		return data;
-	}
-	
-	public void setTableData(ObservableList<Dance> data){
+	public void setTableData(ObservableList<Publication> data){
 		table.setItems(data);
 	}
 	
-	public TableView<Dance> getTable(){
+	public TableView<Publication> getTable(){
 		return table;
 	}
 	
@@ -137,7 +136,7 @@ public class DanceTable {
 		return cellInfo;
 	}
 	
-	public static class Dance{
+	public static class Publication{
 		//private final SimpleStringProperty id;
 		private final String barsperrepeat; 			//2
 		private final String name; 						//3
@@ -155,7 +154,7 @@ public class DanceTable {
 		//private final SimpleStringProperty url;
 		//private final SimpleStringProperty creationdate;
 		
-		public Dance(String nameString, String type, String bars){
+		public Publication(String nameString, String type, String bars){
 			barsperrepeat = bars;
 			name = nameString;
 			typeid = type;
