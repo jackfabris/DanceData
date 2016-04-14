@@ -2,14 +2,19 @@ package tables;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
+
 import database.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -40,8 +45,10 @@ public class DanceTable {
 	public void mapColumnNameToId(){
 		//name, type, bars, publication????, index, “I have”
 		colNameField.put("Name", "name");
-		colNameField.put("Type", "typeid");
+		colNameField.put("Type", "type_id");
 		colNameField.put("Bars", "barsperrepeat");
+		colNameField.put("I Have", "iHave");
+		colNameField.put("Index", "index");
 	}
 
 	public void initializeTable() throws SQLException{
@@ -78,6 +85,7 @@ public class DanceTable {
 		                }
 		            }
 		         };
+		         
 		         cell.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 		             @Override
 		             public void handle(MouseEvent event) {
@@ -91,12 +99,15 @@ public class DanceTable {
 		         return cell;
 		    }
 		});
-	}
+		table.setId("table");
+		danceCol.setStyle( "-fx-alignment: CENTER-LEFT;");
+		}
 	
 	public ObservableList<Dance> populate(ResultSet set) throws SQLException{
 		ObservableList<Dance> data = FXCollections.observableArrayList();
+		List<String> l = new ArrayList<String>(colNameField.values());
 		while(set.next()){
-			data.add(new Dance(set.getString(3), set.getString(6), set.getString(2)));
+			data.add(new Dance(set.getString(l.get(0)), set.getString(l.get(1)), set.getString(l.get(2))));
 		}
 		return data;
 	}
@@ -139,11 +150,11 @@ public class DanceTable {
 	
 	public static class Dance{
 		//private final SimpleStringProperty id;
-		private final String barsperrepeat; 			//2
-		private final String name; 						//3
+		private final String barsperrepeat;
+		private final String name; 
 		//private final SimpleStringProperty ucname;
 		//private final String shapeid; 
-		private final String typeid;					//6
+		private final String type_id;					
 		//private final SimpleStringProperty couples_id;
 		//private final String devisorid;
 		//private final SimpleStringProperty verified;
@@ -154,11 +165,15 @@ public class DanceTable {
 		//private final SimpleStringProperty progression_id;
 		//private final SimpleStringProperty url;
 		//private final SimpleStringProperty creationdate;
+		private CheckBox iHave;
+		private String index;
 		
 		public Dance(String nameString, String type, String bars){
 			barsperrepeat = bars;
 			name = nameString;
-			typeid = type;
+			type_id = type;
+			iHave = new CheckBox();
+			index = "";
 		}
 		public String getBarsperrepeat() {
 			return barsperrepeat;
@@ -166,8 +181,14 @@ public class DanceTable {
 		public String getName() {
 			return name;
 		}
-		public String getTypeid() {
-			return typeid;
+		public String getType_id() {
+			return type_id;
+		}
+		public CheckBox getIHave(){
+			return iHave;
+		}
+		public String getIndex(){
+			return index;
 		}
 	}
 }

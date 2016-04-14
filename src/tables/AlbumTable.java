@@ -2,8 +2,10 @@ package tables;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import database.Database;
 import javafx.collections.FXCollections;
@@ -91,12 +93,15 @@ public class AlbumTable {
 		         return cell;
 		    }
 		});
+		table.setId("table");
+		AlbumCol.setStyle( "-fx-alignment: CENTER-LEFT;");
 	}
 	
 	public ObservableList<Album> populate(ResultSet set) throws SQLException{
 		ObservableList<Album> data = FXCollections.observableArrayList();
+		List<String> l = new ArrayList<String>(colNameField.values());
 		while(set.next()){
-			data.add(new Album(set.getString(2), set.getString(4)));
+			data.add(new Album(set.getString(l.get(0)), set.getString(l.get(1))));
 		}
 		return data;
 	}

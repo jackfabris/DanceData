@@ -10,9 +10,9 @@ import filters.RecordingFilters;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -39,7 +39,8 @@ public class Search {
 		searchVBox = new VBox(10);
 		db = new Database();
 		setUpSearchBar();
-		radioButtons();
+		//radioButtons();
+		navigationButtons();
 		searchFilters();
 		state = "d";
 		danceTable = new DanceTable();
@@ -103,7 +104,7 @@ public class Search {
 		//else if(state.equals("p")) {
 				//	set = db.searchTableByName("publication",title);
 				//  publicationTable.setTableData(publicationTable.populate(set));
-				//}
+		//}
 		else if(state.equals("r")) {
 			set = db.searchTableByName("recording",title);
 			recordingTable.setTableData(recordingTable.populate(set));
@@ -114,7 +115,86 @@ public class Search {
 		}
 	}
 	
-	public void radioButtons(){
+	public void navigationButtons(){
+		HBox navBtnBox = new HBox(10);
+		
+		ToggleGroup tg = new ToggleGroup();
+		
+		final ToggleButton danceTB = new ToggleButton("Dance");
+		danceTB.setSelected(true);
+		danceTB.setToggleGroup(tg);
+		navBtnBox.getChildren().add(danceTB);
+		
+		final ToggleButton publicationTB = new ToggleButton("Publication");
+		publicationTB.setToggleGroup(tg);
+		navBtnBox.getChildren().add(publicationTB);
+		
+		final ToggleButton recordingTB = new ToggleButton("Recording");
+		recordingTB.setToggleGroup(tg);
+		navBtnBox.getChildren().add(recordingTB);
+		
+		final ToggleButton albumTB = new ToggleButton("Album");
+		albumTB.setToggleGroup(tg);
+		navBtnBox.getChildren().add(albumTB);
+	
+		this.searchVBox.getChildren().add(navBtnBox);
+		
+		// Dance
+		danceTB.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				//hide/show tables/cellInfo
+				state = "d";
+				tableVisibility(danceTB.isSelected(), publicationTB.isSelected(), recordingTB.isSelected(), albumTB.isSelected());
+				//search specifics
+				albumFiltersVBox.setVisible(false);
+				danceFiltersVBox.setVisible(!danceFiltersVBox.isVisible());
+				recordingFiltersVBox.setVisible(false);
+			}
+		});
+		// Publication
+		publicationTB.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				//hide/show tables/cellInfo
+				state = "p";
+				tableVisibility(danceTB.isSelected(), publicationTB.isSelected(), recordingTB.isSelected(), albumTB.isSelected());
+				//random right now, because search specifics should be moved eventually
+				//search specifics
+				albumFiltersVBox.setVisible(false);
+				danceFiltersVBox.setVisible(!danceFiltersVBox.isVisible());
+				recordingFiltersVBox.setVisible(false);
+			}
+		});
+		// Recording
+		recordingTB.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				//hide/show tables/cellInfo
+				state = "r";
+				tableVisibility(danceTB.isSelected(), publicationTB.isSelected(), recordingTB.isSelected(), albumTB.isSelected());
+				//search specifics
+				albumFiltersVBox.setVisible(false);
+				danceFiltersVBox.setVisible(false);
+				recordingFiltersVBox.setVisible(!recordingFiltersVBox.isVisible());
+			}
+		});
+		//Album
+		albumTB.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				//hide/show tables/cellInfo
+				state = "a";
+				tableVisibility(danceTB.isSelected(), publicationTB.isSelected(), recordingTB.isSelected(), albumTB.isSelected());
+				//search specifics
+				albumFiltersVBox.setVisible(!albumFiltersVBox.isVisible());
+				danceFiltersVBox.setVisible(false);
+				recordingFiltersVBox.setVisible(false);
+			}
+		});
+	}
+	
+	/*public void radioButtons(){
 		//Radio Buttons
 		HBox radioBtnBox = new HBox(10);
 		
@@ -196,7 +276,7 @@ public class Search {
 				state = "a";
 			}
 		});
-	}
+	}*/
 	
 	public void tableVisibility(boolean d, boolean p, boolean r, boolean a){
 		danceTable.getTable().setVisible(d);

@@ -98,6 +98,8 @@ public class PublicationTable {
 		         return cell;
 		    }
 		});
+		table.setId("table");
+		danceCol.setStyle( "-fx-alignment: CENTER-LEFT;");
 	}
 	
 	public void setTableData(ObservableList<Publication> data){
