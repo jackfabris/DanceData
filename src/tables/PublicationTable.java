@@ -2,8 +2,10 @@ package tables;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import database.Database;
 import javafx.collections.FXCollections;
@@ -20,6 +22,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import tables.RecordingTable.Recording;
 
 public class PublicationTable {
 	
@@ -41,17 +44,14 @@ public class PublicationTable {
 	}
 	
 	public void mapColumnNameToId(){
-		//name, type, bars, publication????, index, “I have”
 		colNameField.put("Name", "name");
-		colNameField.put("Type", "typeid");
-		colNameField.put("Bars", "barsperrepeat");
+		colNameField.put("Author", "devisor_id");
 	}
 
 	public void initializeTable() throws SQLException{
 		//Dance Table
 		table.setEditable(false);
-		ResultSet danceSet = db.searchTableByName("dance", "");
-		
+		ResultSet set = db.searchTableByName("publication", "");
 		Iterator<String> i = colNameField.keySet().iterator();
 		while(i.hasNext()){
 			String colName = i.next();
@@ -62,11 +62,7 @@ public class PublicationTable {
 			table.getColumns().add(col);
 		}
 		
-		ObservableList<Publication> data = FXCollections.observableArrayList();
-		while(danceSet.next()){
-			data.add(new Publication(danceSet.getString(3), danceSet.getString(6), danceSet.getString(2)));
-		}
-		table.setItems(data);
+		table.setItems(populate(set));
 		
 		final TableColumn<Publication, String> danceCol = (TableColumn<Publication, String>) table.getColumns().get(0);
 		danceCol.setCellFactory(new Callback<TableColumn<Publication, String>, TableCell<Publication, String>>() {
@@ -100,6 +96,15 @@ public class PublicationTable {
 		});
 		table.setId("table");
 		danceCol.setStyle( "-fx-alignment: CENTER-LEFT;");
+	}
+	
+	public ObservableList<Publication> populate(ResultSet set) throws SQLException{
+		ObservableList<Publication> data = FXCollections.observableArrayList();
+		List<String> l = new ArrayList<String>(colNameField.values());
+		while(set.next()){
+			data.add(new Publication(set.getString(l.get(0)), set.getString(l.get(1))));
+		}
+		return data;
 	}
 	
 	public void setTableData(ObservableList<Publication> data){
@@ -139,36 +144,27 @@ public class PublicationTable {
 	}
 	
 	public static class Publication{
-		//private final SimpleStringProperty id;
-		private final String barsperrepeat; 			//2
-		private final String name; 						//3
-		//private final SimpleStringProperty ucname;
-		//private final String shapeid; 
-		private final String typeid;					//6
-		//private final SimpleStringProperty couples_id;
-		//private final String devisorid;
-		//private final SimpleStringProperty verified;
-		//private final SimpleStringProperty lastmod;
-		//private final SimpleStringProperty devised;
-		//private final SimpleStringProperty notes;
-		//private final SimpleStringProperty medleytype_id;
-		//private final SimpleStringProperty progression_id;
-		//private final SimpleStringProperty url;
-		//private final SimpleStringProperty creationdate;
+//		private final String id;
+		private final String name;
+//		private final String shortname; 
+		private final String devisor_id;
+//		private final String lastmod;
+//		private final String hasdances;
+//		private final String hastunes;
+//		private final String pagenumbering;
+//		private final String url;
+//		private final String onpaper;
+//		private final String creationdate;
 		
-		public Publication(String nameString, String type, String bars){
-			barsperrepeat = bars;
-			name = nameString;
-			typeid = type;
+		public Publication(String name, String dev){
+			this.name = name;
+			devisor_id = dev;
 		}
-		public String getBarsperrepeat() {
-			return barsperrepeat;
-		}
-		public String getName() {
+		public String getName(){
 			return name;
 		}
-		public String getTypeid() {
-			return typeid;
+		public String getDevisor_id(){
+			return devisor_id;
 		}
 	}
 }

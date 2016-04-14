@@ -20,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import tables.AlbumTable;
 import tables.DanceTable;
+import tables.PublicationTable;
 import tables.RecordingTable;
 
 public class Search {
@@ -27,7 +28,7 @@ public class Search {
 	private VBox searchVBox;
 	private Database db;
 	private DanceTable danceTable;
-	//private PublicationTable publicationTable;
+	private PublicationTable publicationTable;
 	private RecordingTable recordingTable;
 	private AlbumTable albumTable;
 	private VBox danceFiltersVBox;
@@ -49,8 +50,8 @@ public class Search {
 		setUpTable(albumTable.getTable(), albumTable.getCellInfo());
 		recordingTable = new RecordingTable();
 		setUpTable(recordingTable.getTable(), recordingTable.getCellInfo());
-//		publicationTable = new PublicationTable();
-//		setUpPublicationTable(publicationTable.getTable(), publicationTable.getCellInfo());
+		publicationTable = new PublicationTable();
+		setUpTable(publicationTable.getTable(), publicationTable.getCellInfo());
 		tableVisibility(true, false, false, false);
 	}
 	
@@ -101,10 +102,10 @@ public class Search {
 			set = db.searchTableByName("dance",title);
 			danceTable.setTableData(danceTable.populate(set));
 		}
-		//else if(state.equals("p")) {
-				//	set = db.searchTableByName("publication",title);
-				//  publicationTable.setTableData(publicationTable.populate(set));
-		//}
+		else if(state.equals("p")) {
+			set = db.searchTableByName("publication",title);
+			publicationTable.setTableData(publicationTable.populate(set));
+		}
 		else if(state.equals("r")) {
 			set = db.searchTableByName("recording",title);
 			recordingTable.setTableData(recordingTable.populate(set));
@@ -280,29 +281,29 @@ public class Search {
 	
 	public void tableVisibility(boolean d, boolean p, boolean r, boolean a){
 		danceTable.getTable().setVisible(d);
-		//publicationTable.getTable().setVisible(p);
+		publicationTable.getTable().setVisible(p);
 		recordingTable.getTable().setVisible(r);
 		albumTable.getTable().setVisible(a);
 		
 		//cellInfo
 		if(state.equals("d")) { 
-			//publicationTable.getCellInfo().setVisible(false);
+			publicationTable.getCellInfo().setVisible(false);
 			recordingTable.getCellInfo().setVisible(false);
 			albumTable.getCellInfo().setVisible(false);
 		}
-//		else if(state.equals("p")){
-//			danceTable.getCellInfo().setVisible(false);
-//			recordingTable.getCellInfo().setVisible(false);
-//			albumTable.getCellInfo().setVisible(false);
-//		}
+		else if(state.equals("p")){
+			danceTable.getCellInfo().setVisible(false);
+			recordingTable.getCellInfo().setVisible(false);
+			albumTable.getCellInfo().setVisible(false);
+		}
 		else if(state.equals("r")){
 			danceTable.getCellInfo().setVisible(false);
-			//publicationTable.getCellInfo().setVisible(false);
+			publicationTable.getCellInfo().setVisible(false);
 			albumTable.getCellInfo().setVisible(false);
 		}
 		else if(state.equals("a")){
 			danceTable.getCellInfo().setVisible(false);
-			//publicationTable.getCellInfo().setVisible(false);
+			publicationTable.getCellInfo().setVisible(false);
 			recordingTable.getCellInfo().setVisible(false);
 		}
 	}
