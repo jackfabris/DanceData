@@ -1,5 +1,6 @@
 package views;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -34,7 +35,7 @@ public class Home extends Application {
 	private GridPane grid;
 	private int gridY;
 	
-	public Home() throws SQLException {
+	public Home() throws SQLException, MalformedURLException {
 		db = new Database();
 		grid = new GridPane();
 		gridY = 0;
