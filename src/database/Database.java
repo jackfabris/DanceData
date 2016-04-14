@@ -29,6 +29,9 @@ public class Database {
 	
 	public Database() throws SQLException, MalformedURLException {
 		query = "";
+		dbURL = new URL("http://media.strathspey.org/scddata/scddata.db");
+		dbFile = new File("database/scddata.db");
+		saveFile = new File("database/ihave.txt");
 		init();
 	}
 	
@@ -36,9 +39,6 @@ public class Database {
 		connection = connect();
 		stmt = connection.createStatement();
 		stmt.setQueryTimeout(30);
-		dbURL = new URL("http://media.strathspey.org/scddata/scddata.db");
-		dbFile = new File("database/scddata.db");
-		saveFile = new File("database/ihave.txt");
 	}
 	
 	/** 
@@ -218,9 +218,9 @@ public class Database {
 	 */
 	public void iHave(String table, int id, String tag) throws SQLException {
 		if(tag.isEmpty() || tag == null) {
-			query = "UPDATE " + table + " SET ihave=1, tag='" + tag + "' WHERE id=" + id;
-		} else {
 			query = "UPDATE " + table + " SET ihave=1 WHERE id=" + id;
+		} else {
+			query = "UPDATE " + table + " SET ihave=1, tag='" + tag + "' WHERE id=" + id;
 		}
 		stmt.execute(query);
 	}
