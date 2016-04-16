@@ -10,6 +10,7 @@ import filters.RecordingFilters;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -146,7 +147,7 @@ public class Search {
 			public void handle(ActionEvent arg0) {
 				//hide/show tables/cellInfo
 				state = "d";
-				tableVisibility(danceTB.isSelected(), publicationTB.isSelected(), recordingTB.isSelected(), albumTB.isSelected());
+				tableVisibility(true, false, false, false);
 				//search specifics
 				albumFiltersVBox.setVisible(false);
 				danceFiltersVBox.setVisible(!danceFiltersVBox.isVisible());
@@ -159,7 +160,7 @@ public class Search {
 			public void handle(ActionEvent arg0) {
 				//hide/show tables/cellInfo
 				state = "p";
-				tableVisibility(danceTB.isSelected(), publicationTB.isSelected(), recordingTB.isSelected(), albumTB.isSelected());
+				tableVisibility(false, true, false, false);
 				//random right now, because search specifics should be moved eventually
 				//search specifics
 				albumFiltersVBox.setVisible(false);
@@ -173,7 +174,7 @@ public class Search {
 			public void handle(ActionEvent arg0) {
 				//hide/show tables/cellInfo
 				state = "r";
-				tableVisibility(danceTB.isSelected(), publicationTB.isSelected(), recordingTB.isSelected(), albumTB.isSelected());
+				tableVisibility(false, false, true, false);
 				//search specifics
 				albumFiltersVBox.setVisible(false);
 				danceFiltersVBox.setVisible(false);
@@ -186,7 +187,7 @@ public class Search {
 			public void handle(ActionEvent arg0) {
 				//hide/show tables/cellInfo
 				state = "a";
-				tableVisibility(danceTB.isSelected(), publicationTB.isSelected(), recordingTB.isSelected(), albumTB.isSelected());
+				tableVisibility(false, false, false, true);
 				//search specifics
 				albumFiltersVBox.setVisible(!albumFiltersVBox.isVisible());
 				danceFiltersVBox.setVisible(false);
