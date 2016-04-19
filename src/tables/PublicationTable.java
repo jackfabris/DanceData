@@ -12,9 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -24,17 +22,20 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import tables.RecordingTable.Recording;
 
-public class DanceTable {
+public class PublicationTable {
+	
+	//THIS NEEDS TO CHANGE
 	
 	private Database db; 
-	private TableView<Dance> table;
+	private TableView<Publication> table;
 	private VBox cellInfo;
 	private LinkedHashMap<String, String> colNameField;
 	
-	public DanceTable() throws SQLException {
+	public PublicationTable() throws SQLException {
 		db = new Database();
-		table = new TableView<Dance>();
+		table = new TableView<Publication>();
 		cellInfo = new VBox(10);
 		cellInfo.setVisible(false);
 		colNameField = new LinkedHashMap<String, String>();
@@ -43,36 +44,31 @@ public class DanceTable {
 	}
 	
 	public void mapColumnNameToId(){
-		//name, type, bars, publication????, index, “I have”
 		colNameField.put("Name", "name");
-		colNameField.put("Type", "type_id");
-		colNameField.put("Bars", "barsperrepeat");
-		colNameField.put("I Have", "iHave");
-		colNameField.put("Index", "index");
+		colNameField.put("Author", "devisor_id");
 	}
 
 	public void initializeTable() throws SQLException{
 		//Dance Table
 		table.setEditable(false);
-		ResultSet set = db.searchTableByName("dance", "");
-		
+		ResultSet set = db.searchTableByName("publication", "");
 		Iterator<String> i = colNameField.keySet().iterator();
 		while(i.hasNext()){
 			String colName = i.next();
 			String field = colNameField.get(colName);
 			
-			TableColumn<Dance, String> col = new TableColumn<Dance, String>(colName);
-			col.setCellValueFactory(new PropertyValueFactory<Dance, String>(field));
+			TableColumn<Publication, String> col = new TableColumn<Publication, String>(colName);
+			col.setCellValueFactory(new PropertyValueFactory<Publication, String>(field));
 			table.getColumns().add(col);
 		}
-
+		
 		table.setItems(populate(set));
 		
-		final TableColumn<Dance, String> danceCol = (TableColumn<Dance, String>) table.getColumns().get(0);
-		danceCol.setCellFactory(new Callback<TableColumn<Dance, String>, TableCell<Dance, String>>() {
+		final TableColumn<Publication, String> danceCol = (TableColumn<Publication, String>) table.getColumns().get(0);
+		danceCol.setCellFactory(new Callback<TableColumn<Publication, String>, TableCell<Publication, String>>() {
 			@Override
-		    public TableCell<Dance, String> call(TableColumn<Dance, String> col) {
-		        final TableCell<Dance, String> cell = new TableCell<Dance, String>() {
+		    public TableCell<Publication, String> call(TableColumn<Publication, String> col) {
+		        final TableCell<Publication, String> cell = new TableCell<Publication, String>() {
 		            @Override
 		            public void updateItem(String firstName, boolean empty) {
 		                super.updateItem(firstName, empty);
@@ -85,7 +81,6 @@ public class DanceTable {
 		                }
 		            }
 		         };
-		         
 		         cell.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 		             @Override
 		             public void handle(MouseEvent event) {
@@ -101,22 +96,22 @@ public class DanceTable {
 		});
 		table.setId("table");
 		danceCol.setStyle( "-fx-alignment: CENTER-LEFT;");
-		}
+	}
 	
-	public ObservableList<Dance> populate(ResultSet set) throws SQLException{
-		ObservableList<Dance> data = FXCollections.observableArrayList();
+	public ObservableList<Publication> populate(ResultSet set) throws SQLException{
+		ObservableList<Publication> data = FXCollections.observableArrayList();
 		List<String> l = new ArrayList<String>(colNameField.values());
 		while(set.next()){
-			data.add(new Dance(set.getString(l.get(0)), set.getString(l.get(1)), set.getString(l.get(2))));
+			data.add(new Publication(set.getString(l.get(0)), set.getString(l.get(1))));
 		}
 		return data;
 	}
 	
-	public void setTableData(ObservableList<Dance> data){
+	public void setTableData(ObservableList<Publication> data){
 		table.setItems(data);
 	}
 	
-	public TableView<Dance> getTable(){
+	public TableView<Publication> getTable(){
 		return table;
 	}
 	
@@ -148,47 +143,28 @@ public class DanceTable {
 		return cellInfo;
 	}
 	
-	public static class Dance{
-		//private final SimpleStringProperty id;
-		private final String barsperrepeat;
-		private final String name; 
-		//private final SimpleStringProperty ucname;
-		//private final String shapeid; 
-		private final String type_id;					
-		//private final SimpleStringProperty couples_id;
-		//private final String devisorid;
-		//private final SimpleStringProperty verified;
-		//private final SimpleStringProperty lastmod;
-		//private final SimpleStringProperty devised;
-		//private final SimpleStringProperty notes;
-		//private final SimpleStringProperty medleytype_id;
-		//private final SimpleStringProperty progression_id;
-		//private final SimpleStringProperty url;
-		//private final SimpleStringProperty creationdate;
-		private CheckBox iHave;
-		private String index;
+	public static class Publication{
+//		private final String id;
+		private final String name;
+//		private final String shortname; 
+		private final String devisor_id;
+//		private final String lastmod;
+//		private final String hasdances;
+//		private final String hastunes;
+//		private final String pagenumbering;
+//		private final String url;
+//		private final String onpaper;
+//		private final String creationdate;
 		
-		public Dance(String nameString, String type, String bars){
-			barsperrepeat = bars;
-			name = nameString;
-			type_id = type;
-			iHave = new CheckBox();
-			index = "";
+		public Publication(String name, String dev){
+			this.name = name;
+			devisor_id = dev;
 		}
-		public String getBarsperrepeat() {
-			return barsperrepeat;
-		}
-		public String getName() {
+		public String getName(){
 			return name;
 		}
-		public String getType_id() {
-			return type_id;
-		}
-		public CheckBox getIHave(){
-			return iHave;
-		}
-		public String getIndex(){
-			return index;
+		public String getDevisor_id(){
+			return devisor_id;
 		}
 	}
 }

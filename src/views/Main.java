@@ -90,6 +90,7 @@ public class Main extends Application {
 	public void navigationButtons(){
 		// Navigation buttons
 		ToggleButton homeBtn = new ToggleButton("Home");
+		homeBtn.setSelected(true);
 		homeBtn.setId("home-button");
 		ToggleButton searchBtn = new ToggleButton("Search");
 		searchBtn.setId("search-button");

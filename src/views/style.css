@@ -37,3 +37,7 @@ Color Palette: (darkest to lightest)
 #home-button:selected:focused, #search-button:selected:focused, #collection-button:selected:focused {
 	-fx-background-color: #445878;
 }
+
+#table .table-column {
+	-fx-alignment: CENTER;
+}
