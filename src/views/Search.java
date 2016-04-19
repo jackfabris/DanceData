@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import database.Database;
 import filters.AlbumFilters;
 import filters.DanceFilters;
+import filters.PublicationFilters;
 import filters.RecordingFilters;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,6 +36,7 @@ public class Search {
 	private VBox danceFiltersVBox;
 	private VBox recordingFiltersVBox;
 	private VBox albumFiltersVBox;
+	private VBox publicationFiltersVBox;
 	private String state; // "d", "p", "r", a"
 	
 	public Search() throws SQLException {
@@ -122,6 +124,11 @@ public class Search {
 		
 		ToggleGroup tg = new ToggleGroup();
 		
+//		int cc = 0x25B6;
+//		char ccc = (char) Integer.parseInt(String.valueOf(cc), 16);
+//		String test = String.valueOf(ccc);
+//		System.out.println(test);
+		
 		final ToggleButton danceTB = new ToggleButton("Dance");
 		danceTB.setSelected(true);
 		danceTB.setToggleGroup(tg);
@@ -152,6 +159,7 @@ public class Search {
 				albumFiltersVBox.setVisible(false);
 				danceFiltersVBox.setVisible(!danceFiltersVBox.isVisible());
 				recordingFiltersVBox.setVisible(false);
+				publicationFiltersVBox.setVisible(false);
 			}
 		});
 		// Publication
@@ -164,8 +172,9 @@ public class Search {
 				//random right now, because search specifics should be moved eventually
 				//search specifics
 				albumFiltersVBox.setVisible(false);
-				danceFiltersVBox.setVisible(!danceFiltersVBox.isVisible());
+				danceFiltersVBox.setVisible(false);
 				recordingFiltersVBox.setVisible(false);
+				publicationFiltersVBox.setVisible(!publicationFiltersVBox.isVisible());
 			}
 		});
 		// Recording
@@ -179,6 +188,7 @@ public class Search {
 				albumFiltersVBox.setVisible(false);
 				danceFiltersVBox.setVisible(false);
 				recordingFiltersVBox.setVisible(!recordingFiltersVBox.isVisible());
+				publicationFiltersVBox.setVisible(false);
 			}
 		});
 		//Album
@@ -192,6 +202,7 @@ public class Search {
 				albumFiltersVBox.setVisible(!albumFiltersVBox.isVisible());
 				danceFiltersVBox.setVisible(false);
 				recordingFiltersVBox.setVisible(false);
+				publicationFiltersVBox.setVisible(false);
 			}
 		});
 	}
@@ -309,7 +320,7 @@ public class Search {
 		}
 	}
 	
-	public void searchFilters() {
+	public void searchFilters() throws SQLException {
 		DanceFilters df = new DanceFilters();
 		danceFiltersVBox = df.getDanceFiltersVBox();
 		this.searchVBox.getChildren().add(danceFiltersVBox);
@@ -327,6 +338,12 @@ public class Search {
 		this.searchVBox.getChildren().add(albumFiltersVBox);
 		albumFiltersVBox.managedProperty().bind(albumFiltersVBox.visibleProperty());
 		albumFiltersVBox.setVisible(false);
+		
+		PublicationFilters pf = new PublicationFilters();
+		publicationFiltersVBox = pf.getPublicationFiltersVBox();
+		this.searchVBox.getChildren().add(publicationFiltersVBox);
+		publicationFiltersVBox.managedProperty().bind(publicationFiltersVBox.visibleProperty());
+		publicationFiltersVBox.setVisible(false);
 	}
 	
 	public void setUpTable(TableView<?> table, VBox cellInfo){

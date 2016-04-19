@@ -117,6 +117,11 @@ public class Database {
 		}
 	}
 	
+	public ResultSet doQuery(String s) throws SQLException {
+		query = s;
+		return stmt.executeQuery(query);
+	}
+	
 	public static void main(String[] args) throws SQLException, IOException {
 		/* Update the database */
 		System.out.print("Updating Database... ");
