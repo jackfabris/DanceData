@@ -8,7 +8,12 @@ public class DatabaseTest {
 
 	@Test
 	public void DatabaseTests() throws SQLException {
-		Database db = new Database();
+		try {
+			Database db = new Database();
+		}
+		catch (Exception e){
+			System.out.println("Error creating database");
+		}
 		
 	}
 
