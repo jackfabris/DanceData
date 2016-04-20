@@ -1,264 +1,129 @@
 package views;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.sql.ResultSet;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.SQLException;
-
 import database.Database;
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Separator;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
+
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 
-public class Home extends Application {
+public class Home {
 	
-	//THIS IS A TEST
-	
+	private VBox homeVBox;
 	private Database db;
-	private GridPane grid;
-	private int gridY;
-	
-	public Home() throws SQLException, MalformedURLException {
-		db = new Database();
-		grid = new GridPane();
-		gridY = 0;
-	}
-	
-	public Database getDatabase(){
-		return db;
+
+	public Home() throws SQLException, MalformedURLException{
+		homeVBox = new VBox(10);
+		db = new Database();	
+		lastUpdate();
+		setUp();
 	}
 
-	@Override
-	public void start(Stage stg) throws Exception {
-		stg.setTitle("Ghillie Tracks 2.0");
+	public void lastUpdate(){
+		HBox updateHBox = new HBox(10);
+
+		updateHBox.setStyle(
+				"-fx-padding: 10;" +
+				"-fx-border-style: solid inside;" +
+				"-fx-border-width: 1;" +
+				"-fx-border-insets: 5;" +
+				"-fx-border-color: #cfcfcf;");
+		//Date String
+		Label date = new Label();
+		String workingDir = System.getProperty("user.dir");
+		Path path = Paths.get(workingDir + "/database/scddata.db");
+		BasicFileAttributes attr;
+		try {
+			attr = Files.readAttributes(path, BasicFileAttributes.class);
+			long difference = System.currentTimeMillis() - attr.lastModifiedTime().toMillis();
+			int lastDays = (int) (difference / (1000*60*60*24));
+			date.setText("It has been " + lastDays + " days since the database was last updated.");
+		} catch (IOException e) {
+			System.out.println("Unable to Retrieve Date of Last Update");
+		}
+		updateHBox.getChildren().add(date);
 		
-		setUpGrid();
-		setUpHeader();
-		navigationButtons();
-		setUpSearchBar();
-		radioButtons();
-		searchTables();
-		
-		Scene scene = new Scene(grid);
-		stg.setScene(scene);
-		scene.getStylesheets().add(Home.class.getResource("style.css").toExternalForm());
-		stg.setMaximized(true);
-		stg.show();
-	}
-	
-	public void setUpGrid(){
-		// Set up the grid
-		grid.setHgap(5);
-		grid.setVgap(5);
-		grid.setPadding(new Insets(10, 10, 10, 10));
-		
-		ColumnConstraints c = new ColumnConstraints();
-		c.setPercentWidth(100);
-		grid.getColumnConstraints().add(c);
-	}
-	
-	public void setUpHeader(){
-		Text gtText = new Text("Ghillie Tracks 2.0");
-		gtText.setId("header-text");
-		HBox header = new HBox(10);
-		header.getChildren().add(gtText);
-		grid.add(header, 0, gridY++);
-	}
-	
-	public void navigationButtons(){
-		// Navigation buttons
-		final Button homeBtn = new Button("Home");
-		homeBtn.setId("home-button");
-		final Button searchBtn = new Button("Search");
-		searchBtn.setId("search-button");
-		final Button collectionBtn = new Button("Collections");
-		collectionBtn.setId("collection-button");
-		
-		HBox navBox = new HBox(10);
-		navBox.getChildren().add(homeBtn);
-		navBox.getChildren().add(searchBtn);
-		navBox.getChildren().add(collectionBtn);
-		grid.add(navBox, 0, gridY++);
-		
-		Separator sep = new Separator();
-		HBox sepBox = new HBox(10);
-		sepBox.getChildren().add(sep);
-		sepBox.setHgrow(sep, Priority.ALWAYS);
-		grid.add(sepBox, 0, gridY++);
-		
-		// button logic
-		homeBtn.setOnAction(new EventHandler<ActionEvent>() {
+		//Update Button
+		Button updateBtn = new Button("UPDATE");
+		updateHBox.getChildren().add(updateBtn);
+		this.getHomeVBox().getChildren().add(updateHBox);
+		updateBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				homeBtn.setStyle("-fx-background-color: #445878;;");
-				collectionBtn.setStyle("-fx-background-color: #92cdcf");
-				searchBtn.setStyle("-fx-background-color: #92cdcf;");
-			}
-		});
-		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				homeBtn.setStyle("-fx-background-color: #92cdcf;");
-				searchBtn.setStyle("-fx-background-color: #445878;");
-				collectionBtn.setStyle("-fx-background-color: #92cdcf;");
-			}
-		});
-		collectionBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				homeBtn.setStyle("-fx-background-color: #92cdcf;");
-				collectionBtn.setStyle("-fx-background-color: #445878;");
-				searchBtn.setStyle("-fx-background-color: #92cdcf;");
+				db.update();
 			}
 		});
 	}
 	
-	public void setUpSearchBar(){
-		// Search bar
-		TextField search = new TextField();
-		search.setPrefWidth(300);
-		Button searchGoBtn = new Button("Go");
-		searchGoBtn.setPrefWidth(50);
+	public void setUp() {
+		VBox homeTextVBox = new VBox(10);
 		
-		HBox searchBox = new HBox(10);
-		searchBox.getChildren().add(search);
-		searchBox.getChildren().add(searchGoBtn);
-		grid.add(searchBox, 0, gridY++);
+//		WebView browser = new WebView();
+//		WebEngine webEngine = browser.getEngine();
+//		
+//		ScrollPane scrollPane = new ScrollPane();
+//		scrollPane.setContent(browser);
+//		
+//		webEngine.loadContent(
+//				"<h1>Welcome to GhillieTracks 2.0!</h1>");
+//		
+//		homeTextVBox.getChildren().add(scrollPane);
+		
+		// Welcome
+		Text welcome = new Text("Welcome to GhillieTracks 2.0!");
+		homeTextVBox.getChildren().add(welcome);
+		
+		// Intro
+		Text intro1 = new Text(
+				"Ghillie Tracks is an application designed to help teachers, " +
+				"class managers, and dancers in the Scottish Country Dance " +
+				"community research and manage dance and music resources.");
+		Text intro2 = new Text(
+				"This application was inspired by the GhillieTracks program " +
+				"created by Patty Lindsay. It retains much of the same " +
+				"functionality, but any collections created in that program " +
+				"will need to be recreated by the user in this version.");
+		homeTextVBox.getChildren().addAll(intro1, intro2);
+		
+		// Features
+		Text features = new Text("GhillieTracks has x main functions:");
+		HBox feature1HBox = new HBox(10);
+		Text feature1a = new Text("DanceData Search");
+		Text feature1b = new Text(
+				"Search DanceData without being connected to the Internet, " +
+				"allowing access to the data from a laptop in a classroom " + 
+				"environment. Also provides the capability of marking " + 
+				"dances, publications, albums and tunes as \"I Have\" " + 
+				"similar to the original DanceData application.");
+		HBox feature2HBox = new HBox(10);
+		feature1HBox.getChildren().addAll(feature1a, feature1b);
+		Text feature2 = new Text("Collections");
+		homeTextVBox.getChildren().addAll(features, feature1HBox, feature2HBox);
+		
+		// Copyright
+		Text copyright1 = new Text("Copyright 2016 University of Delaware");
+		Text copyright2 = new Text(
+				"GhillieTracks is free software developed by students at " +
+				"the University of Delaware in Newark, DE.");
+		homeTextVBox.getChildren().addAll(copyright1, copyright2);
+		
+		this.getHomeVBox().getChildren().add(homeTextVBox);
 	}
-	
-	public void radioButtons(){
-		//Radio Buttons
-		HBox radioBtnBox = new HBox(10);
-		RadioButton rb1 = new RadioButton();
-		rb1.setText("Album");
-		radioBtnBox.getChildren().add(rb1);
-		RadioButton rb2 = new RadioButton();
-		rb2.setText("Dance");
-		radioBtnBox.getChildren().add(rb2);
-		RadioButton rb3 = new RadioButton();
-		rb3.setText("Recording");
-		radioBtnBox.getChildren().add(rb3);
-		grid.add(radioBtnBox, 0, gridY++);
-		
-		//Search specifics
-		final HBox albumSearchBox = new HBox(10);
-		Label albumSearch = new Label();
-		albumSearch.setText("Album Search Specifics");
-		albumSearchBox.getChildren().add(albumSearch);
-		albumSearchBox.managedProperty().bind(albumSearchBox.visibleProperty());
-		albumSearchBox.setVisible(false);
-		grid.add(albumSearchBox, 0, gridY++);
-		
-		rb1.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				albumSearchBox.setVisible(!albumSearchBox.isVisible());
-			}
-		});
-	}
-	
-	public void searchTables() throws SQLException{
-		// Search results
-		TableView<Dance> table = new TableView<Dance>();
-		table.setEditable(false);
-		ResultSet danceSet = db.searchTableByName("dance","");
-		/*ResultSetMetaData rsmd = danceSet.getMetaData();
-		int columnsNumber = rsmd.getColumnCount();
-		for(int i=1; i <= columnsNumber; i++){
-			table.getColumns().add(new TableColumn<Dance, String>(rsmd.getColumnName(i)));
-		}
-		*/
-		TableColumn<Dance, String> c1 = new TableColumn<Dance, String>("Name");
-		c1.setCellValueFactory(
-				new PropertyValueFactory<Dance, String>("name"));
-		TableColumn<Dance, String> c2 = new TableColumn<Dance, String>("Shape");
-		c2.setCellValueFactory(
-                new PropertyValueFactory<Dance, String>("shapeid"));
-		TableColumn<Dance, String> c3 = new TableColumn<Dance, String>("Type");
-		c3.setCellValueFactory(
-                new PropertyValueFactory<Dance, String>("typeid"));
-		TableColumn<Dance, String> c4 = new TableColumn<Dance, String>("Author");
-		c4.setCellValueFactory(
-                new PropertyValueFactory<Dance, String>("devisorid"));
-		
-		ObservableList<Dance> data = FXCollections.observableArrayList();
-		while(danceSet.next()){
-			data.add(new Dance(danceSet.getString(3), danceSet.getString(5), danceSet.getString(6), danceSet.getString(8)));
-		}
-		table.setItems(data);
-		table.getColumns().addAll(c1, c2, c3, c4);
-		
-		final HBox resultsBox = new HBox(10);
-		resultsBox.getChildren().add(table);
-		resultsBox.setHgrow(table, Priority.ALWAYS);
-		grid.add(resultsBox, 0, gridY++);
-	}
-	
-	public static void main(String[] args) throws SQLException, IOException{
-		launch(args);
-	}
-	
-	
-	
-	
-	
-	public static class Dance{
-		//private final SimpleStringProperty id;
-		//private final SimpleStringProperty barsperrepeat;
-		private final String name;
-		//private final SimpleStringProperty ucname;
-		private final String shapeid; 
-		private final String typeid;
-		//private final SimpleStringProperty couples_id;
-		private final String devisorid;
-		//private final SimpleStringProperty verified;
-		//private final SimpleStringProperty lastmod;
-		//private final SimpleStringProperty devised;
-		//private final SimpleStringProperty notes;
-		//private final SimpleStringProperty medleytype_id;
-		//private final SimpleStringProperty progression_id;
-		//private final SimpleStringProperty url;
-		//private final SimpleStringProperty creationdate;
-		
-		private Dance(String nameString, String shape, String type, String dev){
-			name = nameString;
-			shapeid = shape;
-			typeid = type;
-			devisorid = dev;
-		}
 
-		public String getName() {
-			return name;
-		}
-
-		public String getShapeid() {
-			return shapeid;
-		}
-
-		public String getTypeid() {
-			return typeid;
-		}
-
-		public String getDevisorid() {
-			return devisorid;
-		}
-		
+	public VBox getHomeVBox() {
+		return homeVBox;
 	}
 }
