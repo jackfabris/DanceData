@@ -1,7 +1,6 @@
 package views;
 import java.io.IOException;
 import java.sql.SQLException;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

@@ -26,8 +26,6 @@ import tables.RecordingTable.Recording;
 
 public class PublicationTable {
 	
-	//THIS NEEDS TO CHANGE
-	
 	private Database db; 
 	private TableView<Publication> table;
 	private VBox cellInfo;

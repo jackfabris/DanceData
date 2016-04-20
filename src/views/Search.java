@@ -2,7 +2,6 @@ package views;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import database.Database;
 import filters.AlbumFilters;
 import filters.DanceFilters;
@@ -11,7 +10,7 @@ import filters.RecordingFilters;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -33,6 +32,8 @@ public class Search {
 	private PublicationTable publicationTable;
 	private RecordingTable recordingTable;
 	private AlbumTable albumTable;
+	private final TextField search;
+	private RadioButton advSF;
 	private VBox danceFiltersVBox;
 	private VBox recordingFiltersVBox;
 	private VBox albumFiltersVBox;
@@ -42,9 +43,11 @@ public class Search {
 	public Search() throws SQLException {
 		searchVBox = new VBox(10);
 		db = new Database();
+		search = new TextField();
 		setUpSearchBar();
-		//radioButtons();
 		navigationButtons();
+		advSF = new RadioButton();
+		navSearchFilter();
 		searchFilters();
 		state = "d";
 		danceTable = new DanceTable();
@@ -64,7 +67,7 @@ public class Search {
 	
 	public void setUpSearchBar(){
 		//Search Bar
-		final TextField search = new TextField();
+		search.setPromptText("Search by Dance Title");
 		search.setPrefWidth(300);
 		Button searchGoBtn = new Button("Go");
 		searchGoBtn.setPrefWidth(50);
@@ -124,27 +127,26 @@ public class Search {
 		
 		ToggleGroup tg = new ToggleGroup();
 		
-//		int cc = 0x25B6;
-//		char ccc = (char) Integer.parseInt(String.valueOf(cc), 16);
-//		String test = String.valueOf(ccc);
-//		System.out.println(test);
-		
 		final ToggleButton danceTB = new ToggleButton("Dance");
 		danceTB.setSelected(true);
 		danceTB.setToggleGroup(tg);
 		navBtnBox.getChildren().add(danceTB);
+		danceTB.setId("toggle-button");
 		
 		final ToggleButton publicationTB = new ToggleButton("Publication");
 		publicationTB.setToggleGroup(tg);
 		navBtnBox.getChildren().add(publicationTB);
+		publicationTB.setId("toggle-button");
 		
 		final ToggleButton recordingTB = new ToggleButton("Recording");
 		recordingTB.setToggleGroup(tg);
 		navBtnBox.getChildren().add(recordingTB);
+		recordingTB.setId("toggle-button");
 		
 		final ToggleButton albumTB = new ToggleButton("Album");
 		albumTB.setToggleGroup(tg);
 		navBtnBox.getChildren().add(albumTB);
+		albumTB.setId("toggle-button");
 	
 		this.searchVBox.getChildren().add(navBtnBox);
 		
@@ -152,12 +154,17 @@ public class Search {
 		danceTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				search.setPromptText("Search by Dance Title");
+				advSF.setText("Show Advanced Search Options For Dance");
+				if(!state.equals("d")){
+					advSF.setSelected(false);
+					search.clear();
+				}
 				//hide/show tables/cellInfo
 				state = "d";
 				tableVisibility(true, false, false, false);
 				//search specifics
 				albumFiltersVBox.setVisible(false);
-				danceFiltersVBox.setVisible(!danceFiltersVBox.isVisible());
 				recordingFiltersVBox.setVisible(false);
 				publicationFiltersVBox.setVisible(false);
 			}
@@ -166,28 +173,37 @@ public class Search {
 		publicationTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				search.setPromptText("Search by Publication Title");
+				advSF.setText("Show Advanced Search Options For Publication");
+				if(!state.equals("p")){
+					advSF.setSelected(false);
+					search.clear();
+				}
 				//hide/show tables/cellInfo
 				state = "p";
 				tableVisibility(false, true, false, false);
-				//random right now, because search specifics should be moved eventually
 				//search specifics
 				albumFiltersVBox.setVisible(false);
 				danceFiltersVBox.setVisible(false);
 				recordingFiltersVBox.setVisible(false);
-				publicationFiltersVBox.setVisible(!publicationFiltersVBox.isVisible());
 			}
 		});
 		// Recording
 		recordingTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				search.setPromptText("Search by Recording Title");
+				advSF.setText("Show Advanced Search Options For Recording");
+				if(!state.equals("r")){
+					advSF.setSelected(false);
+					search.clear();
+				}
 				//hide/show tables/cellInfo
 				state = "r";
 				tableVisibility(false, false, true, false);
 				//search specifics
 				albumFiltersVBox.setVisible(false);
 				danceFiltersVBox.setVisible(false);
-				recordingFiltersVBox.setVisible(!recordingFiltersVBox.isVisible());
 				publicationFiltersVBox.setVisible(false);
 			}
 		});
@@ -195,101 +211,22 @@ public class Search {
 		albumTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				search.setPromptText("Search by Album Title");
+				advSF.setText("Show Advanced Search Options For Album");
+				if(!state.equals("a")){
+					advSF.setSelected(false);
+					search.clear();
+				}
 				//hide/show tables/cellInfo
 				state = "a";
 				tableVisibility(false, false, false, true);
 				//search specifics
-				albumFiltersVBox.setVisible(!albumFiltersVBox.isVisible());
 				danceFiltersVBox.setVisible(false);
 				recordingFiltersVBox.setVisible(false);
 				publicationFiltersVBox.setVisible(false);
 			}
 		});
 	}
-	
-	/*public void radioButtons(){
-		//Radio Buttons
-		HBox radioBtnBox = new HBox(10);
-		
-		ToggleGroup tg = new ToggleGroup();
-		
-		final RadioButton danceRB = new RadioButton();
-		danceRB.setText("Dance");
-		danceRB.setSelected(true);
-		danceRB.setToggleGroup(tg);
-		radioBtnBox.getChildren().add(danceRB);
-		
-		final RadioButton publicationRB = new RadioButton();
-		publicationRB.setText("Publication");
-		publicationRB.setToggleGroup(tg);
-		radioBtnBox.getChildren().add(publicationRB);
-		
-		final RadioButton recordingRB = new RadioButton();
-		recordingRB.setText("Recording");
-		recordingRB.setToggleGroup(tg);
-		radioBtnBox.getChildren().add(recordingRB);
-		
-		final RadioButton albumRB = new RadioButton();
-		albumRB.setText("Album");
-		albumRB.setToggleGroup(tg);
-		radioBtnBox.getChildren().add(albumRB);
-	
-		this.searchVBox.getChildren().add(radioBtnBox);
-		
-		// Dance
-		danceRB.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				//hide/show tables/cellInfo
-				tableVisibility(danceRB.isSelected(), publicationRB.isSelected(), recordingRB.isSelected(), albumRB.isSelected());
-				//search specifics
-				albumFiltersVBox.setVisible(false);
-				danceFiltersVBox.setVisible(!danceFiltersVBox.isVisible());
-				recordingFiltersVBox.setVisible(false);
-				state = "d";
-			}
-		});
-		// Publication
-		publicationRB.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				//hide/show tables/cellInfo
-				tableVisibility(danceRB.isSelected(), publicationRB.isSelected(), recordingRB.isSelected(), albumRB.isSelected());
-				//random right now, because search specifics should be moved eventually
-				//search specifics
-				albumFiltersVBox.setVisible(false);
-				danceFiltersVBox.setVisible(!danceFiltersVBox.isVisible());
-				recordingFiltersVBox.setVisible(false);
-				state = "p";
-			}
-		});
-		// Recording
-		recordingRB.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				//hide/show tables/cellInfo
-				tableVisibility(danceRB.isSelected(), publicationRB.isSelected(), recordingRB.isSelected(), albumRB.isSelected());
-				//search specifics
-				albumFiltersVBox.setVisible(false);
-				danceFiltersVBox.setVisible(false);
-				recordingFiltersVBox.setVisible(!recordingFiltersVBox.isVisible());
-				state = "r";
-			}
-		});
-		//Album
-		albumRB.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				//hide/show tables/cellInfo
-				tableVisibility(danceRB.isSelected(), publicationRB.isSelected(), recordingRB.isSelected(), albumRB.isSelected());
-				//search specifics
-				albumFiltersVBox.setVisible(!albumFiltersVBox.isVisible());
-				danceFiltersVBox.setVisible(false);
-				recordingFiltersVBox.setVisible(false);
-				state = "a";
-			}
-		});
-	}*/
 	
 	public void tableVisibility(boolean d, boolean p, boolean r, boolean a){
 		danceTable.getTable().setVisible(d);
@@ -318,6 +255,49 @@ public class Search {
 			publicationTable.getCellInfo().setVisible(false);
 			recordingTable.getCellInfo().setVisible(false);
 		}
+	}
+	
+	public void navSearchFilter(){
+		advSF.setText("Show Advanced Search Options For Dance");
+		this.searchVBox.getChildren().add(advSF);
+		
+		advSF.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				if(state.equals("d")){
+					if(advSF.isSelected()) advSF.setText("Hide Advanced Search Options For Dance");
+					else advSF.setText("Show Advanced Search Options For Dance");
+					albumFiltersVBox.setVisible(false);
+					danceFiltersVBox.setVisible(!danceFiltersVBox.isVisible());
+					recordingFiltersVBox.setVisible(false);
+					publicationFiltersVBox.setVisible(false);
+				}
+				else if(state.equals("p")){
+					if(advSF.isSelected()) advSF.setText("Hide Advanced Search Options For Publication");
+					else advSF.setText("Show Advanced Search Options For Publication");
+					albumFiltersVBox.setVisible(false);
+					danceFiltersVBox.setVisible(false);
+					recordingFiltersVBox.setVisible(false);
+					publicationFiltersVBox.setVisible(!publicationFiltersVBox.isVisible());
+				}
+				else if(state.equals("r")){
+					if(advSF.isSelected()) advSF.setText("Hide Advanced Search Options For Recording");
+					else advSF.setText("Show Advanced Search Options For Recording");
+					albumFiltersVBox.setVisible(false);
+					danceFiltersVBox.setVisible(false);
+					recordingFiltersVBox.setVisible(!recordingFiltersVBox.isVisible());
+					publicationFiltersVBox.setVisible(false);
+				}
+				else{
+					if(advSF.isSelected()) advSF.setText("Hide Advanced Search Options For Album");
+					else advSF.setText("Show Advanced Search Options For Album");
+					albumFiltersVBox.setVisible(!albumFiltersVBox.isVisible());
+					danceFiltersVBox.setVisible(false);
+					recordingFiltersVBox.setVisible(false);
+					publicationFiltersVBox.setVisible(false);
+				}
+			}
+		});
 	}
 	
 	public void searchFilters() throws SQLException {
