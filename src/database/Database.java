@@ -182,7 +182,35 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet searchTableByName(String table, String name) throws SQLException {
-		query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
+		if(table.equals("dance")) {
+			query = "SELECT d.*, dt.name as type, mt.description as medleytype, s.name as shape, "
+					+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor FROM dance d "
+					+ "LEFT OUTER JOIN dancetype dt ON d.type_id=dt.id "
+					+ "LEFT OUTER JOIN medleytype mt ON d.medleytype_id=mt.id "
+					+ "LEFT OUTER JOIN shape s ON d.shape_id=s.id "
+					+ "LEFT OUTER JOIN couples c ON d.couples_id=c.id "
+					+ "LEFT OUTER JOIN progression p ON d.progression_id=p.id "
+					+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
+					+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
+					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
+					+ "WHERE d.name like '%" + name + "%' GROUP BY d.id";
+		} else if(table.equals("album")) {
+			query = "SELECT a.*, p.name as artist FROM album a "
+					+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
+					+ "WHERE a.name like '%" + name + "%'";
+		} else if(table.equals("publication")) {
+			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
+					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id WHERE pb.name like '%" + name + "%'";
+		} else if(table.equals("recording")){
+			query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
+					+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
+					+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
+					+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
+					+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
+					+ "WHERE r.name like '%" + name + "%'";
+		} else {
+			query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
+		}
 		return stmt.executeQuery(query);
 	}
 	
@@ -205,7 +233,34 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getRecordingsByAlbum(int album_id) throws SQLException {
-		query = "SELECT r.* FROM recording r JOIN albumsrecordingsmap arm ON r.id=arm.recording_id WHERE arm.album_id=" + album_id +" ORDER BY tracknumber";
+		query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
+				+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
+				+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
+				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
+				+ "LEFT OUTER JOIN albumsrecordingsmap arm ON r.id=arm.recording_id "
+				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
+				+ "WHERE arm.album_id=" + album_id + " ORDER BY tracknumber";
+		return stmt.executeQuery(query);
+	}
+	
+	/**
+	 * Get a list of dances in the publication with publication_id
+	 * @param publication_id
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
+	public ResultSet getDancesByPublication(int publication_id) throws SQLException {
+		query = "SELECT d.*, dt.name as type, mt.description as medleytype, s.name as shape, "
+				+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor FROM dance d "
+				+ "LEFT OUTER JOIN dancetype dt ON d.type_id=dt.id "
+				+ "LEFT OUTER JOIN medleytype mt ON d.medleytype_id=mt.id "
+				+ "LEFT OUTER JOIN shape s ON d.shape_id=s.id "
+				+ "LEFT OUTER JOIN couples c ON d.couples_id=c.id "
+				+ "LEFT OUTER JOIN progression p ON d.progression_id=p.id "
+				+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
+				+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
+				+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
+				+ "WHERE dpm.publication_id=" + publication_id + "ORDER BY number";
 		return stmt.executeQuery(query);
 	}
 	
@@ -217,17 +272,31 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public void iHave(String table, int id, String tag) throws SQLException {
-		if(tag.isEmpty() || tag == null) {
-			query = "UPDATE " + table + " SET ihave=1 WHERE id=" + id;
-		} else {
-			query = "UPDATE " + table + " SET ihave=1, tag='" + tag + "' WHERE id=" + id;
-		}
+		query = "UPDATE " + table + " SET ihave=1, tag='" + tag + "' WHERE id=" + id;
 		stmt.execute(query);
+		if(table.equals("publication")) {
+			query = "UPDATE dance SET ihave=1, tag='" + tag + "' WHERE id in "
+					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
+			stmt.execute(query);
+		} else if(table.equals("album")) {
+			query = "UPDATE recording SET ihave=1, tag='" + tag + "' WHERE id in "
+					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
+			stmt.execute(query);
+		}
 	}
 	
 	public void iDontHave(String table, int id) throws SQLException {
 		query = "UPDATE " + table + " SET ihave=0, tag=null WHERE id=" +id;
 		stmt.execute(query);
+		if(table.equals("publication")) {
+			query = "UPDATE dance SET ihave=0, tag=null WHERE id in "
+					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
+			stmt.execute(query);
+		} else if(table.equals("album")) {
+			query = "UPDATE recording SET ihave=0, tag=null WHERE id in "
+					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
+			stmt.execute(query);
+		}
 	}
 	
 	/* Use for debugging to print the results of a query */
@@ -299,8 +368,8 @@ public class Database {
 		
 		System.out.println("");
 		
-		db.iHave("album", 24, "tag3");
-		db.iHave("album", 247, "tag3");
+		db.iHave("album", 24, "album24");
+		db.iHave("album", 247, "album247");
 				
 		/* Search for album */
 		System.out.println("Search album");
@@ -318,7 +387,7 @@ public class Database {
 		
 		System.out.println("");
 		
-		int album_id = 1;
+		int album_id = 247;
 
 		/* Search for name of some table its id */
 		System.out.println("ALBUM:");
@@ -328,6 +397,13 @@ public class Database {
 		/* Search for records by album id */
 		System.out.println("RECORDINGS:");
 		resultSet = db.getRecordingsByAlbum(album_id);
+		db.printResults(resultSet);
+		
+		System.out.println("");
+		
+		/* Search publication */
+		System.out.println("Publication search:");
+		resultSet = db.searchTableByName("publication", "flavour");
 		db.printResults(resultSet);
 		
 		System.out.println("");
