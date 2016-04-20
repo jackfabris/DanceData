@@ -25,6 +25,7 @@ public class Home {
 	private VBox homeVBox;
 	private Database db;
 
+
 	public Home() throws SQLException, MalformedURLException{
 		homeVBox = new VBox(10);
 		db = new Database();	
