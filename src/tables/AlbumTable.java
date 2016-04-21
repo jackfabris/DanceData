@@ -101,7 +101,7 @@ public class AlbumTable {
 		ObservableList<Album> data = FXCollections.observableArrayList();
 		List<String> l = new ArrayList<String>(colNameField.values());
 		while(set.next()){
-			data.add(new Album(set.getString(l.get(0)), set.getString(l.get(1))));
+			data.add(new Album(set.getString(l.get(0)) , set.getString(l.get(1))));
 		}
 		return data;
 	}

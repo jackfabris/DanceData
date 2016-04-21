@@ -24,6 +24,13 @@ import tables.DanceTable;
 import tables.PublicationTable;
 import tables.RecordingTable;
 
+/**
+ * 
+ * Search holds information regarding the four main tables for the database and handles 
+ * the visibility and other changes depending on the state, which is one of "d", "p", "r" or "a"
+ * representing a Dance, Publication, Recording, or Album respectively
+ *
+ */
 public class Search {
 	
 	private VBox searchVBox;
@@ -38,8 +45,13 @@ public class Search {
 	private VBox recordingFiltersVBox;
 	private VBox albumFiltersVBox;
 	private VBox publicationFiltersVBox;
-	private String state; // "d", "p", "r", a"
+	private String state;
 	
+	/**
+	 * Constructor for Search sets up initial display and 
+	 * initializes VBox, Database, Advanced Search Filters, and Tables
+	 * @throws SQLException
+	 */
 	public Search() throws SQLException {
 		searchVBox = new VBox(10);
 		db = new Database();
@@ -61,10 +73,18 @@ public class Search {
 		tableVisibility(true, false, false, false);
 	}
 	
+	/**
+	 * returns this class' VBox, which holds all information regarding the Search class
+	 * @return VBox of the Search Class
+	 */
 	public VBox getSearchVBox(){
 		return this.searchVBox;
 	}
 	
+	/**
+	 * sets up the search bar and search button, and will search on both
+	 * a button press and 'Enter' or 'Return' key event
+	 */
 	public void setUpSearchBar(){
 		//Search Bar
 		search.setPromptText("Search by Dance Title");
@@ -78,6 +98,7 @@ public class Search {
 		
 		this.searchVBox.getChildren().add(searchBox);
 		
+		//Go Button Event
 		searchGoBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -88,7 +109,7 @@ public class Search {
 				}
 			}
 		});
-		
+		//Enter/Return Key Event
 		searchBox.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent arg0){
 				if(arg0.getCode() == KeyCode.ENTER){
@@ -102,6 +123,12 @@ public class Search {
 		});
 	}
 	
+	/**
+	 * queries the database table of the current state by rows like
+	 * the given title and displays the result set in that table
+	 * @param title a String representing part of the title for the desired records
+	 * @throws SQLException
+	 */
 	public void searchText(String title) throws SQLException{
 		ResultSet set;
 		if(state.equals("d")) {
@@ -122,6 +149,13 @@ public class Search {
 		}
 	}
 	
+	/**
+	 * responsible for state change on button action.
+	 * sets up the toggle buttons for Dance, Publication, Recording, 
+	 * and Album where, on button action, the state, search bar prompt text, 
+	 * advanced search filter radio button text, table/cellInfo visibility,
+	 * and advanced search filter visibility is changed respectively.
+	 */
 	public void navigationButtons(){
 		HBox navBtnBox = new HBox(10);
 		
@@ -207,7 +241,7 @@ public class Search {
 				publicationFiltersVBox.setVisible(false);
 			}
 		});
-		//Album
+		// Album
 		albumTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -228,13 +262,23 @@ public class Search {
 		});
 	}
 	
+	/**
+	 * based on the given table visibilities, sets the visibility of each table
+	 * and hides or shows cellInfo of each table depending on the state.
+	 * @param d boolean for danceTable visibility
+	 * @param p boolean for publicationTable visibility
+	 * @param r boolean for recordingTable visibility
+	 * @param a boolean for albumTable visibility
+	 */
 	public void tableVisibility(boolean d, boolean p, boolean r, boolean a){
+		// table
 		danceTable.getTable().setVisible(d);
 		publicationTable.getTable().setVisible(p);
 		recordingTable.getTable().setVisible(r);
 		albumTable.getTable().setVisible(a);
 		
-		//cellInfo
+		// cellInfo
+		// should be hidden on state change - change later?
 		if(state.equals("d")) { 
 			publicationTable.getCellInfo().setVisible(false);
 			recordingTable.getCellInfo().setVisible(false);
@@ -257,10 +301,16 @@ public class Search {
 		}
 	}
 	
+	/**
+	 * sets up the advanced search filter button that depends on the navigation buttons and search filters.
+	 * based on the state and selected property of the radio button, sets the radio button test
+	 * and sets the visibility of each filters box respectively. 
+	 */
 	public void navSearchFilter(){
 		advSF.setText("Show Advanced Search Options For Dance");
 		this.searchVBox.getChildren().add(advSF);
-		
+		// when the state is changed, 
+		// the other three search filters box should be hidden
 		advSF.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -326,6 +376,12 @@ public class Search {
 		publicationFiltersVBox.setVisible(false);
 	}
 	
+	/**
+	 * adds the given table and cellInfo to this class' VBox and binds when they are shown or 
+	 * hidden to their visible property in order to collapse respective screens.
+	 * @param table TableView of the passed in table
+	 * @param cellInfo VBox representing the information from a single cell of the passed in table
+	 */
 	public void setUpTable(TableView<?> table, VBox cellInfo){
 		this.searchVBox.getChildren().add(table);
 		table.managedProperty().bind(table.visibleProperty());

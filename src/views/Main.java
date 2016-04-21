@@ -18,6 +18,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * 
+ * Main runs the entire application and holds information regarding the three main screens
+ * which are represented as VBoxes for the classes Home, Search, and Collection
+ * 
+ */
 public class Main extends Application {
 	
 	private GridPane grid;
@@ -26,6 +32,11 @@ public class Main extends Application {
 	private VBox search;
 	private VBox collection;
 	
+	/**
+	 * constructor for Main initializes Grid, Home, Search, and Collection 
+	 * and sets this classes VBoxes respectively
+	 * @throws SQLException
+	 */
 	public Main() throws SQLException {
 		grid = new GridPane();
 		gridY = 0;
@@ -38,6 +49,11 @@ public class Main extends Application {
 	}
 
 	@Override
+	/**
+	 * sets title, icon, grid, header, navigation buttons and 
+	 * adds them to the scene of the application's stage
+	 * @throws Exception
+	 */
 	public void start(Stage stg) throws Exception {
 		stg.setTitle("Ghillie Tracks 2.0");
 		
@@ -57,7 +73,6 @@ public class Main extends Application {
 		collection.setVisible(false);
 		collection.managedProperty().bind(collection.visibleProperty());
 		
-		// set icon
 		stg.getIcons().add(new Image(Main.class.getResourceAsStream("ghillie.png")));
 		
 		Scene scene = new Scene(grid);
@@ -67,8 +82,10 @@ public class Main extends Application {
 		stg.show();
 	}
 	
+	/**
+	 * sets up the grid
+	 */
 	public void setUpGrid(){
-		// Set up the grid
 		grid.setHgap(5);
 		grid.setVgap(5);
 		grid.setPadding(new Insets(10, 10, 10, 10));
@@ -78,6 +95,9 @@ public class Main extends Application {
 		grid.getColumnConstraints().add(c);
 	}
 	
+	/**
+	 * sets up the header
+	 */
 	public void setUpHeader(){
 		Text gtText = new Text("Ghillie Tracks 2.0");
 		gtText.setId("header-text");
@@ -86,8 +106,12 @@ public class Main extends Application {
 		grid.add(header, 0, gridY++);
 	}
 	
+	/**
+	 * creates the toggle navigation buttons for home, search, 
+	 * and collection and changes VBox visibility 
+	 * of each respectively depending on the button action
+	 */
 	public void navigationButtons(){
-		// Navigation buttons
 		ToggleButton homeBtn = new ToggleButton("Home");
 		homeBtn.setSelected(true);
 		homeBtn.setId("home-button");
@@ -112,7 +136,6 @@ public class Main extends Application {
 		sepBox.setHgrow(sep, Priority.ALWAYS);
 		grid.add(sepBox, 0, gridY++);
 		
-		// button logic
 		homeBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -139,6 +162,12 @@ public class Main extends Application {
 		});
 	}
 	
+	/**
+	 * main method that launches the application
+	 * @param args unused
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws SQLException, IOException{
 		launch(args);
 	}
