@@ -19,10 +19,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import tables.AlbumTable;
-import tables.DanceTable;
-import tables.PublicationTable;
-import tables.RecordingTable;
+import tables.RecordTable;
 
 /**
  * 
@@ -33,18 +30,11 @@ import tables.RecordingTable;
  */
 public class Search {
 	
-	private VBox searchVBox;
+	private VBox searchVBox, danceFiltersVBox, recordingFiltersVBox, albumFiltersVBox, publicationFiltersVBox;
 	private Database db;
-	private DanceTable danceTable;
-	private PublicationTable publicationTable;
-	private RecordingTable recordingTable;
-	private AlbumTable albumTable;
+	private RecordTable danceTable, publicationTable, recordingTable, albumTable;
 	private final TextField search;
 	private RadioButton advSF;
-	private VBox danceFiltersVBox;
-	private VBox recordingFiltersVBox;
-	private VBox albumFiltersVBox;
-	private VBox publicationFiltersVBox;
 	private String state;
 	
 	/**
@@ -62,13 +52,13 @@ public class Search {
 		navSearchFilter();
 		searchFilters();
 		state = "d";
-		danceTable = new DanceTable();
+		danceTable = new RecordTable("dance", "d");
 		setUpTable(danceTable.getTable(), danceTable.getCellInfo());
-		albumTable = new AlbumTable();
+		albumTable = new RecordTable("album", "a");
 		setUpTable(albumTable.getTable(), albumTable.getCellInfo());
-		recordingTable = new RecordingTable();
+		recordingTable = new RecordTable("recording", "r");
 		setUpTable(recordingTable.getTable(), recordingTable.getCellInfo());
-		publicationTable = new PublicationTable();
+		publicationTable = new RecordTable("publication", "p");
 		setUpTable(publicationTable.getTable(), publicationTable.getCellInfo());
 		tableVisibility(true, false, false, false);
 	}

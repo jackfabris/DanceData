@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -23,53 +24,78 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
-public class RecordingTable {
+public class RecordTable {
 	
 	private Database db; 
-	private TableView<Recording> table;
+	private TableView<Record> table;
 	private VBox cellInfo;
 	private LinkedHashMap<String, String> colNameField;
+	private String tableString;
+	private String state;
 	
-	public RecordingTable() throws SQLException {
+	public RecordTable(String tableString, String state) throws SQLException {
+		this.tableString = tableString;
+		this.state = state;
 		db = new Database();
-		table = new TableView<Recording>();
+		table = new TableView<Record>();
 		cellInfo = new VBox(10);
 		cellInfo.setVisible(false);
 		colNameField = new LinkedHashMap<String, String>();
-		mapColumnNameToId();
+		mapColumnNameToId(state);
 		initializeTable();
 	}
 	
-	public void mapColumnNameToId(){
-		//Recording results: name, type, bars, repetitions, name of Recording, index, “I have”
-		colNameField.put("Name", "name");
-		colNameField.put("Type", "type_id");
-		colNameField.put("Repetitions", "repetitions");
-		colNameField.put("Bars", "barsperrepeat");
+	public void mapColumnNameToId(String state){
+		if(state.equals("d")){
+			colNameField.put("Name", "name");
+			colNameField.put("Type", "type_id");
+			colNameField.put("Bars", "barsperrepeat");
+			colNameField.put("I Have", "iHave");
+			colNameField.put("Index", "index");
+		}
+		else if(state.equals("a")){
+			colNameField.put("Name", "name");
+			colNameField.put("Artist", "artist_id");
+			colNameField.put("I Have", "iHave");
+			colNameField.put("Index", "index");
+		}
+		else if(state.equals("p")){
+			colNameField.put("Name", "name");
+			colNameField.put("Author", "devisor_id");
+			colNameField.put("I Have", "iHave");
+			colNameField.put("Index", "index");
+		}
+		else{
+			colNameField.put("Name", "name");
+			colNameField.put("Type", "type_id");
+			colNameField.put("Bars", "barsperrepeat");
+			colNameField.put("I Have", "iHave");
+			colNameField.put("Index", "index");
+		}
 	}
-	
+
 	public void initializeTable() throws SQLException{
-		//Recording Table
+		//Record Table
 		table.setEditable(false);
-		ResultSet set = db.searchTableByName("recording", "");
+		ResultSet set = db.searchTableByName(tableString, "");
 		
 		Iterator<String> i = colNameField.keySet().iterator();
 		while(i.hasNext()){
 			String colName = i.next();
 			String field = colNameField.get(colName);
 			
-			TableColumn<Recording, String> col = new TableColumn<Recording, String>(colName);
-			col.setCellValueFactory(new PropertyValueFactory<Recording, String>(field));
+			TableColumn<Record, String> col = new TableColumn<Record, String>(colName);
+			col.setCellValueFactory(new PropertyValueFactory<Record, String>(field));
 			table.getColumns().add(col);
 		}
-		
+
 		table.setItems(populate(set));
 		
-		final TableColumn<Recording, String> RecordingCol = (TableColumn<Recording, String>) table.getColumns().get(0);
-		RecordingCol.setCellFactory(new Callback<TableColumn<Recording, String>, TableCell<Recording, String>>() {
+		final TableColumn<Record, String> RecordCol = (TableColumn<Record, String>) table.getColumns().get(0);
+		RecordCol.setCellFactory(new Callback<TableColumn<Record, String>, TableCell<Record, String>>() {
 			@Override
-		    public TableCell<Recording, String> call(TableColumn<Recording, String> col) {
-		        final TableCell<Recording, String> cell = new TableCell<Recording, String>() {
+		    public TableCell<Record, String> call(TableColumn<Record, String> col) {
+		        final TableCell<Record, String> cell = new TableCell<Record, String>() {
 		            @Override
 		            public void updateItem(String firstName, boolean empty) {
 		                super.updateItem(firstName, empty);
@@ -82,6 +108,7 @@ public class RecordingTable {
 		                }
 		            }
 		         };
+		         
 		         cell.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 		             @Override
 		             public void handle(MouseEvent event) {
@@ -96,23 +123,23 @@ public class RecordingTable {
 		    }
 		});
 		table.setId("table");
-		RecordingCol.setStyle( "-fx-alignment: CENTER-LEFT;");
-	}
+		RecordCol.setStyle( "-fx-alignment: CENTER-LEFT;");
+		}
 	
-	public ObservableList<Recording> populate(ResultSet set) throws SQLException{
-		ObservableList<Recording> data = FXCollections.observableArrayList();
+	public ObservableList<Record> populate(ResultSet set) throws SQLException{
+		ObservableList<Record> data = FXCollections.observableArrayList();
 		List<String> l = new ArrayList<String>(colNameField.values());
 		while(set.next()){
-			data.add(new Recording(set.getString(l.get(0)), set.getString(l.get(1)), set.getString(l.get(2)), set.getString(l.get(3))));
+			data.add(new Record(set,state,l));
 		}
 		return data;
 	}
 	
-	public void setTableData(ObservableList<Recording> data){
+	public void setTableData(ObservableList<Record> data){
 		table.setItems(data);
 	}
 	
-	public TableView<Recording> getTable(){
+	public TableView<Record> getTable(){
 		return table;
 	}
 	
@@ -142,38 +169,5 @@ public class RecordingTable {
 	
 	public VBox getCellInfo(){
 		return cellInfo;
-	}
-	
-	public static class Recording{
-//		private final String id;
-		private final String name; //2
-//		private final String artist_id;
-		private final String type_id; //4
-		private final String repetitions; //5
-		private final String barsperrepeat; //6
-//		private final String medleytype_id;
-//		private final String phrasing_id;
-//		private final String playingseconds;
-//		private final String twochords;
-//		private final String notes;
-		
-		public Recording(String nameString, String type, String reps, String bars){
-			name = nameString;
-			type_id= type;
-			repetitions = reps;
-			barsperrepeat = bars;
-		}
-		public String getName() {
-			return name;
-		}
-		public String getType_id() {
-			return type_id;
-		}
-		public String getRepetitions() {
-			return repetitions;
-		}
-		public String getBarsperrepeat() {
-			return barsperrepeat;
-		}
 	}
 }
