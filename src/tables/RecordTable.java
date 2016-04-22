@@ -67,15 +67,16 @@ public class RecordTable {
 		//Dance
 		if(state.equals("d")){
 			colNameField.put("Name", "name");
-			colNameField.put("Type", "type_id");
+			colNameField.put("Type", "type");
 			colNameField.put("Bars", "barsperrepeat");
+			colNameField.put("Publication", "publication");
 			colNameField.put("I Have", "iHave");
 			colNameField.put("Index", "index");
 		}
 		//Album
 		else if(state.equals("a")){
 			colNameField.put("Name", "name");
-			colNameField.put("Artist", "artist_id");
+			colNameField.put("Artist", "artist");
 			colNameField.put("I Have", "iHave");
 			colNameField.put("Index", "index");
 		}
@@ -89,8 +90,9 @@ public class RecordTable {
 		//Recording
 		else{
 			colNameField.put("Name", "name");
-			colNameField.put("Type", "type_id");
+			colNameField.put("Type", "type");
 			colNameField.put("Bars", "barsperrepeat");
+			colNameField.put("Artist", "artist");
 			colNameField.put("I Have", "iHave");
 			colNameField.put("Index", "index");
 		}
@@ -154,7 +156,7 @@ public class RecordTable {
 		});
 		table.setId("table");
 		RecordCol.setStyle( "-fx-alignment: CENTER-LEFT;");
-		}
+	}
 	
 	/**
 	 * takes the given database query result set and adds each result to the rows of the table as a Record
