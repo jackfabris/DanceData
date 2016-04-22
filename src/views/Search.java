@@ -25,7 +25,8 @@ import tables.RecordTable;
  * 
  * Search holds information regarding the four main tables for the database and handles 
  * the visibility and other changes depending on the state, which is one of "d", "p", "r" or "a"
- * representing a Dance, Publication, Recording, or Album respectively
+ * representing a Dance, Publication, Recording, or Album respectively. 
+ * The initial state of Search is "d".
  *
  */
 public class Search {
@@ -62,7 +63,7 @@ public class Search {
 		setUpTable(publicationTable.getTable(), publicationTable.getCellInfo());
 		tableVisibility(true, false, false, false);
 	}
-	
+
 	/**
 	 * returns this class' VBox, which holds all information regarding the Search class
 	 * @return VBox of the Search Class
@@ -378,4 +379,18 @@ public class Search {
 		this.searchVBox.getChildren().add(cellInfo);
 		cellInfo.managedProperty().bind(cellInfo.visibleProperty());
 	}
+	
+	//Getters for Testing
+	public VBox getDanceFiltersVBox() {return danceFiltersVBox;}
+	public VBox getRecordingFiltersVBox() {return recordingFiltersVBox;}
+	public VBox getAlbumFiltersVBox() {return albumFiltersVBox;}
+	public VBox getPublicationFiltersVBox() {return publicationFiltersVBox;}
+	public Database getDb() {return db;}
+	public RecordTable getDanceTable() {return danceTable;}
+	public RecordTable getPublicationTable() {return publicationTable;}
+	public RecordTable getRecordingTable() {return recordingTable;}
+	public RecordTable getAlbumTable() {return albumTable;}
+	public TextField getSearch() {return search;}
+	public RadioButton getAdvSF() {return advSF;}
+	public String getState() {return state;}
 }
