@@ -1,7 +1,6 @@
 package filters;
 
 import java.net.MalformedURLException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -14,11 +13,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * DanceFilters is a VBox which is placed on the Search page. It contains
+ * various filter options for conducting a dance search, such as specifying
+ * type, number of bars, couples, set shapes, author, formations, and steps
+ * @author Jack
+ *
+ */
 public class DanceFilters extends VBox {
 	
 	private VBox danceFiltersVBox;
 	private Database db;
 	
+	/**
+	 * Create the VBox which will contain the filters for a dance search
+	 * @throws SQLException
+	 */
 	public DanceFilters() throws SQLException, MalformedURLException {
 		danceFiltersVBox = new VBox(10);
 		danceFiltersVBox.setStyle(
@@ -132,6 +142,10 @@ public class DanceFilters extends VBox {
 		this.danceFiltersVBox.getChildren().add(grid);
 	}
 	
+	/**
+	 * Get the dance filters VBox
+	 * @return danceFiltersVBox
+	 */
 	public VBox getDanceFiltersVBox() {
 		return this.danceFiltersVBox;
 	}

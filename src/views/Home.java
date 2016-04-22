@@ -33,6 +33,11 @@ public class Home {
 		setUp();
 	}
 
+	/**
+	 * Display how long it has been since the user's local copy of the
+	 * DanceData database was updated and provide the option (via button)
+	 * for the user to update their copy
+	 */
 	public void lastUpdate(){
 		HBox updateHBox = new HBox(10);
 
@@ -69,6 +74,10 @@ public class Home {
 		});
 	}
 	
+	/**
+	 * Generate the main body of the home page (introduction text, general 
+	 * features, copyright information, etc.)
+	 */
 	public void setUp() {
 		VBox homeTextVBox = new VBox(10);
 		
@@ -124,6 +133,10 @@ public class Home {
 		this.getHomeVBox().getChildren().add(homeTextVBox);
 	}
 
+	/**
+	 * Get the home VBox
+	 * @return homeVBox
+	 */
 	public VBox getHomeVBox() {
 		return homeVBox;
 	}
