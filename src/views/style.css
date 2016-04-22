@@ -41,3 +41,29 @@ Color Palette: (darkest to lightest)
 #table .table-column {
 	-fx-alignment: CENTER;
 }
+
+#toggle-button {
+	-fx-text-fill: #4a4a4d;
+	-fx-font-weight: bold;
+	-fx-background-color: none;
+	-fx-background-radius: 15;
+	-fx-background-inset: 0;
+	-fx-border-color: #b8b8bf;
+	-fx-border-width: 1;
+	-fx-border-radius: 15;
+}
+
+#toggle-button:hover {
+	-fx-background-color: #b8b8bf;
+	-fx-text-fill: #4a4a4d;
+}
+
+#toggle-button:selected {
+	-fx-background-color: #b8b8bf;
+	-fx-text-fill: #4a4a4d;
+}
+
+#toggle-button:focused {
+	-fx-background-color: #b8b8bf;
+	-fx-text-fill: #4a4a4d;
+}
