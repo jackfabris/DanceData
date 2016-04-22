@@ -6,10 +6,20 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * AlbumFilters is a VBox which is placed on the Search page. It contains
+ * various filter options for conduction an album search, such as specifying
+ * an artist name or year of production
+ * @author Jack
+ *
+ */
 public class AlbumFilters extends VBox {
 	
 	private VBox albumFiltersVBox;
 	
+	/**
+	 * Create the VBox which will contain the filters for an album search
+	 */
 	public AlbumFilters() {
 		albumFiltersVBox = new VBox(10);
 		albumFiltersVBox.setStyle(
@@ -38,6 +48,10 @@ public class AlbumFilters extends VBox {
 		this.albumFiltersVBox.getChildren().add(grid);
 	}
 	
+	/**
+	 * Get the album filters VBox
+	 * @return albumFiltersVBox
+	 */
 	public VBox getAlbumFiltersVBox() {
 		return this.albumFiltersVBox;
 	}

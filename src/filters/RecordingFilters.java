@@ -12,11 +12,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * RecordingFilters is a VBox which is placed on the Search page. It contains
+ * various filter options for conducting a recording search, such as type,
+ * medley type, number of bars, and number of repetitions
+ * @author Jack
+ *
+ */
 public class RecordingFilters extends VBox {
 	
 	private VBox recordingFiltersVBox;
 	private Database db;
 	
+	/**
+	 * Create the VBox which will contain the filters for a recording search
+	 * @throws SQLException
+	 */
 	public RecordingFilters() throws SQLException {
 		recordingFiltersVBox = new VBox(10);
 		recordingFiltersVBox.setStyle(
@@ -72,6 +83,10 @@ public class RecordingFilters extends VBox {
 		this.recordingFiltersVBox.getChildren().add(grid);
 	}
 	
+	/**
+	 * Get the recording filters VBox
+	 * @return recordingFiltersVBox
+	 */
 	public VBox getRecordingFiltersVBox() {
 		return this.recordingFiltersVBox;
 	}
