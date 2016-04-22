@@ -1,5 +1,23 @@
 dance 100 tag2
 dance 1670 tag1
-dance 12188 null
-album 24 tag3
-album 247 tag3
+dance 12188 
+album 24 album24
+recording 2 album24
+recording 19 album24
+recording 92 album24
+recording 93 album24
+recording 98 album24
+recording 121 album24
+recording 126 album24
+recording 131 album24
+recording 159 album24
+recording 168 album24
+recording 192 album24
+recording 225 album24
+recording 231 album24
+recording 239 album24
+recording 280 album24
+recording 334 album24
+recording 340 album24
+recording 349 album24
+recording 2366 album24
