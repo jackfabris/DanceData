@@ -18,6 +18,7 @@ import javafx.scene.control.CheckBox;
  */
 public class Record {
 	
+	private int id;
 	private String barsperrepeat;
 	private String name; 
 	private String type;					
@@ -30,6 +31,7 @@ public class Record {
 	private String index;
 
 	public Record(ResultSet set, String state) throws SQLException{
+		id = set.getInt("id");
 		//Dance
 		if(state.equals("d")){
 			barsperrepeat =  set.getString("barsperrepeat");
@@ -59,7 +61,12 @@ public class Record {
 		if(set.getString("ihave").equals("1")) {
 			iHave.setSelected(true);
 		}
-		index = set.getString("tag");
+		//System.out.println(set.getString("tag"));
+		index = (set.getString("tag") != null) ? set.getString("tag") : "";
+	}
+	
+	public int getId(){
+		return id;
 	}
 
 	public String getName() {

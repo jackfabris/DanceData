@@ -6,15 +6,20 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import database.Database;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -70,22 +75,16 @@ public class RecordTable {
 			colNameField.put("Type", "type");
 			colNameField.put("Bars", "barsperrepeat");
 			colNameField.put("Publication", "publication");
-			colNameField.put("I Have", "iHave");
-			colNameField.put("Index", "index");
 		}
 		//Album
 		else if(state.equals("a")){
 			colNameField.put("Name", "name");
 			colNameField.put("Artist", "artist");
-			colNameField.put("I Have", "iHave");
-			colNameField.put("Index", "index");
 		}
 		//Publication
 		else if(state.equals("p")){
 			colNameField.put("Name", "name");
 			colNameField.put("Author", "devisor_id");
-			colNameField.put("I Have", "iHave");
-			colNameField.put("Index", "index");
 		}
 		//Recording
 		else{
@@ -93,9 +92,9 @@ public class RecordTable {
 			colNameField.put("Type", "type");
 			colNameField.put("Bars", "barsperrepeat");
 			colNameField.put("Artist", "artist");
-			colNameField.put("I Have", "iHave");
-			colNameField.put("Index", "index");
 		}
+		colNameField.put("I Have", "iHave");
+		colNameField.put("Index", "index");
 	}
 
 	/**
@@ -103,7 +102,8 @@ public class RecordTable {
 	 * and each record is added based on the a database query, getting all records according to the state
 	 * @throws SQLException
 	 */
-	public void initializeTable() throws SQLException{
+	@SuppressWarnings("unchecked")
+	public void initializeTable() throws SQLException, MalformedURLException{
 		table.setEditable(false);
 		ResultSet set = db.searchTableByName(tableString, "");
 		
@@ -112,10 +112,16 @@ public class RecordTable {
 		while(i.hasNext()){
 			String colName = i.next();
 			String field = colNameField.get(colName);
-			
-			TableColumn<Record, String> col = new TableColumn<Record, String>(colName);
-			col.setCellValueFactory(new PropertyValueFactory<Record, String>(field));
-			table.getColumns().add(col);
+			if(colName.equals("I Have")) {
+				TableColumn<Record, CheckBox> col = new TableColumn<Record, CheckBox>(colName);
+				col.setCellValueFactory(new PropertyValueFactory<Record, CheckBox>(field));
+				table.getColumns().add(col);
+			}
+			else {
+				TableColumn<Record, String> col = new TableColumn<Record, String>(colName);
+				col.setCellValueFactory(new PropertyValueFactory<Record, String>(field));
+				table.getColumns().add(col);
+			}
 		}
 		
 		//add rows to table
@@ -154,8 +160,41 @@ public class RecordTable {
 		         return cell;
 		    }
 		});
+		
+		final TableColumn<Record, CheckBox> iHaveCol = (TableColumn<Record, CheckBox>) table.getColumns().get(table.getColumns().size()-2);
+
+		iHaveCol.setCellFactory(new Callback<TableColumn<Record, CheckBox>, TableCell<Record, CheckBox>>() {
+			@Override
+			public TableCell<Record, CheckBox> call(TableColumn<Record, CheckBox> arg0) {
+				final TableCell<Record, CheckBox> cell = new TableCell<Record, CheckBox>() {
+					@Override
+					public void updateItem(CheckBox cBox, boolean empty) {
+						super.updateItem(cBox, empty);
+						if(!empty){
+							final Record r = (Record) ((this.getTableRow()!=null) ? this.getTableRow().getItem() : null);
+							cBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+								//changed is called twice - problem?
+								public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
+									try {
+										if(r!=null && !old_val && new_val) db.iHave(tableString, r.getId(), r.getIndex());
+										else if(r!=null && old_val && !new_val) db.iDontHave(tableString, r.getId());
+									} catch (SQLException e) {
+										e.printStackTrace();
+									}
+								}
+							});
+							setGraphic(cBox);
+						}
+					}
+				};
+				return cell;
+			}
+		});		
+		
+		iHaveCol.setStyle("-fx-alignment: CENTER;");
+		final TableColumn<Record, String> indexCol = (TableColumn<Record, String>) table.getColumns().get(table.getColumns().size()-1);
+		indexCol.setStyle("-fx-alignment: CENTER;");
 		table.setId("table");
-		RecordCol.setStyle( "-fx-alignment: CENTER-LEFT;");
 	}
 	
 	/**

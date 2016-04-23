@@ -113,6 +113,7 @@ public class Main extends Application {
 	 * and collection and changes VBox visibility 
 	 * of each respectively depending on the button action
 	 */
+	@SuppressWarnings("static-access")
 	public void navigationButtons(){
 		ToggleButton homeBtn = new ToggleButton("Home");
 		homeBtn.setSelected(true);

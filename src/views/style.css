@@ -39,7 +39,7 @@ Color Palette: (darkest to lightest)
 }
 
 #table .table-column {
-	-fx-alignment: CENTER;
+	-fx-alignment: CENTER-LEFT;
 }
 
 #toggle-button {
