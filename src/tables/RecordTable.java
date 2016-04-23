@@ -19,12 +19,15 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 /**
  * 
@@ -104,7 +107,7 @@ public class RecordTable {
 	 */
 	@SuppressWarnings("unchecked")
 	public void initializeTable() throws SQLException, MalformedURLException{
-		table.setEditable(false);
+		table.setEditable(true);
 		ResultSet set = db.searchTableByName(tableString, "");
 		
 		//set up columns
@@ -127,12 +130,11 @@ public class RecordTable {
 		//add rows to table
 		table.setItems(populate(set));
 		
-		//link columns to get CellInfo for a given cell
+		//CELL INFO
 		final TableColumn<Record, String> RecordCol = (TableColumn<Record, String>) table.getColumns().get(0);
 		RecordCol.setCellFactory(new Callback<TableColumn<Record, String>, TableCell<Record, String>>() {
 			@Override
 		    public TableCell<Record, String> call(TableColumn<Record, String> col) {
-		        //set linked cellInfo to be underlined and blue
 				final TableCell<Record, String> cell = new TableCell<Record, String>() {
 		            @Override
 		            public void updateItem(String firstName, boolean empty) {
@@ -140,6 +142,7 @@ public class RecordTable {
 		                if (empty) {
 		                    setText(null);
 		                } else {
+		                	//set linked cellInfo to be underlined and blue
 		                	setTextFill(Color.BLUE);
 		                	setUnderline(true);
 		                    setText(firstName);
@@ -161,6 +164,7 @@ public class RecordTable {
 		    }
 		});
 		
+		//I HAVE COLUMN
 		final TableColumn<Record, CheckBox> iHaveCol = (TableColumn<Record, CheckBox>) table.getColumns().get(table.getColumns().size()-2);
 
 		iHaveCol.setCellFactory(new Callback<TableColumn<Record, CheckBox>, TableCell<Record, CheckBox>>() {
@@ -190,9 +194,37 @@ public class RecordTable {
 				return cell;
 			}
 		});		
-		
 		iHaveCol.setStyle("-fx-alignment: CENTER;");
+
+		//INDEX COLUMN
 		final TableColumn<Record, String> indexCol = (TableColumn<Record, String>) table.getColumns().get(table.getColumns().size()-1);
+		indexCol.setEditable(true);
+		indexCol.setCellFactory(new Callback<TableColumn<Record, String>, TableCell<Record, String>>() {
+			@Override
+			public TableCell<Record, String> call(TableColumn<Record, String> col) {
+				final TextFieldTableCell<Record, String> cell = new TextFieldTableCell<Record, String>(
+						new StringConverter<String>(){
+							@Override
+							public String fromString(String arg0) {return arg0;}
+							@Override
+							public String toString(String arg0) {return arg0;}
+						});
+				return cell;
+			};
+		});
+		indexCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
+            @Override public void handle(TableColumn.CellEditEvent<Record, String> t) {
+            	Record r = ((Record)t.getTableView().getItems().get(t.getTablePosition().getRow()));
+            	System.out.println(r.getId());
+            	try {
+            		if(!t.getNewValue().equals("")) db.iHave(tableString, r.getId(), t.getNewValue());
+            		//else db.iDontHave(tableString, r.getId());
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+            	System.out.println(t.getNewValue());
+            }
+        });
 		indexCol.setStyle("-fx-alignment: CENTER;");
 		table.setId("table");
 	}
