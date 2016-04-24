@@ -21,18 +21,13 @@ import javafx.scene.control.CheckBox;
  * 
  * To change the columns of the Table, one must change the fields of this class according to the constraints above
  * as well as the colNameField mapping of column to field in the mapColumnNametoId() method in RecordTable.
+ * 
  */
 public class Record {
 	
 	private int id;
-	private String barsperrepeat;
-	private String name; 
-	private String type;					
-	private String artist_id;
-	private String artist;
-	private String devisor_id;
-	private String repetitions; 
-	private String publication;
+	//string fields based on schema field names
+	private String barsperrepeat, name, type, artist_id, artist, devisor_id, repetitions, publication;
 	//special cases
 	private CheckBox ihave;
 	private String tag;
