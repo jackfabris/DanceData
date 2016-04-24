@@ -2,19 +2,25 @@ package tables;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-
+import java.util.Collection;
+import java.lang.reflect.*;
 import javafx.scene.control.CheckBox;
 
 /**
  * 
- * Record holds the specific fields of one of the four types of Records depending on the given state.
- * The state will determine what type of record, either Dance, Publication, Recording, or Album.
- * The fields of this class must be all of the fields desired to be shown in the columns of the table,
- * even if the fields are shared by multiple tables. The names of the fields should be identical to the
- * fields of the schema in the table, must be final, and must be used, in this case, by a getter, whose 
- * name must also match the format getField_name() for any field field_name.
+ * Record holds the specific fields of all of the four types of Records depending on the state.
+ * The given collection will determine what type of record is created, Dance, Publication, Recording, or Album.
  * 
+ *  - 	The fields of this class must be all of the fields desired to be shown in any of the columns of any table,
+ * 		even if the fields are shared by multiple tables. 
+ * 
+ * 	-	The names of the fields must be identical to the fields of the schema in the table.
+ * 
+ * 	-	Each field must be used by a getter that returns the value of that field, 
+ * 		whose name must also match the format getField_name() for any field field_name.
+ * 
+ * To change the columns of the Table, one must change the fields of this class according to the constraints above
+ * as well as the colNameField mapping of column to field in the mapColumnNametoId() method in RecordTable.
  */
 public class Record {
 	
@@ -27,43 +33,49 @@ public class Record {
 	private String devisor_id;
 	private String repetitions; 
 	private String publication;
-	private CheckBox iHave;
-	private String index;
+	//special cases
+	private CheckBox ihave;
+	private String tag;
 
-	public Record(ResultSet set, String state) throws SQLException{
-		id = set.getInt("id");
-		//Dance
-		if(state.equals("d")){
-			barsperrepeat =  set.getString("barsperrepeat");
-			name = set.getString("name");
-			type = set.getString("type");	
-			publication = set.getString("publication");
+	/**
+	 * Creates a Record based on the given ResultSet pointer and the collection of field names
+	 * that should be set for the particular Record.
+	 * @param set - ResultSet containing the pointer of the row to be made into a record
+	 * @param fieldNames - Collection of Strings that represent which fields should be set for the Record
+	 * @throws SQLException
+	 */
+	public Record(ResultSet set, Collection<String> fieldNames) throws SQLException {
+		try {
+			Class c = Class.forName(this.getClass().getCanonicalName());
+			Field[] fieldList = c.getDeclaredFields();
+
+			for(Field f : fieldList){
+				if(f.getType() == Integer.TYPE){
+					f.set(this, set.getInt(f.getName()));
+				}
+				else if (f.getType().isAssignableFrom(String.class)){
+					if(fieldNames.contains(f.getName())){
+						if(f.getName().equals("tag")) tag = (set.getString("tag") != null) ? set.getString("tag") : "";
+						else f.set(this, set.getString(f.getName()));
+					}
+				}
+				else{
+					ihave = new CheckBox();
+					if(set.getString("ihave").equals("1")) {
+						ihave.setSelected(true);
+					}
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
-		//Publication
-		else if(state.equals("p")){
-			name = set.getString("name");
-			devisor_id = set.getString("devisor_id");
-		}
-		//Recording
-		else if(state.equals("r")){
-			name = set.getString("name");
-			type = set.getString("type");
-			repetitions = set.getString("repetitions");
-			barsperrepeat = set.getString("barsperrepeat");
-			artist = set.getString("artist");
-		}
-		//Album
-		else{
-			name = set.getString("name");
-			artist = set.getString("artist");
-		}
-		iHave = new CheckBox();
-		if(set.getString("ihave").equals("1")) {
-			iHave.setSelected(true);
-		}
-		//System.out.println(set.getString("tag"));
-		index = (set.getString("tag") != null) ? set.getString("tag") : "";
 	}
+	
+	//GETTERS USED IN PROPERTY VALUE FACTORY IN RecordTable METHOD initializeTable()
 	
 	public int getId(){
 		return id;
@@ -93,12 +105,12 @@ public class Record {
 		return barsperrepeat;
 	}
 	
-	public CheckBox getIHave() {
-		return iHave;
+	public CheckBox getIhave() {
+		return ihave;
 	}
 
-	public String getIndex() {
-		return index;
+	public String getTag() {
+		return tag;
 	}
 	
 	public String getArtist(){

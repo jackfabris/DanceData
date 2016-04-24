@@ -27,6 +27,7 @@ import tables.RecordTable;
  * Search holds information regarding the four main tables for the database and handles 
  * the visibility and other changes depending on the state, which is one of "d", "p", "r" or "a"
  * representing a Dance, Publication, Recording, or Album respectively. 
+ * 
  * The initial state of Search is "d".
  *
  */
@@ -381,7 +382,7 @@ public class Search {
 		cellInfo.managedProperty().bind(cellInfo.visibleProperty());
 	}
 	
-	//Getters for Testing
+	//GETTERS FOR TESTING
 	public VBox getDanceFiltersVBox() {return danceFiltersVBox;}
 	public VBox getRecordingFiltersVBox() {return recordingFiltersVBox;}
 	public VBox getAlbumFiltersVBox() {return albumFiltersVBox;}

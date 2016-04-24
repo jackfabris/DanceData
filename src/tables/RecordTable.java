@@ -17,10 +17,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
@@ -34,9 +31,11 @@ import javafx.util.StringConverter;
  * Record Table holds information regarding the TableView and CellInfo of the passed in state and table.
  * The four types of RecordTables would be a Dance Table, Publication Table, Recording Table and Album Table.
  * The columns are created based on a mapping from column name to field name of that specific Record.
- * Should any more columns be added to a specific table, you must add to the LinkedHashMap accordingly.
- * The fields must also be added to Record and initialized for that state. The state is one of "d", "p", "r" 
- * or "a" representing a Dance, Publication, Recording, or Album respectively.
+ * 
+ * The state is one of "d", "p", "r" or "a" representing a Dance, Publication, Recording, or Album respectively.
+ * 
+ * To change the columns of the Table, one must change colNameField mapping of column to field in the mapColumnNametoId() method 
+ * as well as the fields of the Record class.
  *
  */
 public class RecordTable {
@@ -45,8 +44,7 @@ public class RecordTable {
 	private TableView<Record> table;
 	private VBox cellInfo;
 	private LinkedHashMap<String, String> colNameField;
-	private String tableString;
-	private String state;
+	private String tableString, state;
 	
 	/**
 	 * constructor for RecordTable creates a table of records according to either Dance, Publication, Recording, or Album.
@@ -96,8 +94,8 @@ public class RecordTable {
 			colNameField.put("Bars", "barsperrepeat");
 			colNameField.put("Artist", "artist");
 		}
-		colNameField.put("I Have", "iHave");
-		colNameField.put("Index", "index");
+		colNameField.put("I Have", "ihave");
+		colNameField.put("Tag", "tag");
 	}
 
 	/**
@@ -180,7 +178,7 @@ public class RecordTable {
 								//changed is called twice - problem?
 								public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
 									try {
-										if(r!=null && !old_val && new_val) db.iHave(tableString, r.getId(), r.getIndex());
+										if(r!=null && !old_val && new_val) db.iHave(tableString, r.getId(), r.getTag());
 										else if(r!=null && old_val && !new_val) db.iDontHave(tableString, r.getId());
 									} catch (SQLException e) {
 										e.printStackTrace();
@@ -215,14 +213,12 @@ public class RecordTable {
 		indexCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
             @Override public void handle(TableColumn.CellEditEvent<Record, String> t) {
             	Record r = ((Record)t.getTableView().getItems().get(t.getTablePosition().getRow()));
-            	System.out.println(r.getId());
             	try {
             		if(!t.getNewValue().equals("")) db.iHave(tableString, r.getId(), t.getNewValue());
             		//else db.iDontHave(tableString, r.getId());
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-            	System.out.println(t.getNewValue());
             }
         });
 		indexCol.setStyle("-fx-alignment: CENTER;");
@@ -239,7 +235,7 @@ public class RecordTable {
 	public ObservableList<Record> populate(ResultSet set) throws SQLException{
 		ObservableList<Record> data = FXCollections.observableArrayList();
 		while(set.next()){
-			data.add(new Record(set,state));
+			data.add(new Record(set, colNameField.values()));
 		}
 		return data;
 	}
