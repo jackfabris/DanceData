@@ -227,6 +227,18 @@ public class Database {
 	}
 	
 	/**
+	 * Search the given table and return all data for the given id
+	 * @param table - the table to search in
+	 * @param id - the id to find
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
+	public ResultSet getAllByIdFromTable(String table, int id) throws SQLException {
+		query = "SELECT * FROM '" + table +"' WHERE id=" + id;
+		return stmt.executeQuery(query);
+	}
+	
+	/**
 	 * Get a list of songs on the album with album_id
 	 * @param album_id
 	 * @return ResultSet
