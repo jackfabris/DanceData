@@ -64,29 +64,27 @@ public class RecordTable {
 	
 	/**
 	 * returns the mapping of the class' state of column names in the TableView to field 
-	 * names of the Record according to the state
+	 * names of the Record according to the state. The first Column should refer to Name, 
+	 * the second to last should refer to I Have and the last column should refer to tag.
 	 */
 	public void mapColumnNameToId(){
+		colNameField.put("Name", "name");
 		//Dance
 		if(state.equals("d")){
-			colNameField.put("Name", "name");
 			colNameField.put("Type", "type");
 			colNameField.put("Bars", "barsperrepeat");
 			colNameField.put("Publication", "publication");
 		}
 		//Album
 		else if(state.equals("a")){
-			colNameField.put("Name", "name");
 			colNameField.put("Artist", "artist");
 		}
 		//Publication
 		else if(state.equals("p")){
-			colNameField.put("Name", "name");
 			colNameField.put("Author", "devisor_id");
 		}
 		//Recording
 		else{
-			colNameField.put("Name", "name");
 			colNameField.put("Type", "type");
 			colNameField.put("Bars", "barsperrepeat");
 			colNameField.put("Artist", "artist");

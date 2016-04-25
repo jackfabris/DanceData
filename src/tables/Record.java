@@ -26,22 +26,22 @@ import javafx.scene.control.CheckBox;
 public class Record {
 	
 	private int id;
-	//string fields based on schema field names
-	private String barsperrepeat, name, type, artist_id, artist, devisor_id, repetitions, publication;
+	//string fields based on schema field names of any type of Record
+	private String name, barsperrepeat, type, artist_id, artist, devisor_id, repetitions, publication;
 	//special cases
 	private CheckBox ihave;
 	private String tag;
 
 	/**
 	 * Creates a Record based on the given ResultSet pointer and the collection of field names
-	 * that should be set for the particular Record.
+	 * that should be set for the particular Record. Fields ihave and tag are special cases that cannot be set by Reflection.
 	 * @param set - ResultSet containing the pointer of the row to be made into a record
 	 * @param fieldNames - Collection of Strings that represent which fields should be set for the Record
 	 * @throws SQLException
 	 */
 	public Record(ResultSet set, Collection<String> fieldNames) throws SQLException {
 		try {
-			Class c = Class.forName(this.getClass().getCanonicalName());
+			Class<?> c = Class.forName(this.getClass().getCanonicalName());
 			Field[] fieldList = c.getDeclaredFields();
 
 			for(Field f : fieldList){
