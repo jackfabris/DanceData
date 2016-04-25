@@ -3,6 +3,7 @@ package filters;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 
 import database.Database;
 import javafx.collections.FXCollections;
@@ -52,6 +53,7 @@ public class RecordingFilters extends VBox {
 		while(typeSet.next()) {
 			typeList.add(typeSet.getString(1));
 		}
+		Collections.sort(typeList);
 		Label type = new Label("Type");
 		ComboBox<String> typeOptions = new ComboBox<String>(typeList);
 		grid.add(type, 0, 0);
@@ -64,6 +66,7 @@ public class RecordingFilters extends VBox {
 		while(medleyTypeSet.next()) {
 			medleyTypeList.add(medleyTypeSet.getString(1));
 		}
+		Collections.sort(medleyTypeList);
 		Label medleyType = new Label("Medley Type");
 		ComboBox<String> medleyTypeOptions = new ComboBox<String>(medleyTypeList);
 		grid.add(medleyType, 0, 1);

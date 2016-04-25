@@ -67,3 +67,7 @@ Color Palette: (darkest to lightest)
 	-fx-background-color: #b8b8bf;
 	-fx-text-fill: #4a4a4d;
 }
+
+#home {
+	-fx-font-size: 13px;
+}

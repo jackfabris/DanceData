@@ -3,6 +3,7 @@ package filters;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 
 import database.Database;
 import javafx.collections.FXCollections;
@@ -54,6 +55,7 @@ public class DanceFilters extends VBox {
 		while(typesSet.next()) {
 			typesList.add(typesSet.getString(1));
 		}
+		Collections.sort(typesList);
 		Label type = new Label("Type");
 		ComboBox<String> typeOptions = new ComboBox<String>(typesList);
 		grid.add(type, 0, 0);
@@ -72,6 +74,7 @@ public class DanceFilters extends VBox {
 		while(couplesSet.next()) {
 			couplesList.add(couplesSet.getString(1));
 		}
+		Collections.sort(couplesList);
 		Label couples = new Label("Couples");
 		ComboBox<String> couplesOptions = new ComboBox<String>(couplesList);
 		grid.add(couples, 0, 2);
@@ -84,6 +87,7 @@ public class DanceFilters extends VBox {
 		while(setShapeSet.next()) {
 			setShapeList.add(setShapeSet.getString(1));
 		}
+		Collections.sort(setShapeList);
 		Label setShape = new Label("Set Shape");
 		ComboBox<String> setShapeOptions = new ComboBox<String>(setShapeList);
 		grid.add(setShape, 0, 3);
@@ -102,6 +106,7 @@ public class DanceFilters extends VBox {
 		while(formationSet.next()) {
 			formationList.add(formationSet.getString(1));
 		}
+		Collections.sort(formationList);
 		Label formations = new Label("Formations");
 		ComboBox<String> formationOptions1 = new ComboBox<String>(formationList);
 		ComboBox<String> formationBool1 = new ComboBox<String>();
@@ -124,6 +129,7 @@ public class DanceFilters extends VBox {
 		while(stepSet.next()) {
 			stepList.add(stepSet.getString(1));
 		}
+		Collections.sort(stepList);
 		Label steps = new Label("Steps");
 		ComboBox<String> stepOptions1 = new ComboBox<String>(stepList);
 		ComboBox<String> stepBool1 = new ComboBox<String>();

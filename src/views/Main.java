@@ -33,6 +33,7 @@ public class Main extends Application {
 	private VBox home;
 	private VBox search;
 	private VBox collection;
+	private Scene scene;
 	
 	/**
 	 * constructor for Main initializes Grid, Home, Search, and Collection 
@@ -42,7 +43,8 @@ public class Main extends Application {
 	public Main() throws SQLException, MalformedURLException {
 		grid = new GridPane();
 		gridY = 0;
-		Home h = new Home();
+		scene = new Scene(grid);
+		Home h = new Home(scene);
 		home = h.getHomeVBox();
 		Search s = new Search();
 		search = s.getSearchVBox();
@@ -77,7 +79,7 @@ public class Main extends Application {
 		
 		stg.getIcons().add(new Image(Main.class.getResourceAsStream("ghillie.png")));
 		
-		Scene scene = new Scene(grid);
+		//scene = new Scene(grid);
 		stg.setScene(scene);
 		scene.getStylesheets().add(Main.class.getResource("style.css").toExternalForm());
 		stg.setMaximized(true);
@@ -113,7 +115,6 @@ public class Main extends Application {
 	 * and collection and changes VBox visibility 
 	 * of each respectively depending on the button action
 	 */
-	@SuppressWarnings("static-access")
 	public void navigationButtons(){
 		ToggleButton homeBtn = new ToggleButton("Home");
 		homeBtn.setSelected(true);
