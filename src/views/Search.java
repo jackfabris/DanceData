@@ -10,6 +10,7 @@ import filters.PublicationFilters;
 import filters.RecordingFilters;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableView;
@@ -45,7 +46,7 @@ public class Search {
 	 * initializes VBox, Database, Advanced Search Filters, and Tables
 	 * @throws SQLException
 	 */
-	public Search() throws SQLException, MalformedURLException {
+	public Search(Scene scene) throws SQLException, MalformedURLException {
 		searchVBox = new VBox(10);
 		db = new Database();
 		search = new TextField();
@@ -55,13 +56,13 @@ public class Search {
 		navSearchFilter();
 		searchFilters();
 		state = "d";
-		danceTable = new RecordTable("dance", "d");
+		danceTable = new RecordTable("dance", "d", scene);
 		setUpTable(danceTable.getTable(), danceTable.getCellInfo());
-		albumTable = new RecordTable("album", "a");
+		albumTable = new RecordTable("album", "a", scene);
 		setUpTable(albumTable.getTable(), albumTable.getCellInfo());
-		recordingTable = new RecordTable("recording", "r");
+		recordingTable = new RecordTable("recording", "r", scene);
 		setUpTable(recordingTable.getTable(), recordingTable.getCellInfo());
-		publicationTable = new RecordTable("publication", "p");
+		publicationTable = new RecordTable("publication", "p", scene);
 		setUpTable(publicationTable.getTable(), publicationTable.getCellInfo());
 		tableVisibility(true, false, false, false);
 	}

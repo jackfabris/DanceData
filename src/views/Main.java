@@ -8,6 +8,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -30,9 +32,8 @@ public class Main extends Application {
 	
 	private GridPane grid;
 	private int gridY;
-	private VBox home;
-	private VBox search;
-	private VBox collection;
+	private VBox home, search, collection;
+	private ScrollPane homeSP, searchSP, collectionSP;
 	private Scene scene;
 	
 	/**
@@ -46,10 +47,13 @@ public class Main extends Application {
 		scene = new Scene(grid);
 		Home h = new Home(scene);
 		home = h.getHomeVBox();
-		Search s = new Search();
+		Search s = new Search(scene);
 		search = s.getSearchVBox();
-		Collection c = new Collection();
+		Collection c = new Collection(scene);
 		collection = c.getCollectionVBox();
+		homeSP = new ScrollPane();
+		searchSP = new ScrollPane();
+		collectionSP = new ScrollPane();
 	}
 
 	@Override
@@ -65,17 +69,19 @@ public class Main extends Application {
 		setUpHeader();
 		navigationButtons();
 		
-		grid.add(home, 0, gridY);
-		home.managedProperty().bind(home.visibleProperty());
-		home.setVisible(true);
+		//grid.add(home, 0, gridY);
+//		home.managedProperty().bind(home.visibleProperty());
+//		home.setVisible(true);
 		
-		grid.add(search, 0, gridY);
-		search.managedProperty().bind(search.visibleProperty());
-		search.setVisible(false);
-		
-		grid.add(collection, 0, gridY);
-		collection.setVisible(false);
-		collection.managedProperty().bind(collection.visibleProperty());
+//		grid.add(search, 0, gridY);
+//		search.managedProperty().bind(search.visibleProperty());
+//		search.setVisible(false);
+//		
+//		grid.add(collection, 0, gridY);
+//		collection.setVisible(false);
+//		collection.managedProperty().bind(collection.visibleProperty());
+//		
+		scrollPaneVBoxes();
 		
 		stg.getIcons().add(new Image(Main.class.getResourceAsStream("ghillie.png")));
 		
@@ -143,27 +149,56 @@ public class Main extends Application {
 		homeBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				home.setVisible(true);
-				search.setVisible(false);
-				collection.setVisible(false);
+				homeSP.setVisible(true);
+				searchSP.setVisible(false);
+				collectionSP.setVisible(false);
 			}
 		});
 		searchBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {				
-				home.setVisible(false);
-				search.setVisible(true);
-				collection.setVisible(false);
+				homeSP.setVisible(false);
+				searchSP.setVisible(true);
+				collectionSP.setVisible(false);
 			}
 		});
 		collectionBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				home.setVisible(false);
-				search.setVisible(false);
-				collection.setVisible(true);
+				homeSP.setVisible(false);
+				searchSP.setVisible(false);
+				collectionSP.setVisible(true);
 			}
 		});
+	}
+	
+	/**
+	 * takes this classes VBoxes and put them in a Scroll Pane
+	 */
+	public void scrollPaneVBoxes(){
+		//Home
+		homeSP.setHbarPolicy(ScrollBarPolicy.NEVER);
+		homeSP.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		homeSP.setContent(home);
+		grid.add(homeSP, 0, gridY++);
+		homeSP.managedProperty().bind(homeSP.visibleProperty());
+		homeSP.setVisible(true);
+		
+		//Search
+		searchSP.setHbarPolicy(ScrollBarPolicy.NEVER);
+		searchSP.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		searchSP.setContent(search);
+		grid.add(searchSP, 0, gridY++);
+		searchSP.managedProperty().bind(searchSP.visibleProperty());
+		searchSP.setVisible(false);
+		
+		//Collection
+		collectionSP.setHbarPolicy(ScrollBarPolicy.NEVER);
+		collectionSP.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		collectionSP.setContent(collection);
+		grid.add(collectionSP, 0, gridY++);
+		collectionSP.managedProperty().bind(collectionSP.visibleProperty());
+		collectionSP.setVisible(false);
 	}
 	
 	/**

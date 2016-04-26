@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import database.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
@@ -22,19 +23,19 @@ public class Collection {
 	private RecordTable danceTable, publicationTable, recordingTable, albumTable;
 	private String state;
 
-	public Collection() throws SQLException, MalformedURLException{
+	public Collection(Scene scene) throws SQLException, MalformedURLException{
 		collectionVBox = new VBox(10);
 		db = new Database();
 		addLabel();
 		navigationButtons();
 		state="d";
-		danceTable = new RecordTable("dance", "d");
+		danceTable = new RecordTable("dance", "d", scene);
 		setUpTable(danceTable.getTable(), danceTable.getCellInfo());
-		albumTable = new RecordTable("album", "a");
+		albumTable = new RecordTable("album", "a", scene);
 		setUpTable(albumTable.getTable(), albumTable.getCellInfo());
-		recordingTable = new RecordTable("recording", "r");
+		recordingTable = new RecordTable("recording", "r", scene);
 		setUpTable(recordingTable.getTable(), recordingTable.getCellInfo());
-		publicationTable = new RecordTable("publication", "p");
+		publicationTable = new RecordTable("publication", "p", scene);
 		setUpTable(publicationTable.getTable(), publicationTable.getCellInfo());
 		//showIHave();
 		tableVisibility(true, false, false, false);

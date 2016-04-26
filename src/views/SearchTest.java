@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import org.junit.Test;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 /*

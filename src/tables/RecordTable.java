@@ -11,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -42,6 +43,9 @@ public class RecordTable {
 	private CellInfo cellInfo;
 	private LinkedHashMap<String, String> colNameField;
 	private String tableString, state;
+	private Scene scene;
+	
+	private int rowsPerPage = 3;
 	
 	/**
 	 * constructor for RecordTable creates a table of records according to either Dance, Publication, Recording, or Album.
@@ -50,8 +54,9 @@ public class RecordTable {
 	 * @throws SQLException
 	 * @throws MalformedURLException 
 	 */
-	public RecordTable(String tableString, String state) throws SQLException, MalformedURLException {
+	public RecordTable(String tableString, String state, Scene scene) throws SQLException, MalformedURLException {
 		this.tableString = tableString;
+		this.scene = scene;
 		this.state = state;
 		db = new Database();
 		table = new TableView<Record>();
@@ -100,6 +105,7 @@ public class RecordTable {
 	 */
 	@SuppressWarnings("unchecked")
 	public void initializeTable() throws SQLException, MalformedURLException{
+		table.minWidthProperty().bind(scene.widthProperty().subtract(15));
 		table.setEditable(true);
 		ResultSet set = db.searchTableByName(tableString, "");
 		
@@ -123,6 +129,11 @@ public class RecordTable {
 		//add rows to table
 		table.setItems(populate(set));
 		
+//		table.setFixedCellSize(25);
+//		table.prefHeightProperty().bind(table.fixedCellSizeProperty().multiply(Bindings.size(table.getItems()).add(1.01)));
+//		table.minHeightProperty().bind(table.prefHeightProperty());
+//		table.maxHeightProperty().bind(table.prefHeightProperty());
+		
 		//CELL INFO
 		final TableColumn<Record, String> RecordCol = (TableColumn<Record, String>) table.getColumns().get(0);
 		RecordCol.setCellFactory(new Callback<TableColumn<Record, String>, TableCell<Record, String>>() {
@@ -132,7 +143,10 @@ public class RecordTable {
 		            @Override
 		            public void updateItem(String firstName, boolean empty) {
 		                super.updateItem(firstName, empty);
-		                if (!empty) {
+		                if(empty){
+		                	setText(null);
+		                }
+		                else {
 		                	//set linked cellInfo to be underlined and blue
 		                	setTextFill(Color.BLUE);
 		                	setUnderline(true);
@@ -148,8 +162,14 @@ public class RecordTable {
 		        			 final Record r = (Record) ((cell.getTableRow()!=null) ? cell.getTableRow().getItem() : null);
 		        			 ResultSet set;
 		        			 try {
-		        				 set = db.doQuery("SELECT * FROM "+ tableString + " WHERE id="+r.getId());
-		        				 cellInfo.set(set);
+		        				 if(cell.getItem()!=null) {
+		        					 set = db.doQuery("SELECT * FROM "+ tableString + " WHERE id="+r.getId());
+		        					 cellInfo.set(set);
+		        				 }
+		        				 else{
+		        					 cellInfo.set(null);
+		        				 }
+		        				 
 		        			 } catch (SQLException e) {
 		        				 e.printStackTrace();
 		        			 }
@@ -172,7 +192,11 @@ public class RecordTable {
 					@Override
 					public void updateItem(CheckBox cBox, boolean empty) {
 						super.updateItem(cBox, empty);
-						if(!empty){
+						if(empty){
+							setText(null);
+							setGraphic(null);
+						}
+						else{
 							final Record r = (Record) ((this.getTableRow()!=null) ? this.getTableRow().getItem() : null);
 							cBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
 								//changed is called twice - problem?
