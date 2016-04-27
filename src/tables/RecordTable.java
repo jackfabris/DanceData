@@ -103,7 +103,7 @@ public class RecordTable {
 	 */
 	public void initializeTable() throws SQLException{
 		table.setEditable(false);
-		ResultSet set = db.searchTableByName(tableString, "");
+		ResultSet set = db.searchTableByName(tableString, "", false);
 		
 		//set up columns
 		Iterator<String> i = colNameField.keySet().iterator();

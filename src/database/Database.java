@@ -178,10 +178,11 @@ public class Database {
 	 * Search the table and return all records where name contains the param name
 	 * @param table - the table to search in
 	 * @param name - the name to search for
+	 * @param ihave - if true only show what is marked as ihave, otherwise show all results
 	 * @return ResultSet
 	 * @throws SQLException
 	 */
-	public ResultSet searchTableByName(String table, String name) throws SQLException {
+	public ResultSet searchTableByName(String table, String name, boolean ihave) throws SQLException {
 		if(table.equals("dance")) {
 			query = "SELECT d.*, dt.name as type, mt.description as medleytype, s.name as shape, "
 					+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor FROM dance d "
@@ -193,14 +194,23 @@ public class Database {
 					+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
 					+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
 					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
-					+ "WHERE d.name like '%" + name + "%' GROUP BY d.id";
+					+ "WHERE d.name like '%" + name + "%'";
+			if(ihave) {
+				query += " AND d.ihave=1";
+			}
 		} else if(table.equals("album")) {
 			query = "SELECT a.*, p.name as artist FROM album a "
 					+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
 					+ "WHERE a.name like '%" + name + "%'";
+			if(ihave) {
+				query += " AND a.ihave=1";
+			}
 		} else if(table.equals("publication")) {
 			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
 					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id WHERE pb.name like '%" + name + "%'";
+			if(ihave) {
+				query += " AND pb.ihave=1";
+			}
 		} else if(table.equals("recording")){
 			query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
 					+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
@@ -208,8 +218,14 @@ public class Database {
 					+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
 					+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
 					+ "WHERE r.name like '%" + name + "%'";
+			if(ihave) {
+				query += " AND r.ihave=1";
+			}
 		} else {
 			query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
+			if(ihave) {
+				query += " AND ihave=1";
+			}
 		}
 		return stmt.executeQuery(query);
 	}
@@ -361,7 +377,7 @@ public class Database {
 				
 		/* Search for dance */
 		System.out.println("Search dance");
-		resultSet = db.searchTableByName("dance", "dolphin");
+		resultSet = db.searchTableByName("dance", "dolphin", true);
 		db.printResults(resultSet);
 		
 		db.iHave("dance", 100, "tag2");
@@ -373,7 +389,7 @@ public class Database {
 				
 		/* Search for album */
 		System.out.println("Search album");
-		resultSet = db.searchTableByName("album", "Jimmy");
+		resultSet = db.searchTableByName("album", "Jimmy", true);
 		db.printResults(resultSet);
 		
 		db.iHave("dance", 12188, "");
@@ -382,7 +398,7 @@ public class Database {
 		
 		/* Search for recording */
 		System.out.println("Search recording");
-		resultSet = db.searchTableByName("recording", "frog");
+		resultSet = db.searchTableByName("recording", "frog", false);
 		db.printResults(resultSet);
 		
 		System.out.println("");
@@ -403,7 +419,7 @@ public class Database {
 		
 		/* Search publication */
 		System.out.println("Publication search:");
-		resultSet = db.searchTableByName("publication", "flavour");
+		resultSet = db.searchTableByName("publication", "flavour", false);
 		db.printResults(resultSet);
 		
 		System.out.println("");

@@ -2,8 +2,10 @@ dance 100 tag2
 dance 1670 tag1
 dance 12188 
 album 24 album24
+album 247 album247
 recording 2 album24
 recording 19 album24
+recording 23 album247
 recording 92 album24
 recording 93 album24
 recording 98 album24
@@ -20,4 +22,12 @@ recording 280 album24
 recording 334 album24
 recording 340 album24
 recording 349 album24
+recording 1594 album247
+recording 1595 album247
+recording 1596 album247
+recording 1598 album247
+recording 1599 album247
+recording 1600 album247
+recording 1601 album247
+recording 1602 album247
 recording 2366 album24
