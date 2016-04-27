@@ -10,32 +10,22 @@ import java.sql.SQLException;
 import database.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextBoundsType;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 
 public class Home {
 	
 	private VBox homeVBox;
 	private Database db;
-	private Scene scene;
 
-
-	public Home(Scene s) throws SQLException, MalformedURLException{
+	public Home() throws SQLException, MalformedURLException{
 		homeVBox = new VBox(10);
 		db = new Database();	
-		scene = s;
 		lastUpdate();
 		setUp();
 	}
@@ -117,7 +107,7 @@ public class Home {
 				"Copyright 2016 University of Delaware\n" +
 				"GhillieTracks is free software developed by students at " +
 				"the University of Delaware in Newark, DE.");
-		text.wrappingWidthProperty().bind(scene.widthProperty().subtract(15));
+		text.wrappingWidthProperty().bind(Main.sceneWidthProp.subtract(15));
 		homeTextVBox.getChildren().add(text);
 		
 //		// Intro

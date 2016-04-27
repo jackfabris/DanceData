@@ -38,6 +38,11 @@ Color Palette: (darkest to lightest)
 	-fx-background-color: #445878;
 }
 
+#scroll-pane {
+	-fx-background-color: #eeeff7;
+	-fx-background: #eeeff7;
+}
+
 #table .table-column {
 	-fx-alignment: CENTER-LEFT;
 }

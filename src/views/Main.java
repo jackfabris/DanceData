@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.SQLException;
 
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -36,6 +37,8 @@ public class Main extends Application {
 	private ScrollPane homeSP, searchSP, collectionSP;
 	private Scene scene;
 	
+	public static ReadOnlyDoubleProperty sceneWidthProp;
+	
 	/**
 	 * constructor for Main initializes Grid, Home, Search, and Collection 
 	 * and sets this classes VBoxes respectively
@@ -45,11 +48,12 @@ public class Main extends Application {
 		grid = new GridPane();
 		gridY = 0;
 		scene = new Scene(grid);
-		Home h = new Home(scene);
+		sceneWidthProp = scene.widthProperty();
+		Home h = new Home();
 		home = h.getHomeVBox();
-		Search s = new Search(scene);
+		Search s = new Search();
 		search = s.getSearchVBox();
-		Collection c = new Collection(scene);
+		Collection c = new Collection();
 		collection = c.getCollectionVBox();
 		homeSP = new ScrollPane();
 		searchSP = new ScrollPane();
@@ -68,24 +72,12 @@ public class Main extends Application {
 		setUpGrid();
 		setUpHeader();
 		navigationButtons();
-		
-		//grid.add(home, 0, gridY);
-//		home.managedProperty().bind(home.visibleProperty());
-//		home.setVisible(true);
-		
-//		grid.add(search, 0, gridY);
-//		search.managedProperty().bind(search.visibleProperty());
-//		search.setVisible(false);
-//		
-//		grid.add(collection, 0, gridY);
-//		collection.setVisible(false);
-//		collection.managedProperty().bind(collection.visibleProperty());
-//		
-		scrollPaneVBoxes();
+		scrollPaneVBox(homeSP, home, true);
+		scrollPaneVBox(searchSP, search, false);
+		scrollPaneVBox(collectionSP, collection, false);
 		
 		stg.getIcons().add(new Image(Main.class.getResourceAsStream("ghillie.png")));
-		
-		//scene = new Scene(grid);
+
 		stg.setScene(scene);
 		scene.getStylesheets().add(Main.class.getResource("style.css").toExternalForm());
 		stg.setMaximized(true);
@@ -175,30 +167,15 @@ public class Main extends Application {
 	/**
 	 * takes this classes VBoxes and put them in a Scroll Pane
 	 */
-	public void scrollPaneVBoxes(){
+	public void scrollPaneVBox(ScrollPane sp, VBox box, boolean vis){
 		//Home
-		homeSP.setHbarPolicy(ScrollBarPolicy.NEVER);
-		homeSP.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-		homeSP.setContent(home);
-		grid.add(homeSP, 0, gridY++);
-		homeSP.managedProperty().bind(homeSP.visibleProperty());
-		homeSP.setVisible(true);
-		
-		//Search
-		searchSP.setHbarPolicy(ScrollBarPolicy.NEVER);
-		searchSP.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-		searchSP.setContent(search);
-		grid.add(searchSP, 0, gridY++);
-		searchSP.managedProperty().bind(searchSP.visibleProperty());
-		searchSP.setVisible(false);
-		
-		//Collection
-		collectionSP.setHbarPolicy(ScrollBarPolicy.NEVER);
-		collectionSP.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-		collectionSP.setContent(collection);
-		grid.add(collectionSP, 0, gridY++);
-		collectionSP.managedProperty().bind(collectionSP.visibleProperty());
-		collectionSP.setVisible(false);
+		sp.setHbarPolicy(ScrollBarPolicy.NEVER);
+		sp.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+		sp.setContent(box);
+		grid.add(sp, 0, gridY++);
+		sp.managedProperty().bind(sp.visibleProperty());
+		sp.setVisible(vis);
+		sp.setId("scroll-pane");
 	}
 	
 	/**

@@ -3,15 +3,20 @@ package views;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import javax.security.auth.callback.Callback;
+
 import database.Database;
 import filters.AlbumFilters;
 import filters.DanceFilters;
 import filters.PublicationFilters;
 import filters.RecordingFilters;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -21,6 +26,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import tables.Record;
 import tables.RecordTable;
 
 /**
@@ -33,20 +39,22 @@ import tables.RecordTable;
  *
  */
 public class Search {
-	
+
 	private VBox searchVBox, danceFiltersVBox, recordingFiltersVBox, albumFiltersVBox, publicationFiltersVBox;
 	private Database db;
 	private RecordTable danceTable, publicationTable, recordingTable, albumTable;
 	private final TextField search;
 	private RadioButton advSF;
 	private String state;
-	
+
+//	private Pagination pagination;
+
 	/**
 	 * Constructor for Search sets up initial display and 
 	 * initializes VBox, Database, Advanced Search Filters, and Tables
 	 * @throws SQLException
 	 */
-	public Search(Scene scene) throws SQLException, MalformedURLException {
+	public Search() throws SQLException, MalformedURLException {
 		searchVBox = new VBox(10);
 		db = new Database();
 		search = new TextField();
@@ -56,15 +64,19 @@ public class Search {
 		navSearchFilter();
 		searchFilters();
 		state = "d";
-		danceTable = new RecordTable("dance", "d", scene);
+		danceTable = new RecordTable("dance", "d");
+//		pagination = new Pagination();
 		setUpTable(danceTable.getTable(), danceTable.getCellInfo());
-		albumTable = new RecordTable("album", "a", scene);
+		albumTable = new RecordTable("album", "a");
 		setUpTable(albumTable.getTable(), albumTable.getCellInfo());
-		recordingTable = new RecordTable("recording", "r", scene);
+		recordingTable = new RecordTable("recording", "r");
 		setUpTable(recordingTable.getTable(), recordingTable.getCellInfo());
-		publicationTable = new RecordTable("publication", "p", scene);
+		publicationTable = new RecordTable("publication", "p");
 		setUpTable(publicationTable.getTable(), publicationTable.getCellInfo());
 		tableVisibility(true, false, false, false);
+
+		//PAGINATION
+		//this.searchVBox.getChildren().add(danceTable.getPagination());
 	}
 
 	/**
@@ -74,7 +86,7 @@ public class Search {
 	public VBox getSearchVBox(){
 		return this.searchVBox;
 	}
-	
+
 	/**
 	 * sets up the search bar and search button, and will search on both
 	 * a button press and 'Enter' or 'Return' key event
@@ -85,13 +97,13 @@ public class Search {
 		search.setPrefWidth(300);
 		Button searchGoBtn = new Button("Go");
 		searchGoBtn.setPrefWidth(50);
-		
+
 		HBox searchBox = new HBox(10);
 		searchBox.getChildren().add(search);
 		searchBox.getChildren().add(searchGoBtn);
-		
+
 		this.searchVBox.getChildren().add(searchBox);
-		
+
 		//Go Button Event
 		searchGoBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -116,7 +128,7 @@ public class Search {
 			}
 		});
 	}
-	
+
 	/**
 	 * queries the database table of the current state by rows like
 	 * the given title and displays the result set in that table
@@ -142,7 +154,7 @@ public class Search {
 			albumTable.setTableData(albumTable.populate(set));
 		}
 	}
-	
+
 	/**
 	 * responsible for state change on button action.
 	 * sets up the toggle buttons for Dance, Publication, Recording, 
@@ -152,36 +164,37 @@ public class Search {
 	 */
 	public void navigationButtons(){
 		HBox navBtnBox = new HBox(10);
-		
+
 		ToggleGroup tg = new ToggleGroup();
-		
+
 		final ToggleButton danceTB = new ToggleButton("Dance");
 		danceTB.setSelected(true);
 		danceTB.setToggleGroup(tg);
 		navBtnBox.getChildren().add(danceTB);
 		danceTB.setId("toggle-button");
-		
+
 		final ToggleButton publicationTB = new ToggleButton("Publication");
 		publicationTB.setToggleGroup(tg);
 		navBtnBox.getChildren().add(publicationTB);
 		publicationTB.setId("toggle-button");
-		
+
 		final ToggleButton recordingTB = new ToggleButton("Recording");
 		recordingTB.setToggleGroup(tg);
 		navBtnBox.getChildren().add(recordingTB);
 		recordingTB.setId("toggle-button");
-		
+
 		final ToggleButton albumTB = new ToggleButton("Album");
 		albumTB.setToggleGroup(tg);
 		navBtnBox.getChildren().add(albumTB);
 		albumTB.setId("toggle-button");
-	
+
 		this.searchVBox.getChildren().add(navBtnBox);
-		
+
 		// Dance
 		danceTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				danceTB.setSelected(true);
 				search.setPromptText("Search by Dance Title");
 				advSF.setText("Show Advanced Search Options For Dance");
 				if(!state.equals("d")){
@@ -201,6 +214,7 @@ public class Search {
 		publicationTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				publicationTB.setSelected(true);
 				search.setPromptText("Search by Publication Title");
 				advSF.setText("Show Advanced Search Options For Publication");
 				if(!state.equals("p")){
@@ -220,6 +234,7 @@ public class Search {
 		recordingTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				recordingTB.setSelected(true);
 				search.setPromptText("Search by Recording Title");
 				advSF.setText("Show Advanced Search Options For Recording");
 				if(!state.equals("r")){
@@ -239,6 +254,7 @@ public class Search {
 		albumTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				albumTB.setSelected(true);
 				search.setPromptText("Search by Album Title");
 				advSF.setText("Show Advanced Search Options For Album");
 				if(!state.equals("a")){
@@ -255,7 +271,7 @@ public class Search {
 			}
 		});
 	}
-	
+
 	/**
 	 * based on the given table visibilities, sets the visibility of each table
 	 * and hides or shows cellInfo of each table depending on the state.
@@ -270,7 +286,7 @@ public class Search {
 		publicationTable.getTable().setVisible(p);
 		recordingTable.getTable().setVisible(r);
 		albumTable.getTable().setVisible(a);
-		
+
 		// cellInfo
 		// should be hidden on state change - change later?
 		if(state.equals("d")) { 
@@ -294,7 +310,7 @@ public class Search {
 			recordingTable.getCellInfo().setVisible(false);
 		}
 	}
-	
+
 	/**
 	 * sets up the advanced search filter button that depends on the navigation buttons and search filters.
 	 * based on the state and selected property of the radio button, sets the radio button test
@@ -343,33 +359,33 @@ public class Search {
 			}
 		});
 	}
-	
+
 	public void searchFilters() throws SQLException, MalformedURLException {
 		DanceFilters df = new DanceFilters();
 		danceFiltersVBox = df.getDanceFiltersVBox();
 		this.searchVBox.getChildren().add(danceFiltersVBox);
 		danceFiltersVBox.managedProperty().bind(danceFiltersVBox.visibleProperty());
 		danceFiltersVBox.setVisible(false);
-		
+
 		RecordingFilters rf = new RecordingFilters();
 		recordingFiltersVBox = rf.getRecordingFiltersVBox();
 		this.searchVBox.getChildren().add(recordingFiltersVBox);
 		recordingFiltersVBox.managedProperty().bind(recordingFiltersVBox.visibleProperty());
 		recordingFiltersVBox.setVisible(false);
-		
+
 		AlbumFilters af = new AlbumFilters();
 		albumFiltersVBox = af.getAlbumFiltersVBox();
 		this.searchVBox.getChildren().add(albumFiltersVBox);
 		albumFiltersVBox.managedProperty().bind(albumFiltersVBox.visibleProperty());
 		albumFiltersVBox.setVisible(false);
-		
+
 		PublicationFilters pf = new PublicationFilters();
 		publicationFiltersVBox = pf.getPublicationFiltersVBox();
 		this.searchVBox.getChildren().add(publicationFiltersVBox);
 		publicationFiltersVBox.managedProperty().bind(publicationFiltersVBox.visibleProperty());
 		publicationFiltersVBox.setVisible(false);
 	}
-	
+
 	/**
 	 * adds the given table and cellInfo to this class' VBox and binds when they are shown or 
 	 * hidden to their visible property in order to collapse respective screens.
@@ -377,12 +393,14 @@ public class Search {
 	 * @param cellInfo VBox representing the information from a single cell of the passed in table
 	 */
 	public void setUpTable(TableView<?> table, VBox cellInfo){
+		
+
 		this.searchVBox.getChildren().add(table);
 		table.managedProperty().bind(table.visibleProperty());
 		this.searchVBox.getChildren().add(cellInfo);
 		cellInfo.managedProperty().bind(cellInfo.visibleProperty());
 	}
-	
+
 	//GETTERS FOR TESTING
 	public VBox getDanceFiltersVBox() {return danceFiltersVBox;}
 	public VBox getRecordingFiltersVBox() {return recordingFiltersVBox;}
