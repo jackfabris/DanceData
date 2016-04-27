@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import database.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -25,7 +24,6 @@ public class Collection {
 	public Collection() throws SQLException, MalformedURLException{
 		collectionVBox = new VBox(10);
 		db = new Database();
-		addLabel();
 		navigationButtons();
 		state="d";
 		danceTable = new RecordTable("dance", "d");
@@ -174,12 +172,6 @@ public class Collection {
 		albumTable.setTableData(albumTable.populate(set));
 		set = db.doQuery("SELECT * FROM recording WHERE ihave=1");
 		recordingTable.setTableData(recordingTable.populate(set));
-	}
-	
-	public void addLabel(){
-		Label l = new Label();
-		l.setText("Collection Page");
-		this.collectionVBox.getChildren().add(l);
 	}
 
 	public VBox getCollectionVBox() {

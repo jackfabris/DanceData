@@ -23,11 +23,11 @@ import javafx.scene.control.CheckBox;
  * as well as the colNameField mapping of column to field in the mapColumnNametoId() method in RecordTable.
  * 
  */
-public class Record {
+public class Record implements Comparable<Record> {
 	
 	private int id;
 	//string fields based on schema field names of any type of Record
-	private String name, barsperrepeat, type, artist_id, artist, devisor_id, repetitions, publication;
+	private String name, barsperrepeat, type, artist_id, artist, devisor, repetitions, publication;
 	//special cases
 	private CheckBox ihave;
 	private String tag;
@@ -88,8 +88,8 @@ public class Record {
 		return artist_id;
 	}
 
-	public String getDevisor_id() {
-		return devisor_id;
+	public String getDevisor() {
+		return devisor;
 	}
 
 	public String getRepetitions() {
@@ -114,5 +114,10 @@ public class Record {
 	
 	public String getPublication() {
 		return publication;
+	}
+	
+	@Override
+	public int compareTo(Record o) {
+		return this.getName().compareTo(o.getName());
 	}
 }

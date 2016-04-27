@@ -172,7 +172,7 @@ public class Main extends Application {
 		sp.setHbarPolicy(ScrollBarPolicy.NEVER);
 		sp.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		sp.setContent(box);
-		grid.add(sp, 0, gridY++);
+		grid.add(sp, 0, gridY);
 		sp.managedProperty().bind(sp.visibleProperty());
 		sp.setVisible(vis);
 		sp.setId("scroll-pane");

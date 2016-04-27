@@ -37,6 +37,7 @@ public class Home {
 	 */
 	public void lastUpdate(){
 		HBox updateHBox = new HBox(10);
+		//updateHBox.
 
 		updateHBox.setStyle(
 				"-fx-padding: 10;" +

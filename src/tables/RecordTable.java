@@ -3,6 +3,7 @@ package tables;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import database.Database;
@@ -12,9 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -47,11 +46,7 @@ public class RecordTable {
 	private LinkedHashMap<String, String> colNameField;
 	private String tableString, state;
 	
-	public static final int rowsPerPage = 25;
-//	private Pagination pagination;
-//	public Pagination getPagination(){
-//		return pagination;
-//	}
+	public static final int rowsPerPage = 18;
 	
 	/**
 	 * constructor for RecordTable creates a table of records according to either Dance, Publication, Recording, or Album.
@@ -91,7 +86,7 @@ public class RecordTable {
 		}
 		//Publication
 		else if(state.equals("p")){
-			colNameField.put("Author", "devisor_id");
+			colNameField.put("Author", "devisor");
 		}
 		//Recording
 		else{
@@ -110,7 +105,7 @@ public class RecordTable {
 	 */
 	@SuppressWarnings("unchecked")
 	public void initializeTable() throws SQLException, MalformedURLException{
-		table.minWidthProperty().bind(Main.sceneWidthProp.subtract(15));
+		table.minWidthProperty().bind(Main.sceneWidthProp.subtract(75));
 		table.setEditable(true);
 		ResultSet set = db.searchTableByName(tableString, "");
 		
@@ -134,21 +129,6 @@ public class RecordTable {
 		//add rows to table
 		table.setItems(populate(set));
 		setTableHeight();
-		
-		//PAGINATION
-//		pagination = new Pagination(table.getItems().size() / rowsPerPage+1);
-//		pagination.setPageFactory(new Callback<Integer, Node>() {
-//            @Override
-//            public Node call(Integer pageIndex) {
-//            	  int fromIndex = pageIndex * rowsPerPage;
-//                  //int toIndex = Math.min(fromIndex + rowsPerPage, table.getItems().size());
-//            	  int toIndex = fromIndex + rowsPerPage;
-//                  table.setItems(FXCollections.observableArrayList(table.getItems().subList(fromIndex, toIndex)));
-//                  setTableHeight();
-//                  return table;
-//            }
-//        });
-		
 			
 		//CELL INFO
 		final TableColumn<Record, String> RecordCol = (TableColumn<Record, String>) table.getColumns().get(0);
@@ -275,13 +255,14 @@ public class RecordTable {
 		while(set.next()){
 			data.add(new Record(set, colNameField.values()));
 		}
+		Collections.sort(data);
 		return data;
 	}
 	
 	public void setTableHeight(){
-		table.setFixedCellSize(rowsPerPage); //25
+		table.setFixedCellSize(25);
 		if(table.getItems().isEmpty()) table.prefHeightProperty().bind(table.fixedCellSizeProperty().multiply(2.01));
-		else if(table.getItems().size() < rowsPerPage) table.prefHeightProperty().bind(table.fixedCellSizeProperty().multiply(Bindings.size(table.getItems()).add(1.01)));
+		else if(table.getItems().size() < rowsPerPage) table.prefHeightProperty().bind(table.fixedCellSizeProperty().multiply(Bindings.size(table.getItems()).add(1.09)));
 		else table.prefHeightProperty().bind(table.fixedCellSizeProperty().multiply(rowsPerPage+(1.01)));
 		table.minHeightProperty().bind(table.prefHeightProperty());
 		table.maxHeightProperty().bind(table.prefHeightProperty());
