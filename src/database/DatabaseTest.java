@@ -121,14 +121,15 @@ public class DatabaseTest {
 				
 				System.out.print("Testing iHave/iDontHave functions... ");
 				currentMethod = "iHave";
-				db.iHave("recording", iHaveTestTagValue, "");
+				db.iHave("recording", iHaveTestTagValue);
 				ResultSet haveNoTag = db.getAllByIdFromTable("recording", iHaveTestTagValue);
 				//System.out.println(haveNoTag.getString("iHave"));
 				assertTrue(haveNoTag.getString("iHave").equals("1"));
 				db.iDontHave("recording", iHaveTestTagValue);
 				ResultSet donthaveNoTag = db.getAllByIdFromTable("recording", iHaveTestTagValue);
 				assertTrue(donthaveNoTag.getString("iHave").equals("0"));
-				db.iHave("recording", iHaveTestNoTagValue, "fav");
+				db.iHave("recording", iHaveTestNoTagValue);
+				db.addTag("recording", iHaveTestNoTagValue, "fav");
 				ResultSet haveWithTag = db.getAllByIdFromTable("recording", iHaveTestNoTagValue);
 				assertTrue(haveWithTag.getString("iHave").equals("1"));
 				db.iDontHave("recording", iHaveTestNoTagValue);

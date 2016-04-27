@@ -154,7 +154,7 @@ public class Database {
 		while(iter.hasNext()) {
 			line = iter.next();
 			info = line.split(" ");
-			if(info.length == 2)
+			if(info.length == 2 || info[2].equals("null"))
 				query = "UPDATE " + info[0] + " SET ihave=1 WHERE id=" + info[1];
 			else
 				query = "UPDATE " + info[0] + " SET ihave=1, tag='" + info[2] + "' WHERE id=" + info[1];
@@ -296,32 +296,78 @@ public class Database {
 	 * Mark as having in personal collection. 
 	 * @param table - the type of thing i have (can be album, recording, publication, or dance)
 	 * @param id - the id 
-	 * @param tag - what should we mark the tag
 	 * @throws SQLException
 	 */
-	public void iHave(String table, int id, String tag) throws SQLException {
-		query = "UPDATE " + table + " SET ihave=1, tag='" + tag + "' WHERE id=" + id;
+	public void iHave(String table, int id) throws SQLException {
+		query = "UPDATE " + table + " SET ihave=1 WHERE id=" + id;
 		stmt.execute(query);
 		if(table.equals("publication")) {
-			query = "UPDATE dance SET ihave=1, tag='" + tag + "' WHERE id in "
+			query = "UPDATE dance SET ihave=1 WHERE id in "
 					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
 			stmt.execute(query);
 		} else if(table.equals("album")) {
-			query = "UPDATE recording SET ihave=1, tag='" + tag + "' WHERE id in "
+			query = "UPDATE recording SET ihave=1 WHERE id in "
 					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
 			stmt.execute(query);
 		}
 	}
 	
+	/**
+	 * Mark as not having in personal collection
+	 * @param table - the type (album, recording, publication, or dance)
+	 * @param id - the id
+	 * @throws SQLException
+	 */
 	public void iDontHave(String table, int id) throws SQLException {
-		query = "UPDATE " + table + " SET ihave=0, tag=null WHERE id=" +id;
+		query = "UPDATE " + table + " SET ihave=0 WHERE id=" +id;
 		stmt.execute(query);
 		if(table.equals("publication")) {
-			query = "UPDATE dance SET ihave=0, tag=null WHERE id in "
+			query = "UPDATE dance SET ihave=0 WHERE id in "
 					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
 			stmt.execute(query);
 		} else if(table.equals("album")) {
-			query = "UPDATE recording SET ihave=0, tag=null WHERE id in "
+			query = "UPDATE recording SET ihave=0 WHERE id in "
+					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
+			stmt.execute(query);
+		}
+	}
+	
+	/**
+	 * Give the item a tag
+	 * @param table - the type (album, recording, publication, or dance)
+	 * @param id - the id
+	 * @param tag - the tag string
+	 * @throws SQLException
+	 */
+	public void addTag(String table, int id, String tag) throws SQLException {
+		query = "UPDATE " + table + " SET tag='" + tag + "' WHERE id=" + id;
+		stmt.execute(query);
+		if(table.equals("publication")) {
+			query = "UPDATE dance SET tag='" + tag + "' WHERE id in "
+					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
+			stmt.execute(query);
+		} else if(table.equals("album")) {
+			query = "UPDATE recording SET tag='" + tag + "' WHERE id in "
+					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
+			stmt.execute(query);
+		}
+	}
+	
+	/**
+	 * Remove the items tag
+	 * @param table - the type (album, recording, publicaiton, or dance)
+	 * @param id - the id
+	 * @throws SQLException 
+	 */
+	public void removeTag(String table, int id) throws SQLException {
+		query = "UPDATE " + table + " SET tag=null WHERE id=" +id;
+		stmt.execute(query);
+		if(table.equals("publication")) {
+			query = "UPDATE dance SET tag=null WHERE id in "
+					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
+			stmt.execute(query);
+		} else if(table.equals("album")) {
+			query = "UPDATE recording SET tag=null WHERE id in "
 					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
 			stmt.execute(query);
 		}
@@ -385,26 +431,30 @@ public class Database {
 		
 		System.out.println("");
 		
-		db.iHave("dance", 1670, "tag1");
+		db.iHave("dance", 1670);
+		db.addTag("dance", 1670, "tag1");
 				
 		/* Search for dance */
 		System.out.println("Search dance");
 		resultSet = db.searchTableByName("dance", "dolphin", true);
 		db.printResults(resultSet);
 		
-		db.iHave("dance", 100, "tag2");
+		db.iHave("dance", 100);
+		db.addTag("dance", 100, "tag2");
 		
 		System.out.println("");
 		
-		db.iHave("album", 24, "album24");
-		db.iHave("album", 247, "album247");
+		db.iHave("album", 24);
+		db.addTag("album", 24, "album24");
+		db.iHave("album", 247);
+		db.addTag("album", 247, "album247");
 				
 		/* Search for album */
 		System.out.println("Search album");
 		resultSet = db.searchTableByName("album", "Jimmy", true);
 		db.printResults(resultSet);
 		
-		db.iHave("dance", 12188, "");
+		db.iHave("dance", 12188);
 		
 		System.out.println("");
 		
