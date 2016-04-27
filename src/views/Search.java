@@ -124,19 +124,19 @@ public class Search {
 	public void searchText(String title) throws SQLException{
 		ResultSet set;
 		if(state.equals("d")) {
-			set = db.searchTableByName("dance",title);
+			set = db.searchTableByName("dance",title, false);
 			danceTable.setTableData(danceTable.populate(set));
 		}
 		else if(state.equals("p")) {
-			set = db.searchTableByName("publication",title);
+			set = db.searchTableByName("publication",title, false);
 			publicationTable.setTableData(publicationTable.populate(set));
 		}
 		else if(state.equals("r")) {
-			set = db.searchTableByName("recording",title);
+			set = db.searchTableByName("recording",title, false);
 			recordingTable.setTableData(recordingTable.populate(set));
 		}
 		else if(state.equals("a")) {
-			set = db.searchTableByName("album",title);
+			set = db.searchTableByName("album",title, false);
 			albumTable.setTableData(albumTable.populate(set));
 		}
 	}

@@ -90,7 +90,8 @@ public class DatabaseTest {
 				
 				System.out.print("Testing searchByTableName function... ");
 				currentMethod = "searchByTableName";
-				ResultSet searchTableByNameTest = db.searchTableByName("dance", searchByTableNameTestValue);
+				ResultSet searchTableByNameTest = db.searchTableByName("dance", searchByTableNameTestValue, false);
+
 				while (searchTableByNameTest.next()){
 					//System.out.println(searchTableByNameTest.getString("name"));
 					assertTrue(searchTableByNameTest.getString("name").toLowerCase().contains(searchByTableNameTestValue));
