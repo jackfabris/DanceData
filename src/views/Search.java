@@ -130,23 +130,19 @@ public class Search {
 	public void searchText(String title) throws SQLException{
 		ResultSet set;
 		if(state.equals("d")) {
-			danceTitle = title;
-			set = db.searchTableByName("dance",title);
+			set = db.searchTableByName("dance",title, false);
 			danceTable.setTableData(danceTable.populate(set));
 		}
 		else if(state.equals("p")) {
-			publicationTitle = title;
-			set = db.searchTableByName("publication",title);
+			set = db.searchTableByName("publication",title, false);
 			publicationTable.setTableData(publicationTable.populate(set));
 		}
 		else if(state.equals("r")) {
-			recordingTitle = title;
-			set = db.searchTableByName("recording",title);
+			set = db.searchTableByName("recording",title, false);
 			recordingTable.setTableData(recordingTable.populate(set));
 		}
 		else if(state.equals("a")) {
-			albumTitle = title;
-			set = db.searchTableByName("album",title);
+			set = db.searchTableByName("album",title, false);
 			albumTable.setTableData(albumTable.populate(set));
 		}
 	}
@@ -329,7 +325,7 @@ public class Search {
 			}
 		});
 	}
-
+	
 	public void searchFilters() throws SQLException, MalformedURLException {
 		DanceFilters df = new DanceFilters();
 		danceFiltersVBox = df.getDanceFiltersVBox();

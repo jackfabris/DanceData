@@ -107,7 +107,7 @@ public class RecordTable {
 	public void initializeTable() throws SQLException, MalformedURLException{
 		table.minWidthProperty().bind(Main.sceneWidthProp.subtract(75));
 		table.setEditable(true);
-		ResultSet set = db.searchTableByName(tableString, "");
+		ResultSet set = db.searchTableByName(tableString, "", false);
 		
 		//set up columns
 		Iterator<String> i = colNameField.keySet().iterator();
@@ -196,7 +196,7 @@ public class RecordTable {
 								//changed is called twice - problem?
 								public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
 									try {
-										if(r!=null && !old_val && new_val) db.iHave(tableString, r.getId(), r.getTag());
+										if(r!=null && !old_val && new_val) db.iHave(tableString, r.getId());
 										else if(r!=null && old_val && !new_val) db.iDontHave(tableString, r.getId());
 									} catch (SQLException e) {
 										e.printStackTrace();
@@ -232,8 +232,8 @@ public class RecordTable {
             @Override public void handle(TableColumn.CellEditEvent<Record, String> t) {
             	Record r = ((Record)t.getTableView().getItems().get(t.getTablePosition().getRow()));
             	try {
-            		if(!t.getNewValue().equals("")) db.iHave(tableString, r.getId(), t.getNewValue());
-            		//else db.iDontHave(tableString, r.getId());
+            		if(!t.getNewValue().equals("")) db.addTag(tableString, r.getId(), t.getNewValue());
+            		else db.removeTag(tableString, r.getId());
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
