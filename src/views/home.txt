@@ -1,0 +1,14 @@
+GhillieTracks is an application designed to help teachers, class managers, and dancers in the Scottish Country Dance community research and manage dance and music resources.
+
+This application was inspired by the GhillieTracks program created by Patty Lindsay. It retains much of the same functionality, but any collections created in that program will need to be recreated by the user in this version.
+
+
+GhillieTracks has 2 main functions:
+
+DanceData Search - Search DanceData without being connected to the Internet, allowing access to the data from a laptop in a classroom environment. Also provides the capability of marking dances, publications, albums, and tunes as "I Have" similar to the original DanceData application.
+
+Collections - View a list of dances, publications, albums, and tunes that you have marked as "I Have."
+
+
+Copyright 2016 University of Delaware
+GhillieTracks is free software developed by students at the University of Delaware in Newark, DE.

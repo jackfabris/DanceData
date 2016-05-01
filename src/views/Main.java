@@ -43,8 +43,9 @@ public class Main extends Application {
 	 * constructor for Main initializes Grid, Home, Search, and Collection 
 	 * and sets this classes VBoxes respectively
 	 * @throws SQLException
+	 * @throws IOException 
 	 */
-	public Main() throws SQLException, MalformedURLException {
+	public Main() throws SQLException, IOException {
 		grid = new GridPane();
 		gridY = 0;
 		scene = new Scene(grid);
