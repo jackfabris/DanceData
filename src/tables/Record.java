@@ -115,4 +115,12 @@ public class Record {
 	public String getPublication() {
 		return publication;
 	}
+	
+	public String getArtist(){
+		return artist;
+	}
+	
+	public String getPublication() {
+		return publication;
+	}
 }
