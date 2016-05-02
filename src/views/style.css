@@ -18,7 +18,7 @@ Color Palette: (darkest to lightest)
 	-fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.15), 1, 0, 2, 2);
 }
 
-#home-button, #search-button, #collection-button {
+#home-button, #search-button, #collection-button, #update {
 	-fx-text-fill: white;
 	-fx-font-weight: bold;
 	-fx-background-color: #92cdcf;
@@ -26,7 +26,7 @@ Color Palette: (darkest to lightest)
 	-fx-background-inset: 0;
 }
 
-#home-button:hover, #search-button:hover, #collection-button:hover {
+#home-button:hover, #search-button:hover, #collection-button:hover, #update:hover {
 	-fx-background-color: #445878;
 }
 

@@ -1,7 +1,6 @@
 package views;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,9 +10,9 @@ import java.sql.SQLException;
 import database.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -37,10 +36,9 @@ public class Home {
 	 * for the user to update their copy
 	 */
 	public void lastUpdate(){
-		HBox updateHBox = new HBox(10);
-		//updateHBox.
-
-		updateHBox.setStyle(
+		VBox updateVBox = new VBox(10);
+		updateVBox.setAlignment(Pos.CENTER);
+		updateVBox.setStyle(
 				"-fx-padding: 10;" +
 				"-fx-border-style: solid inside;" +
 				"-fx-border-width: 1;" +
@@ -59,12 +57,13 @@ public class Home {
 		} catch (IOException e) {
 			System.out.println("Unable to Retrieve Date of Last Update");
 		}
-		updateHBox.getChildren().add(date);
+		updateVBox.getChildren().add(date);
 		
 		//Update Button
 		Button updateBtn = new Button("UPDATE");
-		updateHBox.getChildren().add(updateBtn);
-		this.getHomeVBox().getChildren().add(updateHBox);
+		updateBtn.setId("update");
+		updateVBox.getChildren().add(updateBtn);
+		this.getHomeVBox().getChildren().add(updateVBox);
 		updateBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
