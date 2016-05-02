@@ -1,6 +1,9 @@
 package filters;
 
-import javafx.scene.control.ComboBox;
+import java.util.LinkedHashMap;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -14,9 +17,11 @@ import javafx.scene.layout.VBox;
  *
  */
 public class AlbumFilters extends VBox {
-	
+
+	private GridPane grid;
 	private VBox albumFiltersVBox;
-	
+	private LinkedHashMap<String, String> albumMap;
+
 	/**
 	 * Create the VBox which will contain the filters for an album search
 	 */
@@ -28,26 +33,49 @@ public class AlbumFilters extends VBox {
 				"-fx-border-width: 1;" +
 				"-fx-border-insets: 5;" +
 				"-fx-border-color: #cfcfcf;");
-		
-		GridPane grid = new GridPane();
+		albumMap = new LinkedHashMap<String, String>();
+		grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
-		
-		// Artist Name
-		Label artist = new Label("Artist");
-		TextField artistField = new TextField();
-		grid.add(artist, 0, 0);
-		grid.add(artistField, 1, 0);
-		
-		// Production Year
-		Label year = new Label("Year");
-		TextField yearField = new TextField();
-		grid.add(year, 0, 1);
-		grid.add(yearField, 1, 1);
-		
+
+		artist();
+		year();
+
 		this.albumFiltersVBox.getChildren().add(grid);
 	}
 	
+	public void artist(){
+		// Artist Name
+		Label artist = new Label("Artist");
+		final TextField artistField = new TextField();
+		artistField.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				albumMap.put("Artist", artistField.getText());
+			}
+		});
+		grid.add(artist, 0, 0);
+		grid.add(artistField, 1, 0);
+	}
+
+	public void year(){
+		// Production Year
+		Label year = new Label("Year");
+		final TextField yearField = new TextField();
+		yearField.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				albumMap.put("Year", yearField.getText());
+			}
+		});
+		grid.add(year, 0, 1);
+		grid.add(yearField, 1, 1);
+	}
+	
+	public LinkedHashMap<String, String> getAlbumMap() {
+		return albumMap;
+	}
+
 	/**
 	 * Get the album filters VBox
 	 * @return albumFiltersVBox
@@ -55,5 +83,4 @@ public class AlbumFilters extends VBox {
 	public VBox getAlbumFiltersVBox() {
 		return this.albumFiltersVBox;
 	}
-
 }

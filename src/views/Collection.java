@@ -7,9 +7,13 @@ import java.sql.SQLException;
 import database.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import tables.RecordTable;
@@ -20,10 +24,13 @@ public class Collection {
 	private Database db;
 	private RecordTable danceTable, publicationTable, recordingTable, albumTable;
 	private String state;
+	private final TextField search;
 
 	public Collection() throws SQLException, MalformedURLException{
 		collectionVBox = new VBox(10);
 		db = new Database();
+		search = new TextField();
+		setUpSearchBar();
 		navigationButtons();
 		state="d";
 		danceTable = new RecordTable("dance", "d");
@@ -34,8 +41,76 @@ public class Collection {
 		setUpTable(recordingTable.getTable(), recordingTable.getCellInfo());
 		publicationTable = new RecordTable("publication", "p");
 		setUpTable(publicationTable.getTable(), publicationTable.getCellInfo());
-		//showIHave();
+		showIHave();
 		tableVisibility(true, false, false, false);
+	}
+	
+	/**
+	 * sets up the search bar and search button, and will search on both
+	 * a button press and 'Enter' or 'Return' key event
+	 */
+	public void setUpSearchBar(){
+		//Search Bar
+		search.setPromptText("Search by Dance Title");
+		search.setPrefWidth(300);
+		Button searchGoBtn = new Button("Go");
+		searchGoBtn.setPrefWidth(50);
+
+		HBox searchBox = new HBox(10);
+		searchBox.getChildren().add(search);
+		searchBox.getChildren().add(searchGoBtn);
+
+		this.collectionVBox.getChildren().add(searchBox);
+
+		//Go Button Event
+		searchGoBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				try {
+					searchText(search.getText());
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		//Enter/Return Key Event
+		searchBox.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent arg0){
+				if(arg0.getCode() == KeyCode.ENTER){
+					try {
+						searchText(search.getText());
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}
+	
+	/**
+	 * queries the database table of the current state by rows like
+	 * the given title and displays the result set in that table - *sets title
+	 * @param title a String representing part of the title for the desired records
+	 * @throws SQLException
+	 */
+	public void searchText(String title) throws SQLException{
+		ResultSet set;
+		if(state.equals("d")) {
+			set = db.searchTableByName("dance",title, true);
+			danceTable.setTableData(danceTable.populate(set));
+		}
+		else if(state.equals("p")) {
+			set = db.searchTableByName("publication",title, true);
+			publicationTable.setTableData(publicationTable.populate(set));
+		}
+		else if(state.equals("r")) {
+			set = db.searchTableByName("recording",title, true);
+			recordingTable.setTableData(recordingTable.populate(set));
+		}
+		else if(state.equals("a")) {
+			set = db.searchTableByName("album",title, true);
+			albumTable.setTableData(albumTable.populate(set));
+		}
 	}
 	
 	/**
@@ -164,13 +239,13 @@ public class Collection {
 	}
 	
 	public void showIHave() throws SQLException{
-		ResultSet set = db.doQuery("SELECT * FROM dance WHERE ihave=1");
+		ResultSet set = db.searchTableByName("dance", "", true);
 		danceTable.setTableData(danceTable.populate(set));
-		set = db.doQuery("SELECT * FROM publication WHERE ihave=1");
+		set = db.searchTableByName("publication", "", true);
 		publicationTable.setTableData(publicationTable.populate(set));
-		set = db.doQuery("SELECT * FROM album WHERE ihave=1");
+		set = db.searchTableByName("album", "", true);
 		albumTable.setTableData(albumTable.populate(set));
-		set = db.doQuery("SELECT * FROM recording WHERE ihave=1");
+		set = db.searchTableByName("recording", "", true);
 		recordingTable.setTableData(recordingTable.populate(set));
 	}
 

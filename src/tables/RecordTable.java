@@ -255,7 +255,6 @@ public class RecordTable {
 		while(set.next()){
 			data.add(new Record(set, colNameField.values()));
 		}
-		Collections.sort(data);
 		return data;
 	}
 	
