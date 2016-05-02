@@ -1,6 +1,5 @@
 package views;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.sql.SQLException;
 
 import javafx.application.Application;
@@ -52,10 +51,10 @@ public class Main extends Application {
 		sceneWidthProp = scene.widthProperty();
 		Home h = new Home();
 		home = h.getHomeVBox();
-		Search s = new Search();
-		search = s.getSearchVBox();
-		Collection c = new Collection();
-		collection = c.getCollectionVBox();
+		SearchDataView s = new SearchDataView(false);
+		search = s.getVBox();
+		SearchDataView c = new SearchDataView(true);
+		collection = c.getVBox();
 		homeSP = new ScrollPane();
 		searchSP = new ScrollPane();
 		collectionSP = new ScrollPane();

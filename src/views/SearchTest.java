@@ -17,7 +17,7 @@ import javafx.stage.Stage;
  */
 public class SearchTest {
 	
-	private Search s;
+	private SearchDataView s;
 	
 	@Test
     public void testA() throws InterruptedException {
@@ -46,10 +46,10 @@ public class SearchTest {
 	 * Tests the constructor for Search
 	 */
 	public void initialSearchTest() throws SQLException, MalformedURLException {
-		s = new Search();
+		s = new SearchDataView(false);
 		//non-primitive reference fields should be initialized and not null
 		//VBox
-		assertNotNull(s.getSearchVBox());
+		assertNotNull(s.getVBox());
 		assertNotNull(s.getDanceFiltersVBox());
 		assertNotNull(s.getRecordingFiltersVBox());
 		assertNotNull(s.getAlbumFiltersVBox());
@@ -79,7 +79,7 @@ public class SearchTest {
 	 */
 	@Test
 	public void setUpSearchBarTest() throws SQLException, MalformedURLException{
-		s = new Search();
+		s = new SearchDataView(false);
 		s.setUpSearchBar();
 		assertEquals(s.getSearch().getPromptText(), "Search by Dance Title");
 		assertEquals(s.getSearch().getPrefWidth(), 300, .01);
