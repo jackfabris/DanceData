@@ -1,6 +1,6 @@
 dance 100 tag2
 dance 1670 tag1
-dance 12188 
+dance 12188 null
 album 24 album24
 album 247 album247
 recording 2 album24

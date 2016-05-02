@@ -18,12 +18,14 @@ import javafx.scene.control.CheckBox;
  */
 public class Record {
 	
-	private final String barsperrepeat;
-	private final String name; 
-	private final String type_id;					
-	private final String artist_id;
-	private final String devisor_id;
-	private final String repetitions; 
+	private String barsperrepeat;
+	private String name; 
+	private String type;					
+	private String artist_id;
+	private String artist;
+	private String devisor_id;
+	private String repetitions; 
+	private String publication;
 	private CheckBox iHave;
 	private String index;
 
@@ -32,48 +34,40 @@ public class Record {
 		if(state.equals("d")){
 			barsperrepeat =  set.getString("barsperrepeat");
 			name = set.getString("name");
-			type_id = set.getString("type_id");	
-			artist_id = "";
-			devisor_id = "";
-			repetitions = ""; 
+			type = set.getString("type");	
+			publication = set.getString("publication");
 		}
 		//Publication
 		else if(state.equals("p")){
 			name = set.getString("name");
 			devisor_id = set.getString("devisor_id");
-			barsperrepeat = "";
-			repetitions = ""; 
-			type_id = "";
-			artist_id = "";
 		}
 		//Recording
 		else if(state.equals("r")){
 			name = set.getString("name");
-			type_id = set.getString("type_id");
+			type = set.getString("type");
 			repetitions = set.getString("repetitions");
 			barsperrepeat = set.getString("barsperrepeat");
-			artist_id="";
-			devisor_id = "";
+			artist = set.getString("artist");
 		}
 		//Album
 		else{
 			name = set.getString("name");
-			artist_id = set.getString("artist_id");
-			devisor_id = "";
-			repetitions = ""; 
-			barsperrepeat = "";
-			type_id = "";
+			artist = set.getString("artist");
 		}
 		iHave = new CheckBox();
-		index = "";
+		if(set.getString("ihave").equals("1")) {
+			iHave.setSelected(true);
+		}
+		index = set.getString("tag");
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public String getType_id() {
-		return type_id;
+	public String getType() {
+		return type;
 	}
 
 	public String getArtist_id() {
@@ -98,5 +92,13 @@ public class Record {
 
 	public String getIndex() {
 		return index;
+	}
+	
+	public String getArtist(){
+		return artist;
+	}
+	
+	public String getPublication() {
+		return publication;
 	}
 }
