@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -36,7 +37,7 @@ public class Home {
 	 * for the user to update their copy
 	 */
 	public void lastUpdate(){
-		VBox updateVBox = new VBox(10);
+		final VBox updateVBox = new VBox(10);
 		updateVBox.setAlignment(Pos.CENTER);
 		updateVBox.setStyle(
 				"-fx-padding: 10;" +
@@ -67,10 +68,19 @@ public class Home {
 		updateBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+				//updateVBox.getChildren().get(2).setVisible(true);
 				db.update();
+				//updateVBox.getChildren().get(2).setVisible(false);
 			}
 		});
 		
+//		//Loading Indicator
+//		ProgressIndicator prog = new ProgressIndicator(-1.0f);
+//		prog.setMinHeight(1);
+//		prog.setMinWidth(prog.getMinHeight());
+//		prog.setStyle("-fx-progress-color: #92cdcf;");
+//		prog.setVisible(false);
+//		updateVBox.getChildren().add(prog);
 	}
 	
 	/**

@@ -4,9 +4,6 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-
-import database.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,8 +11,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 
 /**
  * PublicationFilters is a VBox which is placed on the Search page. It contains
@@ -24,12 +19,7 @@ import javafx.scene.layout.VBox;
  * @author Jack
  *
  */
-public class PublicationFilters extends VBox {
-	
-	private VBox publicationFiltersVBox;
-	private Database db;
-	private LinkedHashMap<String, String> publMap;
-	private GridPane grid;
+public class PublicationFilters extends AdvancedFilters {
 	
 	/**
 	 * Create the VBox which will contain the filters for a publication search
@@ -37,23 +27,10 @@ public class PublicationFilters extends VBox {
 	 * @throws MalformedURLException 
 	 */
 	public PublicationFilters() throws SQLException, MalformedURLException {
-		publicationFiltersVBox = new VBox(10);
-		publicationFiltersVBox.setStyle(
-				"-fx-padding: 10;" +
-				"-fx-border-style: solid inside;" +
-				"-fx-border-width: 1;" +
-				"-fx-border-insets: 5;" +
-				"-fx-border-color: #cfcfcf;");
-		publMap = new LinkedHashMap<String, String>();
-		db = new Database();
-		grid = new GridPane();
-		grid.setHgap(10);
-		grid.setVgap(10);
-	
+		super();
 		author();
 		name();
-		
-		this.publicationFiltersVBox.getChildren().add(grid);
+		buttonGrid();
 	}
 	
 	public void author(){
@@ -62,7 +39,7 @@ public class PublicationFilters extends VBox {
 		authorField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				publMap.put("Author", authorField.getText());
+				map.put("Author", authorField.getText());
 			}
 		});
 		grid.add(author, 0, 0);
@@ -82,23 +59,10 @@ public class PublicationFilters extends VBox {
 		nameOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				publMap.put("Name", nameOptions.getValue());
+				map.put("Name", nameOptions.getValue());
 			}
 		});
 		grid.add(name, 0, 1);
 		grid.add(nameOptions, 1, 1);
 	}
-	
-	public LinkedHashMap<String, String> getPublMap() {
-		return publMap;
-	}
-
-	/**
-	 * Get the publication filters VBox
-	 * @return publicationFiltersVBox
-	 */
-	public VBox getPublicationFiltersVBox() {
-		return this.publicationFiltersVBox;
-	}
-
 }

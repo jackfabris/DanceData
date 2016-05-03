@@ -1,13 +1,11 @@
 package filters;
 
-import java.util.LinkedHashMap;
-
+import java.net.MalformedURLException;
+import java.sql.SQLException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 
 /**
  * AlbumFilters is a VBox which is placed on the Search page. It contains
@@ -16,32 +14,18 @@ import javafx.scene.layout.VBox;
  * @author Jack
  *
  */
-public class AlbumFilters extends VBox {
-
-	private GridPane grid;
-	private VBox albumFiltersVBox;
-	private LinkedHashMap<String, String> albumMap;
+public class AlbumFilters extends AdvancedFilters {
 
 	/**
 	 * Create the VBox which will contain the filters for an album search
+	 * @throws SQLException 
+	 * @throws MalformedURLException 
 	 */
-	public AlbumFilters() {
-		albumFiltersVBox = new VBox(10);
-		albumFiltersVBox.setStyle(
-				"-fx-padding: 10;" +
-				"-fx-border-style: solid inside;" +
-				"-fx-border-width: 1;" +
-				"-fx-border-insets: 5;" +
-				"-fx-border-color: #cfcfcf;");
-		albumMap = new LinkedHashMap<String, String>();
-		grid = new GridPane();
-		grid.setHgap(10);
-		grid.setVgap(10);
-
+	public AlbumFilters() throws MalformedURLException, SQLException {
+		super();
 		artist();
 		year();
-
-		this.albumFiltersVBox.getChildren().add(grid);
+		buttonGrid();
 	}
 	
 	public void artist(){
@@ -51,7 +35,7 @@ public class AlbumFilters extends VBox {
 		artistField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				albumMap.put("Artist", artistField.getText());
+				map.put("Artist", artistField.getText());
 			}
 		});
 		grid.add(artist, 0, 0);
@@ -65,22 +49,10 @@ public class AlbumFilters extends VBox {
 		yearField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				albumMap.put("Year", yearField.getText());
+				map.put("Year", yearField.getText());
 			}
 		});
 		grid.add(year, 0, 1);
 		grid.add(yearField, 1, 1);
-	}
-	
-	public LinkedHashMap<String, String> getAlbumMap() {
-		return albumMap;
-	}
-
-	/**
-	 * Get the album filters VBox
-	 * @return albumFiltersVBox
-	 */
-	public VBox getAlbumFiltersVBox() {
-		return this.albumFiltersVBox;
 	}
 }

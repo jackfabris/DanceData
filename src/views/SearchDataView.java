@@ -305,25 +305,25 @@ public class SearchDataView {
 	
 	public void searchFilters() throws SQLException, MalformedURLException {
 		DanceFilters df = new DanceFilters();
-		danceFiltersVBox = df.getDanceFiltersVBox();
+		danceFiltersVBox = df.getFiltersVBox();
 		this.vBox.getChildren().add(danceFiltersVBox);
 		danceFiltersVBox.managedProperty().bind(danceFiltersVBox.visibleProperty());
 		danceFiltersVBox.setVisible(false);
 
 		RecordingFilters rf = new RecordingFilters();
-		recordingFiltersVBox = rf.getRecordingFiltersVBox();
+		recordingFiltersVBox = rf.getFiltersVBox();
 		this.vBox.getChildren().add(recordingFiltersVBox);
 		recordingFiltersVBox.managedProperty().bind(recordingFiltersVBox.visibleProperty());
 		recordingFiltersVBox.setVisible(false);
 
 		AlbumFilters af = new AlbumFilters();
-		albumFiltersVBox = af.getAlbumFiltersVBox();
+		albumFiltersVBox = af.getFiltersVBox();
 		this.vBox.getChildren().add(albumFiltersVBox);
 		albumFiltersVBox.managedProperty().bind(albumFiltersVBox.visibleProperty());
 		albumFiltersVBox.setVisible(false);
 
 		PublicationFilters pf = new PublicationFilters();
-		publicationFiltersVBox = pf.getPublicationFiltersVBox();
+		publicationFiltersVBox = pf.getFiltersVBox();
 		this.vBox.getChildren().add(publicationFiltersVBox);
 		publicationFiltersVBox.managedProperty().bind(publicationFiltersVBox.visibleProperty());
 		publicationFiltersVBox.setVisible(false);
