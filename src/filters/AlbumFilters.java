@@ -29,6 +29,7 @@ public class AlbumFilters extends AdvancedFilters {
 	}
 	
 	public void artist(){
+		map.put("Artist", "");
 		// Artist Name
 		Label artist = new Label("Artist");
 		final TextField artistField = new TextField();
@@ -43,6 +44,7 @@ public class AlbumFilters extends AdvancedFilters {
 	}
 
 	public void year(){
+		map.put("Year", "");
 		// Production Year
 		Label year = new Label("Year");
 		final TextField yearField = new TextField();

@@ -55,6 +55,7 @@ public class DanceFilters extends AdvancedFilters {
 		// Make observable list using database query to get options
 		
 	public void type() throws SQLException{
+		map.put("Type", "");
 		// Type
 		ResultSet typesSet;
 		typesSet = db.doQuery("SELECT name FROM dancetype");
@@ -78,6 +79,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void bars(){
+		map.put("Bars", "");
 		// Bars
 		Label bars = new Label("Bars");
 		final TextField barsField = new TextField();
@@ -94,6 +96,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void couples() throws SQLException{
+		map.put("Couples", "");
 		// Couples
 		ResultSet couplesSet;
 		couplesSet = db.doQuery("SELECT name FROM couples");
@@ -117,6 +120,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void setShape() throws SQLException{
+		map.put("Set Shape", "");
 		// Set Shape
 		ResultSet setShapeSet;
 		setShapeSet = db.doQuery("SELECT name FROM shape");
@@ -140,6 +144,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void author(){
+		map.put("Author", "");
 		// Author
 		Label author = new Label("Author");
 		final TextField authorField = new TextField();
@@ -156,6 +161,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void formations() throws SQLException{
+		map.put("Formations", "");
 		// Formations
 		ResultSet formationSet;
 		formationSet = db.doQuery("SELECT name FROM formation");
@@ -234,6 +240,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void steps() throws SQLException{
+		map.put("Steps", "");
 		// Steps
 		ResultSet stepSet;
 		stepSet = db.doQuery("SELECT name FROM step");

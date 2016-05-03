@@ -34,6 +34,7 @@ public class PublicationFilters extends AdvancedFilters {
 	}
 	
 	public void author(){
+		map.put("Author", "");
 		Label author = new Label("Author");
 		final TextField authorField = new TextField();
 		authorField.setOnAction(new EventHandler<ActionEvent>() {
@@ -47,6 +48,7 @@ public class PublicationFilters extends AdvancedFilters {
 	}
 	
 	public void name() throws SQLException{
+		map.put("Name", "");
 		ResultSet nameSet;
 		nameSet = db.doQuery("SELECT name FROM publication");
 		ObservableList<String> nameList = FXCollections.observableArrayList("");

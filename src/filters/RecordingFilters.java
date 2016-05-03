@@ -40,6 +40,7 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 
 	public void type() throws SQLException{
+		map.put("Type", "");
 		// Same as dance type?
 		ResultSet typeSet;
 		typeSet = db.doQuery("SELECT name FROM dancetype");
@@ -61,6 +62,7 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 	
 	public void medley() throws SQLException{
+		map.put("Medley Type", "");
 		// Medley Type
 		ResultSet medleyTypeSet;
 		medleyTypeSet = db.doQuery("SELECT description FROM medleytype");
@@ -82,6 +84,7 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 	
 	public void repetitions(){
+		map.put("Repetitions", "");
 		// Repetitions
 		Label repetitions = new Label("Repetitions");
 		final TextField repetitionsField = new TextField();
@@ -96,6 +99,7 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 	
 	public void bars(){
+		map.put("Bars", "");
 		// Bars
 		Label bars = new Label("Bars");
 		final TextField barsField = new TextField();
