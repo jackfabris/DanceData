@@ -221,7 +221,9 @@ public class SearchDataView {
 				albumTB.setSelected(true);
 				if (albumTitle.equals("")) search.setPromptText("Search by Album Title");
 				else {
+					//*****IM HERE AND EVERYTHING SUCKS******
 					search.setText(albumTitle);
+					System.out.println("Text: "+search.getText());
 				}
 				advSF.setText("Show Advanced Search Options For Album");
 				if(!state.equals("a")){

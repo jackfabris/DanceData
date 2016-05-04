@@ -3,7 +3,6 @@ package tables;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import database.Database;
@@ -159,10 +158,11 @@ public class RecordTable {
 		        			 ResultSet set;
 		        			 try {
 		        				 if(cell.getItem()!=null) {
-		        					 set = db.doQuery("SELECT * FROM "+ tableString + " WHERE id="+r.getId());
-		        					 cellInfo.set(set);
+		        					 //set = db.doQuery("SELECT * FROM "+ tableString + " WHERE id="+r.getId());
+		        					 set = db.getAllByIdFromTable(tableString, r.getId());
+		        					 cellInfo.set(set, tableString);
 		        				 }
-		        				 else cellInfo.set(null);
+		        				 else cellInfo.set(null, tableString);
 		        				 
 		        			 } catch (SQLException e) {
 		        				 e.printStackTrace();

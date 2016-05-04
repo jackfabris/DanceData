@@ -184,8 +184,7 @@ public class DanceFilters extends AdvancedFilters {
 		});
 		
 		final ComboBox<String> formationBool1 = new ComboBox<String>();
-		formationBool1.getItems().addAll("and", "or", "but not");
-		formationBool1.setValue("or");
+		formationBool1.getItems().addAll("and", "or", "not");
 		formationBool1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -208,8 +207,7 @@ public class DanceFilters extends AdvancedFilters {
 		});
 		
 		final ComboBox<String> formationBool2 = new ComboBox<String>();
-		formationBool2.getItems().addAll("and", "or", "but not");
-		formationBool2.setValue("or");
+		formationBool2.getItems().addAll("and", "or", "not");
 		formationBool2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -262,8 +260,7 @@ public class DanceFilters extends AdvancedFilters {
 		});
 		
 		final ComboBox<String> stepBool1 = new ComboBox<String>();
-		stepBool1.getItems().addAll("and", "or", "but not");
-		stepBool1.setValue("or");
+		stepBool1.getItems().addAll("and", "or", "not");
 		stepBool1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -286,8 +283,7 @@ public class DanceFilters extends AdvancedFilters {
 		});
 		
 		final ComboBox<String> stepBool2 = new ComboBox<String>();
-		stepBool2.getItems().addAll("and", "or", "but not");
-		stepBool2.setValue("or");
+		stepBool2.getItems().addAll("and", "or", "not");
 		stepBool2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
