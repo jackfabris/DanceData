@@ -7,11 +7,16 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import database.Database;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -115,10 +120,9 @@ public class CellInfo extends VBox{
 		albumInfo.put("Year: ", "productionyear");
 		albumInfo.put("Available: ", "isavailable");
 //		albumInfo.put("Tracks: ", value);	//QN
-		albumInfo.put("I Have: ", "ihave");
-		albumInfo.put("Tag: ", "tag");
 		
 		iterateInfo(albumInfo);
+		iHaveAndTag();
 	}
 	
 	private boolean isMedium(String medium){
@@ -133,10 +137,9 @@ public class CellInfo extends VBox{
 //		danceInfo.put("Steps: ", value);		//QN: all of the steps of a given dance id
 //		danceInfo.put("Tunes: ", value);		//QN
 //		danceInfo.put("Recordings: ", value);	//QN
-		danceInfo.put("I Have: ", "ihave");		
-		danceInfo.put("Tag: ", "tag");
 		
 		iterateInfo(danceInfo);
+		iHaveAndTag();
 	}
 
 	private void personCellInfo() throws SQLException {
@@ -183,10 +186,9 @@ public class CellInfo extends VBox{
 		publicationInfo.put("On Paper: ", "onpaper");
 		//publicationInfo.put("Dances: ", value); //QN
 		//publicationInfo.put("Tunes: ", value); //QN
-		publicationInfo.put("I Have: ", "ihave");
-		publicationInfo.put("Tag: ", "tag");
 		
 		iterateInfo(publicationInfo);
+		iHaveAndTag();
 	}
 
 	private void recordingCellInfo() throws SQLException {
@@ -198,6 +200,7 @@ public class CellInfo extends VBox{
 //		recordingInfo.put("Album: ", "album"); //QN
 		
 		iterateInfo(recordingInfo);
+		iHaveAndTag();
 	}
 
 	private void tuneCellInfo() throws SQLException {
@@ -208,10 +211,60 @@ public class CellInfo extends VBox{
 //		tuneInfo.put("Recordings: ", value);	//QN
 		
 		iterateInfo(tuneInfo);
+		iHaveAndTag(); //?
 	}
 	
 	public boolean isYesOrNo(String field){
 		return field.equals("isavailable") || field.equals("hasdances") || field.equals("hastunes") || field.equals("onpaper");
+	}
+	
+	public void iHaveAndTag() throws SQLException{
+		//I HAVE
+		Label iHave = new Label("I Have: ");
+		CheckBox cb = new CheckBox();
+		if(set.getString("ihave").equals("1")) {
+			cb.setSelected(true);
+		}
+		cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			//changed is called twice - problem?
+			public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
+				int id;
+				try {
+					id = Integer.parseInt(set.getString("id"));
+					if(!old_val && new_val) db.iHave(type, id);
+					else if(old_val && !new_val) db.iDontHave(type, id);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		grid.add(iHave, 0, gridY++);
+		grid.add(cb, 1, gridY-1);
+		
+		//TAG
+		Label tagCol = new Label("Tag: ");
+		final TextField tag = new TextField();
+		if(set.getString("tag") == null) tag.setText("");
+		else tag.setText(set.getString("tag"));
+		tag.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				int id;
+				try {
+					id = Integer.parseInt(set.getString("id"));
+					if(!tag.getText().equals("")) db.addTag(type, id, tag.getText());
+					else db.removeTag(type, id);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		grid.add(tagCol, 0, gridY++);
+		grid.add(tag, 1, gridY-1);
 	}
 
 	public void returnButton(){

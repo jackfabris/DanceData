@@ -234,6 +234,7 @@ public class RecordTable {
             	try {
             		if(!t.getNewValue().equals("")) db.addTag(tableString, r.getId(), t.getNewValue());
             		else db.removeTag(tableString, r.getId());
+            		r.setTag(t.getNewValue());
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

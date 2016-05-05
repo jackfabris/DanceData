@@ -159,14 +159,12 @@ public class SearchDataView {
 		albumTB.setId("toggle-button");
 
 		this.vBox.getChildren().add(navBtnBox);
-
+		
 		// Dance
 		danceTB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				danceTB.setSelected(true);
-				if (danceTitle.equals("")) search.setPromptText("Search by Dance Title");
-				else search.setPromptText(danceTitle);
 				advSF.setText("Show Advanced Search Options For Dance");
 				if(!state.equals("d")){
 					advSF.setSelected(false);
@@ -176,6 +174,8 @@ public class SearchDataView {
 				searchFiltersVisibility(danceFiltersVBox.isVisible(), false, false, false);
 				tableVisibility(true, false, false, false);
 				cellInfoVisibility(danceTable.getCellInfo().isVisible(), false, false, false);
+				if (danceTitle.equals("")) search.setPromptText("Search by Dance Title");
+				else search.setText(danceTitle);
 			}
 		});
 		// Publication
@@ -183,8 +183,6 @@ public class SearchDataView {
 			@Override
 			public void handle(ActionEvent arg0) {
 				publicationTB.setSelected(true);
-				if (publicationTitle.equals("")) search.setPromptText("Search by Publication Title");
-				else search.setPromptText(publicationTitle);
 				advSF.setText("Show Advanced Search Options For Publication");
 				if(!state.equals("p")){
 					advSF.setSelected(false);
@@ -194,6 +192,8 @@ public class SearchDataView {
 				searchFiltersVisibility(false, publicationFiltersVBox.isVisible(), false, false);
 				tableVisibility(false, true, false, false);
 				cellInfoVisibility(false, publicationTable.getCellInfo().isVisible(), false, false);
+				if (publicationTitle.equals("")) search.setPromptText("Search by Publication Title");
+				else search.setText(publicationTitle);
 			}
 		});
 		// Recording
@@ -201,8 +201,6 @@ public class SearchDataView {
 			@Override
 			public void handle(ActionEvent arg0) {
 				recordingTB.setSelected(true);
-				if (recordingTitle.equals("")) search.setPromptText("Search by Recording Title");
-				else search.setPromptText(recordingTitle);
 				advSF.setText("Show Advanced Search Options For Recording");
 				if(!state.equals("r")){
 					advSF.setSelected(false);
@@ -212,6 +210,8 @@ public class SearchDataView {
 				searchFiltersVisibility(false, false, recordingFiltersVBox.isVisible(), false);
 				tableVisibility(false, false, true, false);
 				cellInfoVisibility(false, false, recordingTable.getCellInfo().isVisible(), false);
+				if (recordingTitle.equals("")) search.setPromptText("Search by Recording Title");
+				else search.setText(recordingTitle);
 			}
 		});
 		// Album
@@ -219,12 +219,6 @@ public class SearchDataView {
 			@Override
 			public void handle(ActionEvent arg0) {
 				albumTB.setSelected(true);
-				if (albumTitle.equals("")) search.setPromptText("Search by Album Title");
-				else {
-					//*****IM HERE AND EVERYTHING SUCKS******
-					search.setText(albumTitle);
-					System.out.println("Text: "+search.getText());
-				}
 				advSF.setText("Show Advanced Search Options For Album");
 				if(!state.equals("a")){
 					advSF.setSelected(false);
@@ -234,6 +228,8 @@ public class SearchDataView {
 				searchFiltersVisibility(false, false, false, albumFiltersVBox.isVisible());
 				tableVisibility(false, false, false, true);
 				cellInfoVisibility(false, false, false, albumTable.getCellInfo().isVisible());
+				if (albumTitle.equals("")) search.setPromptText("Search by Album Title");
+				else search.setText(albumTitle);
 			}
 		});
 	}
