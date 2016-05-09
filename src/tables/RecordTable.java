@@ -229,7 +229,8 @@ public class RecordTable {
 			};
 		});
 		indexCol.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Record, String>>() {
-            @Override public void handle(TableColumn.CellEditEvent<Record, String> t) {
+            @Override 
+            public void handle(TableColumn.CellEditEvent<Record, String> t) {
             	Record r = ((Record)t.getTableView().getItems().get(t.getTablePosition().getRow()));
             	try {
             		if(!t.getNewValue().equals("")) db.addTag(tableString, r.getId(), t.getNewValue());

@@ -3,6 +3,7 @@ dance 4 GBJM
 dance 100 tag2
 dance 608 hey
 dance 862 hey
+dance 1092 Wedd
 dance 1615 hey
 dance 1670 tag1
 dance 1931 hey

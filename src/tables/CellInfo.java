@@ -14,7 +14,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -24,13 +23,11 @@ import javafx.scene.layout.VBox;
 public class CellInfo extends VBox{
 
 	private TableView<Record> table;
-	private String type; //change to Enumeration
+	private String type;
 	private ResultSet set; 
 	private GridPane grid;
-	private int gridY;
-	
-	//TESTING
-	Database db;
+	private int gridY, gridX, id, linkId;
+	private Database db;
 
 	public CellInfo(double spacing, TableView<Record> table) throws MalformedURLException, SQLException{
 		super(spacing);
@@ -61,8 +58,10 @@ public class CellInfo extends VBox{
 	public void set(ResultSet set, String type) throws SQLException{
 		format();
 		this.set = set;
+		id = Integer.parseInt(set.getString("id"));
 		this.type = type;
 		gridY = 0;
+		gridX = 0;
 		grid.getChildren().clear();
 		Label title = new Label(type.toUpperCase()+":");
 		title.setStyle("-fx-text-fill: #445878;"+
@@ -93,7 +92,8 @@ public class CellInfo extends VBox{
 			Label infoCol = new Label(info);
 			//Person Link
 			if(info != null && isPerson(cellInfo.get(col))){
-				personLink(info, infoCol);
+				linkId = Integer.parseInt(set.getString(cellInfo.get(col)));
+				personLink(infoCol, db.getPerson(linkId));
 			}
 			//1/0 to Yes/No
 			if(info != null && isYesOrNo(cellInfo.get(col))){
@@ -107,8 +107,20 @@ public class CellInfo extends VBox{
 //			}
 			grid.add(danceCol, 0, gridY++);
 			grid.add(infoCol, 1, gridY-1);
-			
-			//Probable can't do Query Needed things in here, might want to do ihave and index after!!!
+		}
+	}
+
+	public void iterateLists(String colName, String linkType, ResultSet list) throws SQLException{
+		gridY=1;
+		gridX+=2;
+		Label col = new Label(colName);
+		grid.add(col, gridX, gridY++);
+		gridY--;
+		while(list.next()){
+			Label infoCol = new Label();
+			linkId = Integer.parseInt(list.getString("id"));
+			recordingLink(infoCol, list.getString("name"));
+			grid.add(infoCol, gridX+1, gridY++);
 		}
 	}
 
@@ -116,15 +128,15 @@ public class CellInfo extends VBox{
 		LinkedHashMap<String, String> albumInfo = new LinkedHashMap<String, String>();
 		albumInfo.put("Name: ", "name");
 		albumInfo.put("Artist: ", "artist_id");	
-//		albumInfo.put("Medium: ", "medium");	//Do it yourself
+		//albumInfo.put("Medium: ", "medium");	//Do it yourself
 		albumInfo.put("Year: ", "productionyear");
 		albumInfo.put("Available: ", "isavailable");
-//		albumInfo.put("Tracks: ", value);	//QN
 		
 		iterateInfo(albumInfo);
 		iHaveAndTag();
+		iterateLists("Recordings: ", "recording", db.getRecordingsByAlbum(id));
 	}
-	
+
 	private boolean isMedium(String medium){
 		return medium.equals("iscd"); //2 others
 	}
@@ -139,6 +151,7 @@ public class CellInfo extends VBox{
 //		danceInfo.put("Recordings: ", value);	//QN
 		
 		iterateInfo(danceInfo);
+		//iterateLists("Formations: ", db.get)
 		iHaveAndTag();
 	}
 
@@ -152,29 +165,27 @@ public class CellInfo extends VBox{
 		//A person should have the things they've "done"
 	}
 	
-	public boolean isPerson(String person){
-		return person.equals("devisor_id") || person.equals("artist_id");
-	}
-	
-	public void personLink(String info, Label infoCol) throws SQLException{
-		final int id = Integer.parseInt(info);
-		infoCol.setText(db.getPerson(id).getString("name"));
+	public void personLink(Label infoCol, ResultSet name) throws SQLException{
+		infoCol.setText(name.getString("name"));
 		infoCol.setStyle("-fx-text-fill: blue;");
-    	infoCol.setUnderline(true);
-    	
-    	infoCol.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-        	 @Override
-        	 public void handle(MouseEvent event) {
-        		 if (event.getClickCount() > 1) {
-        			 try {
-        				ResultSet set = db.getPerson(id);
+		infoCol.setUnderline(true);
+		infoCol.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (event.getClickCount() > 1) {
+					try {
+						ResultSet set = db.getPerson(linkId);
 						set(set, "person");
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
-        		 }
-        	 }
-         });
+				}
+			}
+		});
+	}
+	
+	public boolean isPerson(String person){
+		return person.equals("devisor_id") || person.equals("artist_id");
 	}
 	
 	private void publicationCellInfo() throws SQLException {
@@ -198,9 +209,27 @@ public class CellInfo extends VBox{
 //		recordingInfo.put("Two Cords: ", value);
 //		recordingInfo.put("Tunes: ", value); //QN
 //		recordingInfo.put("Album: ", "album"); //QN
-		
 		iterateInfo(recordingInfo);
 		iHaveAndTag();
+	}
+	
+	public void recordingLink(Label infoCol, String name) throws SQLException{
+		infoCol.setText(name);
+		infoCol.setStyle("-fx-text-fill: blue;");
+		infoCol.setUnderline(true);
+		infoCol.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (event.getClickCount() > 1) {
+					try {
+						ResultSet set = db.getAllByIdFromTable("recording", linkId);
+						set(set, "recording");
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	private void tuneCellInfo() throws SQLException {
@@ -226,11 +255,8 @@ public class CellInfo extends VBox{
 			cb.setSelected(true);
 		}
 		cb.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			//changed is called twice - problem?
 			public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
-				int id;
 				try {
-					id = Integer.parseInt(set.getString("id"));
 					if(!old_val && new_val) db.iHave(type, id);
 					else if(old_val && !new_val) db.iDontHave(type, id);
 				} catch (NumberFormatException e) {
