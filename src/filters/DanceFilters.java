@@ -5,6 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Iterator;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +15,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 
 /**
  * DanceFilters is a VBox which is placed on the Search page. It contains
@@ -22,8 +26,8 @@ import javafx.scene.control.TextField;
  */
 public class DanceFilters extends AdvancedFilters {
 
-	private String[] formationStringArray = {"", "or", "", "or", ""};
-	private String[] stepsStringArray = {"", "or", "", "or", ""};
+	private String[] formationStringArray = {"", "", "", "", ""};
+	private String[] stepsStringArray = {"", "", "", "", ""};
 	
 	/**
 	 * Create the VBox which will contain the filters for a dance search
@@ -40,20 +44,7 @@ public class DanceFilters extends AdvancedFilters {
 		steps();
 		buttonGrid();
 	}
-	
-	public void printMap(){
-		//TESTING
-		Iterator<String> i = map.keySet().iterator();
-		while(i.hasNext()){
-			String x = i.next();
-			System.out.println(x+", "+map.get(x));
-		}
-		System.out.println();
-	}
-		
-		// https://docs.oracle.com/javafx/2/ui_controls/combo-box.htm#BABDBJBD
-		// Make observable list using database query to get options
-		
+			
 	public void type() throws SQLException{
 		map.put("Type", "");
 		// Type
@@ -70,8 +61,6 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				map.put("Type", typeOptions.getValue());
-
-				//printMap();
 			}
 		});
 		grid.add(type, 0, 0);
@@ -83,14 +72,22 @@ public class DanceFilters extends AdvancedFilters {
 		// Bars
 		Label bars = new Label("Bars");
 		final TextField barsField = new TextField();
+		barsField.setTooltip(new Tooltip("Use <, <=, >, >= before the number of bars \n"
+				+ "to indicate less, equal, or more bars"));
+		Tooltip.install(barsField, barsField.getTooltip());
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				map.put("Bars", barsField.getText());
-
-				//printMap();
+				callQuery();
 			}
 		});
+       barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(!newValue.booleanValue())
+                	map.put("Bars", barsField.getText());
+            }
+        });
 		grid.add(bars, 0, 1);
 		grid.add(barsField, 1, 1);
 	}
@@ -152,10 +149,15 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				map.put("Author", authorField.getText());
-
-				//printMap();
+				callQuery();
 			}
 		});
+       authorField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(!newValue.booleanValue())
+                	map.put("Author", authorField.getText());
+            }
+        });
 		grid.add(author, 0, 4);
 		grid.add(authorField, 1, 4);
 	}
@@ -173,13 +175,18 @@ public class DanceFilters extends AdvancedFilters {
 		Label formations = new Label("Formations");
 		
 		final ComboBox<String> formationOptions1 = new ComboBox<String>(formationList);
+		formationOptions1.setTooltip(new Tooltip("Fill out formations in order. \n"
+				+ "If you need to indicate more than one formation, \n"
+				+ "indicate whether you want both formations (and), \n"
+				+ "one or the other or both (or), \n"
+				+ "or whether you do not want the second formation (not). \n"
+				+ "Choose the blank line to clear the formation or combination"));
+		Tooltip.install(formationOptions1, formationOptions1.getTooltip());
 		formationOptions1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationOptions1.getValue(), 0);
 				map.put("Formations", arrayToString(formationStringArray));
-
-				//printMap();
 			}
 		});
 		
@@ -190,8 +197,6 @@ public class DanceFilters extends AdvancedFilters {
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationBool1.getValue(), 1);
 				map.put("Formations", arrayToString(formationStringArray));
-
-				//printMap();
 			}
 		});
 		
@@ -201,8 +206,6 @@ public class DanceFilters extends AdvancedFilters {
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationOptions2.getValue(), 2);
 				map.put("Formations", arrayToString(formationStringArray));
-
-				//printMap();
 			}
 		});
 		
@@ -213,8 +216,6 @@ public class DanceFilters extends AdvancedFilters {
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationBool2.getValue(), 3);
 				map.put("Formations", arrayToString(formationStringArray));
-
-				//printMap();
 			}
 		});
 		
@@ -224,8 +225,6 @@ public class DanceFilters extends AdvancedFilters {
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationOptions3.getValue(), 4);
 				map.put("Formations", arrayToString(formationStringArray));
-				
-				//printMap();
 			}
 		});
 		
@@ -249,13 +248,18 @@ public class DanceFilters extends AdvancedFilters {
 		Collections.sort(stepList);
 		Label steps = new Label("Steps");
 		final ComboBox<String> stepOptions1 = new ComboBox<String>(stepList);
+		stepOptions1.setTooltip(new Tooltip("Fill out steps in order. \n"
+				+ "If you need to indicate more than one step, \n"
+				+ "indicate whether you want both steps (and), \n"
+				+ "one or the other or both (or), \n"
+				+ "or whether you do not want the second step (not). \n"
+				+ "Choose the blank line to clear the step or combination"));
+		Tooltip.install(stepOptions1, stepOptions1.getTooltip());
 		stepOptions1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepOptions1.getValue(), 0);
 				map.put("Steps", arrayToString(stepsStringArray));
-
-				//printMap();
 			}
 		});
 		
@@ -266,8 +270,6 @@ public class DanceFilters extends AdvancedFilters {
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepBool1.getValue(), 1);
 				map.put("Steps", arrayToString(stepsStringArray));
-
-				//printMap();
 			}
 		});
 		
@@ -277,8 +279,6 @@ public class DanceFilters extends AdvancedFilters {
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepOptions2.getValue(), 2);
 				map.put("Steps", arrayToString(stepsStringArray));
-
-				//printMap();
 			}
 		});
 		
@@ -289,8 +289,6 @@ public class DanceFilters extends AdvancedFilters {
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepBool2.getValue(), 3);
 				map.put("Steps", arrayToString(stepsStringArray));
-
-				//printMap();
 			}
 		});
 		
@@ -300,8 +298,6 @@ public class DanceFilters extends AdvancedFilters {
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepOptions3.getValue(), 4);
 				map.put("Steps", arrayToString(stepsStringArray));
-				
-				//printMap();
 			}
 		});
 		
@@ -320,7 +316,7 @@ public class DanceFilters extends AdvancedFilters {
 	public String arrayToString(String[] array){
 		String sb = "";
 		for(int i=0; i < array.length; i++){
-			sb+=array[i]+" ";
+			sb+="'" + array[i]+" ";
 		}
 		return sb;
 	}

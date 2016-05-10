@@ -4,6 +4,9 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -41,8 +44,15 @@ public class PublicationFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				map.put("Author", authorField.getText());
+				callQuery();
 			}
 		});
+       authorField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(!newValue.booleanValue())
+                	map.put("Author", authorField.getText());
+            }
+        });
 		grid.add(author, 0, 0);
 		grid.add(authorField, 1, 0);
 	}

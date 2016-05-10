@@ -302,29 +302,40 @@ public class SearchDataView {
 	}
 	
 	public void searchFilters() throws SQLException, MalformedURLException {
-		DanceFilters df = new DanceFilters();
+		final DanceFilters df = new DanceFilters();
 		danceFiltersVBox = df.getFiltersVBox();
 		this.vBox.getChildren().add(danceFiltersVBox);
 		danceFiltersVBox.managedProperty().bind(danceFiltersVBox.visibleProperty());
 		danceFiltersVBox.setVisible(false);
 
-		RecordingFilters rf = new RecordingFilters();
+		final RecordingFilters rf = new RecordingFilters();
 		recordingFiltersVBox = rf.getFiltersVBox();
 		this.vBox.getChildren().add(recordingFiltersVBox);
 		recordingFiltersVBox.managedProperty().bind(recordingFiltersVBox.visibleProperty());
 		recordingFiltersVBox.setVisible(false);
 
-		AlbumFilters af = new AlbumFilters();
+		final AlbumFilters af = new AlbumFilters();
 		albumFiltersVBox = af.getFiltersVBox();
 		this.vBox.getChildren().add(albumFiltersVBox);
 		albumFiltersVBox.managedProperty().bind(albumFiltersVBox.visibleProperty());
 		albumFiltersVBox.setVisible(false);
 
-		PublicationFilters pf = new PublicationFilters();
+		final PublicationFilters pf = new PublicationFilters();
 		publicationFiltersVBox = pf.getFiltersVBox();
 		this.vBox.getChildren().add(publicationFiltersVBox);
 		publicationFiltersVBox.managedProperty().bind(publicationFiltersVBox.visibleProperty());
 		publicationFiltersVBox.setVisible(false);
+		
+		vBox.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent arg0){
+				if(arg0.getCode() == KeyCode.ENTER){
+					if(state.equals("d") && df.getSearchBool()) df.callQuery();
+					else if(state.equals("r") && rf.getSearchBool()) rf.callQuery();
+					else if(state.equals("a") && af.getSearchBool()) af.callQuery();
+					else if(state.equals("p") && pf.getSearchBool()) pf.callQuery();
+				}
+			}
+		});
 	}
 	
 	public void setUpTables() throws MalformedURLException, SQLException{

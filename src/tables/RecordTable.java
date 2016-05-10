@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+
 import database.Database;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -44,6 +46,8 @@ public class RecordTable {
 	private CellInfo cellInfo;
 	private LinkedHashMap<String, String> colNameField;
 	private String tableString, state;
+	//LL
+	private LinkedList<CellInfo> cells;
 	
 	public static final int rowsPerPage = 18;
 	
@@ -55,10 +59,14 @@ public class RecordTable {
 	 * @throws MalformedURLException 
 	 */
 	public RecordTable(String tableString, String state) throws SQLException, MalformedURLException {
+		//LL
+		cells = new LinkedList<CellInfo>();
+		
 		this.tableString = tableString;
 		this.state = state;
 		db = new Database();
 		table = new TableView<Record>();
+		//LL
 		cellInfo = new CellInfo(10, table);
 		cellInfo.setVisible(false);
 		colNameField = new LinkedHashMap<String, String>();
@@ -158,12 +166,16 @@ public class RecordTable {
 		        			 ResultSet set;
 		        			 try {
 		        				 if(cell.getItem()!=null) {
-		        					 //set = db.doQuery("SELECT * FROM "+ tableString + " WHERE id="+r.getId());
 		        					 set = db.getAllByIdFromTable(tableString, r.getId());
 		        					 cellInfo.set(set, tableString);
+		        					 
+		        					 //LL
+		        					 //cells.add(new CellInfo(10, table));
+		        					 //cells.getFirst().set(set, tableString);
+		        					 //cellInfo = cells.getFirst();
 		        				 }
 		        				 else cellInfo.set(null, tableString);
-		        				 
+		        				 //LL - Malformed
 		        			 } catch (SQLException e) {
 		        				 e.printStackTrace();
 		        			 }
@@ -292,5 +304,13 @@ public class RecordTable {
 	 */
 	public VBox getCellInfo(){
 		return cellInfo;
+	}
+	
+	//LL
+	public void setCellInfo(CellInfo cellInfo){
+		this.cellInfo = cellInfo;
+	}
+	public LinkedList<CellInfo> getCells(){
+		return cells;
 	}
 }

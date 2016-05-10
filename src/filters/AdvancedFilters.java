@@ -2,6 +2,7 @@ package filters;
 
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import database.Database;
@@ -10,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -19,6 +21,7 @@ public class AdvancedFilters {
 	protected GridPane grid;
 	protected LinkedHashMap<String, String> map;
 	protected Database db;
+	protected boolean searchBool;
 
 	public AdvancedFilters() throws MalformedURLException, SQLException{
 		grid = new GridPane();
@@ -27,6 +30,17 @@ public class AdvancedFilters {
 		db = new Database();
 		map = new LinkedHashMap<String, String>();
 		setUpFilters();
+		searchBool = false;
+	}
+	
+	public void printMap(){
+		//TESTING
+		Iterator<String> i = map.keySet().iterator();
+		while(i.hasNext()){
+			String x = i.next();
+			System.out.println(x+", "+map.get(x));
+		}
+		System.out.println();
 	}
 
 	public void setUpFilters(){
@@ -40,9 +54,21 @@ public class AdvancedFilters {
 		filtersVBox.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent arg0){
 				if(arg0.getCode() == KeyCode.ENTER){
-					//QUERY CALL
-					System.out.println("QUERY CALL ENTER!");
+					callQuery();
 				}
+			}
+		});
+		//MOUSE HOVER
+		filtersVBox.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				searchBool = true;
+			}
+		});
+		filtersVBox.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				searchBool = false;
 			}
 		});
 	}
@@ -52,7 +78,6 @@ public class AdvancedFilters {
 		goBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				//QUERY CALL
 				callQuery();	
 			}
 		});
@@ -69,7 +94,8 @@ public class AdvancedFilters {
 	}
 	
 	public void callQuery(){
-		System.out.println("QUERY CALL BUTTON!");
+		System.out.println("QUERY CALL!");
+		printMap();
 	}
 
 	/**
@@ -78,6 +104,10 @@ public class AdvancedFilters {
 	 */
 	public VBox getFiltersVBox() {
 		return this.filtersVBox;
+	}
+	
+	public boolean getSearchBool(){
+		return searchBool;
 	}
 
 }

@@ -28,6 +28,9 @@ public class CellInfo extends VBox{
 	private GridPane grid;
 	private int gridY, gridX, id, linkId;
 	private Database db;
+	
+	//LL
+	//private RecordTable recTab; //add to constructor
 
 	public CellInfo(double spacing, TableView<Record> table) throws MalformedURLException, SQLException{
 		super(spacing);
@@ -111,7 +114,7 @@ public class CellInfo extends VBox{
 	}
 
 	public void iterateLists(String colName, String linkType, ResultSet list) throws SQLException{
-		gridY=1;
+		gridY=3;
 		gridX+=2;
 		Label col = new Label(colName);
 		grid.add(col, gridX, gridY++);
@@ -132,8 +135,8 @@ public class CellInfo extends VBox{
 		albumInfo.put("Year: ", "productionyear");
 		albumInfo.put("Available: ", "isavailable");
 		
-		iterateInfo(albumInfo);
 		iHaveAndTag();
+		iterateInfo(albumInfo);
 		iterateLists("Recordings: ", "recording", db.getRecordingsByAlbum(id));
 	}
 
@@ -150,9 +153,9 @@ public class CellInfo extends VBox{
 //		danceInfo.put("Tunes: ", value);		//QN
 //		danceInfo.put("Recordings: ", value);	//QN
 		
+		iHaveAndTag();
 		iterateInfo(danceInfo);
 		//iterateLists("Formations: ", db.get)
-		iHaveAndTag();
 	}
 
 	private void personCellInfo() throws SQLException {
@@ -176,6 +179,11 @@ public class CellInfo extends VBox{
 					try {
 						ResultSet set = db.getPerson(linkId);
 						set(set, "person");
+						
+						//LL
+						//CellInfo linkCell = new CellInfo(10, table);
+						
+						//LL - malformed
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
@@ -198,8 +206,8 @@ public class CellInfo extends VBox{
 		//publicationInfo.put("Dances: ", value); //QN
 		//publicationInfo.put("Tunes: ", value); //QN
 		
-		iterateInfo(publicationInfo);
 		iHaveAndTag();
+		iterateInfo(publicationInfo);
 	}
 
 	private void recordingCellInfo() throws SQLException {
@@ -209,8 +217,9 @@ public class CellInfo extends VBox{
 //		recordingInfo.put("Two Cords: ", value);
 //		recordingInfo.put("Tunes: ", value); //QN
 //		recordingInfo.put("Album: ", "album"); //QN
-		iterateInfo(recordingInfo);
 		iHaveAndTag();
+		iterateInfo(recordingInfo);
+		
 	}
 	
 	public void recordingLink(Label infoCol, String name) throws SQLException{
@@ -240,7 +249,6 @@ public class CellInfo extends VBox{
 //		tuneInfo.put("Recordings: ", value);	//QN
 		
 		iterateInfo(tuneInfo);
-		iHaveAndTag(); //?
 	}
 	
 	public boolean isYesOrNo(String field){

@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 
 /**
  * RecordingFilters is a VBox which is placed on the Search page. It contains
@@ -84,12 +87,21 @@ public class RecordingFilters extends AdvancedFilters {
 		// Repetitions
 		Label repetitions = new Label("Repetitions");
 		final TextField repetitionsField = new TextField();
+		repetitionsField.setTooltip(new Tooltip("Use <, <=, >, >= before the number of repetitions \nto indicate less, equal, or more repetitions"));
+		Tooltip.install(repetitionsField, repetitionsField.getTooltip());
 		repetitionsField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				map.put("Repetitions", repetitionsField.getText());
+				callQuery();
 			}
 		});
+        repetitionsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(!newValue.booleanValue())
+                	map.put("Repetitions", repetitionsField.getText());
+            }
+        });
 		grid.add(repetitions, 0, 2);
 		grid.add(repetitionsField, 1, 2);
 	}
@@ -99,12 +111,21 @@ public class RecordingFilters extends AdvancedFilters {
 		// Bars
 		Label bars = new Label("Bars");
 		final TextField barsField = new TextField();
+		barsField.setTooltip(new Tooltip("Use <, <=, >, >= before number of bars \nto indicate less, equal, or more bars"));
+		Tooltip.install(barsField, barsField.getTooltip());
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				map.put("Bars", barsField.getText());
+				callQuery();
 			}
 		});
+       barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(!newValue.booleanValue())
+                	map.put("Bars", barsField.getText());
+            }
+        });
 		grid.add(bars, 0, 3);
 		grid.add(barsField, 1, 3);
 	}
