@@ -18,15 +18,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 public class Home {
 	
 	private VBox homeVBox;
 	private Database db;
+	private TextFormatter tf;
 
 	public Home() throws SQLException, IOException{
 		homeVBox = new VBox(10);
-		db = new Database();	
+		db = new Database();
+		tf = new TextFormatter();
 		lastUpdate();
 		setUp();
 	}
@@ -98,11 +101,16 @@ public class Home {
 		homeTextVBox.getChildren().add(welcome);
 		
 		// Read the content from "home.txt" to display on home screen
+//		String workingDir = System.getProperty("user.dir");
+//		Path path = Paths.get(workingDir + "/src/views/home.txt");
+//		Text text = new Text(readFile(path, Charset.defaultCharset()));
+//		text.wrappingWidthProperty().bind(Main.sceneWidthProp.subtract(15));
+//		homeTextVBox.getChildren().add(text);
+		
 		String workingDir = System.getProperty("user.dir");
-		Path path = Paths.get(workingDir + "/src/views/home.txt");
-		Text text = new Text(readFile(path, Charset.defaultCharset()));
-		text.wrappingWidthProperty().bind(Main.sceneWidthProp.subtract(15));
-		homeTextVBox.getChildren().add(text);
+		String path = workingDir + "/src/views/home.txt";
+		TextFlow homeTextFlow = tf.createTextFlow(path);
+		homeTextVBox.getChildren().add(homeTextFlow);
 		
 		this.getHomeVBox().getChildren().add(homeTextVBox);
 	}

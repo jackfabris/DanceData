@@ -5,9 +5,9 @@ This application was inspired by the GhillieTracks program created by Patty Lind
 
 GhillieTracks has 2 main functions:
 
-DanceData Search - Search DanceData without being connected to the Internet, allowing access to the data from a laptop in a classroom environment. Also provides the capability of marking dances, publications, albums, and tunes as "I Have" similar to the original DanceData application.
+[b]DanceData Search[/b] - Search DanceData without being connected to the Internet, allowing access to the data from a laptop in a classroom environment. Also provides the capability of marking dances, publications, albums, and tunes as "I Have" similar to the original DanceData application.
 
-Collections - View a list of dances, publications, albums, and tunes that you have marked as "I Have."
+[b]Collections[/b] - View a list of dances, publications, albums, and tunes that you have marked as "I Have."
 
 
 Copyright 2016 University of Delaware
