@@ -89,6 +89,7 @@ public class DatabaseTest {
 				System.out.println("DONE");
 				
 				System.out.print("Testing searchByTableName function... ");
+
 				currentMethod = "searchByTableName";
 				ResultSet searchTableByNameTest = db.searchTableByName("dance", searchByTableNameTestValue, false);
 
