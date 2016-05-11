@@ -134,12 +134,11 @@ public class CellInfo extends VBox{
 	}
 
 	private void albumCellInfo() throws SQLException {
-		db.printResults(db.doQuery("SELECT * FROM album WHERE id=1"));
 		LinkedHashMap<String, String> albumInfo = new LinkedHashMap<String, String>();
 		albumInfo.put("Name: ", "name");
+		//albumInfo.put("Artist: ", "artist_id");	
 		albumInfo.put("Year: ", "productionyear");
 		albumInfo.put("Available: ", "isavailable");
-		albumInfo.put("Artist: ", "artist_id");	
 		iHaveAndTag();
 		iterateInfo(albumInfo);
 		

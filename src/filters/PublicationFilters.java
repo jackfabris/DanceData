@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import views.SearchDataView;
 
 /**
  * PublicationFilters is a VBox which is placed on the Search page. It contains
@@ -29,15 +30,15 @@ public class PublicationFilters extends AdvancedFilters {
 	 * @throws SQLException 
 	 * @throws MalformedURLException 
 	 */
-	public PublicationFilters() throws SQLException, MalformedURLException {
-		super();
+	public PublicationFilters(SearchDataView sc) throws SQLException, MalformedURLException {
+		super(sc, "publication");
 		author();
 		name();
 		buttonGrid();
 	}
 	
 	public void author(){
-		map.put("Author", "");
+		map.put("author", ""); //artist_id?
 		Label author = new Label("Author");
 		final TextField authorField = new TextField();
 		authorField.setOnAction(new EventHandler<ActionEvent>() {
@@ -50,7 +51,7 @@ public class PublicationFilters extends AdvancedFilters {
        authorField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue.booleanValue())
-                	map.put("Author", authorField.getText());
+                	map.put("author", authorField.getText());
             }
         });
 		grid.add(author, 0, 0);
@@ -58,7 +59,7 @@ public class PublicationFilters extends AdvancedFilters {
 	}
 	
 	public void name() throws SQLException{
-		map.put("Name", "");
+		map.put("name", "");
 		ResultSet nameSet;
 		nameSet = db.doQuery("SELECT name FROM publication");
 		ObservableList<String> nameList = FXCollections.observableArrayList("");
@@ -71,7 +72,7 @@ public class PublicationFilters extends AdvancedFilters {
 		nameOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Name", nameOptions.getValue());
+				map.put("name", nameOptions.getValue());
 			}
 		});
 		grid.add(name, 0, 1);

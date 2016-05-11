@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.Iterator;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,6 +15,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import views.SearchDataView;
 
 /**
  * DanceFilters is a VBox which is placed on the Search page. It contains
@@ -33,8 +33,8 @@ public class DanceFilters extends AdvancedFilters {
 	 * Create the VBox which will contain the filters for a dance search
 	 * @throws SQLException
 	 */
-	public DanceFilters() throws SQLException, MalformedURLException {
-		super();
+	public DanceFilters(SearchDataView sc) throws SQLException, MalformedURLException {
+		super(sc, "dance");
 		type();
 		bars();
 		couples();
@@ -46,7 +46,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 			
 	public void type() throws SQLException{
-		map.put("Type", "");
+		map.put("type", "");
 		// Type
 		ResultSet typesSet;
 		typesSet = db.doQuery("SELECT name FROM dancetype");
@@ -60,7 +60,7 @@ public class DanceFilters extends AdvancedFilters {
 		typeOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Type", typeOptions.getValue());
+				map.put("type", typeOptions.getValue());
 			}
 		});
 		grid.add(type, 0, 0);
@@ -68,7 +68,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void bars(){
-		map.put("Bars", "");
+		map.put("bars", "");
 		// Bars
 		Label bars = new Label("Bars");
 		final TextField barsField = new TextField();
@@ -78,14 +78,14 @@ public class DanceFilters extends AdvancedFilters {
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Bars", barsField.getText());
+				map.put("bars", barsField.getText());
 				callQuery();
 			}
 		});
        barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue.booleanValue())
-                	map.put("Bars", barsField.getText());
+                	map.put("bars", barsField.getText());
             }
         });
 		grid.add(bars, 0, 1);
@@ -93,7 +93,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void couples() throws SQLException{
-		map.put("Couples", "");
+		map.put("couples", "");
 		// Couples
 		ResultSet couplesSet;
 		couplesSet = db.doQuery("SELECT name FROM couples");
@@ -107,9 +107,7 @@ public class DanceFilters extends AdvancedFilters {
 		couplesOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Couples", couplesOptions.getValue());
-
-				//printMap();
+				map.put("couples", couplesOptions.getValue());
 			}
 		});
 		grid.add(couples, 0, 2);
@@ -117,7 +115,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void setShape() throws SQLException{
-		map.put("Set Shape", "");
+		map.put("shape", "");
 		// Set Shape
 		ResultSet setShapeSet;
 		setShapeSet = db.doQuery("SELECT name FROM shape");
@@ -131,9 +129,7 @@ public class DanceFilters extends AdvancedFilters {
 		setShapeOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Set Shape", setShapeOptions.getValue());
-
-				//printMap();
+				map.put("shape", setShapeOptions.getValue());
 			}
 		});
 		grid.add(setShape, 0, 3);
@@ -141,21 +137,21 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void author(){
-		map.put("Author", "");
+		map.put("author", ""); //devisor_id?
 		// Author
 		Label author = new Label("Author");
 		final TextField authorField = new TextField();
 		authorField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Author", authorField.getText());
+				map.put("author", authorField.getText());
 				callQuery();
 			}
 		});
        authorField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue.booleanValue())
-                	map.put("Author", authorField.getText());
+                	map.put("author", authorField.getText());
             }
         });
 		grid.add(author, 0, 4);
@@ -163,7 +159,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void formations() throws SQLException{
-		map.put("Formations", "");
+		map.put("formation", "");
 		// Formations
 		ResultSet formationSet;
 		formationSet = db.doQuery("SELECT name FROM formation");
@@ -186,7 +182,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationOptions1.getValue(), 0);
-				map.put("Formations", arrayToString(formationStringArray));
+				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
 		
@@ -196,7 +192,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationBool1.getValue(), 1);
-				map.put("Formations", arrayToString(formationStringArray));
+				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
 		
@@ -205,7 +201,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationOptions2.getValue(), 2);
-				map.put("Formations", arrayToString(formationStringArray));
+				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
 		
@@ -215,7 +211,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationBool2.getValue(), 3);
-				map.put("Formations", arrayToString(formationStringArray));
+				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
 		
@@ -224,7 +220,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(formationStringArray, formationOptions3.getValue(), 4);
-				map.put("Formations", arrayToString(formationStringArray));
+				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
 		

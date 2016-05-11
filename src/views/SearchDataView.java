@@ -302,25 +302,25 @@ public class SearchDataView {
 	}
 	
 	public void searchFilters() throws SQLException, MalformedURLException {
-		final DanceFilters df = new DanceFilters();
+		final DanceFilters df = new DanceFilters(this);
 		danceFiltersVBox = df.getFiltersVBox();
 		this.vBox.getChildren().add(danceFiltersVBox);
 		danceFiltersVBox.managedProperty().bind(danceFiltersVBox.visibleProperty());
 		danceFiltersVBox.setVisible(false);
 
-		final RecordingFilters rf = new RecordingFilters();
+		final RecordingFilters rf = new RecordingFilters(this);
 		recordingFiltersVBox = rf.getFiltersVBox();
 		this.vBox.getChildren().add(recordingFiltersVBox);
 		recordingFiltersVBox.managedProperty().bind(recordingFiltersVBox.visibleProperty());
 		recordingFiltersVBox.setVisible(false);
 
-		final AlbumFilters af = new AlbumFilters();
+		final AlbumFilters af = new AlbumFilters(this);
 		albumFiltersVBox = af.getFiltersVBox();
 		this.vBox.getChildren().add(albumFiltersVBox);
 		albumFiltersVBox.managedProperty().bind(albumFiltersVBox.visibleProperty());
 		albumFiltersVBox.setVisible(false);
 
-		final PublicationFilters pf = new PublicationFilters();
+		final PublicationFilters pf = new PublicationFilters(this);
 		publicationFiltersVBox = pf.getFiltersVBox();
 		this.vBox.getChildren().add(publicationFiltersVBox);
 		publicationFiltersVBox.managedProperty().bind(publicationFiltersVBox.visibleProperty());
@@ -379,8 +379,28 @@ public class SearchDataView {
 		return vBox;
 	}
 
-	//GETTERS FOR TESTING
+
 	public VBox getDanceFiltersVBox() {return danceFiltersVBox;}
+	public String getDanceTitle() {
+		return danceTitle;
+	}
+
+	public String getPublicationTitle() {
+		return publicationTitle;
+	}
+
+	public String getRecordingTitle() {
+		return recordingTitle;
+	}
+
+	public String getAlbumTitle() {
+		return albumTitle;
+	}
+
+	public boolean isCollection() {
+		return isCollection;
+	}
+
 	public VBox getRecordingFiltersVBox() {return recordingFiltersVBox;}
 	public VBox getAlbumFiltersVBox() {return albumFiltersVBox;}
 	public VBox getPublicationFiltersVBox() {return publicationFiltersVBox;}

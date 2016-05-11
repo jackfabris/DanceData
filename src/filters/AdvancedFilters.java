@@ -1,6 +1,7 @@
 package filters;
 
 import java.net.MalformedURLException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,6 +15,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import tables.RecordTable;
+import views.SearchDataView;
 
 public class AdvancedFilters {
 
@@ -22,8 +25,12 @@ public class AdvancedFilters {
 	protected LinkedHashMap<String, String> map;
 	protected Database db;
 	protected boolean searchBool;
+	protected SearchDataView SearchCollection;
+	protected String table;
 
-	public AdvancedFilters() throws MalformedURLException, SQLException{
+	public AdvancedFilters(SearchDataView sc, String table) throws MalformedURLException, SQLException{
+		this.SearchCollection = sc;
+		this.table = table;
 		grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
@@ -94,8 +101,28 @@ public class AdvancedFilters {
 	}
 	
 	public void callQuery(){
-		System.out.println("QUERY CALL!");
+		//have sub classes overide call query
 		printMap();
+		String name = "";
+		if(table.equals("dance")) name = SearchCollection.getDanceTitle();
+		else if(table.equals("album")) name = SearchCollection.getAlbumTitle();
+		else if(table.equals("publication")) name = SearchCollection.getPublicationTitle();
+		else if(table.equals("recording")) name = SearchCollection.getRecordingTitle();
+
+		try {
+			//Result set data = db.advancedTableSearch(table, name, map, SearchCollection.isCollection());
+			ResultSet data = db.searchTableByName(table, "dog", SearchCollection.isCollection());
+			RecordTable danceTable = SearchCollection.getDanceTable();
+			RecordTable albumTable = SearchCollection.getAlbumTable();
+			RecordTable publicationTable = SearchCollection.getPublicationTable();
+			RecordTable recordingTable = SearchCollection.getRecordingTable();
+			if(table.equals("dance")) danceTable.setTableData(danceTable.populate(data));
+			else if(table.equals("album")) albumTable.setTableData(albumTable.populate(data));
+			else if(table.equals("publication")) publicationTable.setTableData(publicationTable.populate(data));
+			else if(table.equals("recording")) recordingTable.setTableData(recordingTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

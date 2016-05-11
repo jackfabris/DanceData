@@ -15,6 +15,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import views.SearchDataView;
 
 /**
  * RecordingFilters is a VBox which is placed on the Search page. It contains
@@ -29,8 +30,8 @@ public class RecordingFilters extends AdvancedFilters {
 	 * Create the VBox which will contain the filters for a recording search
 	 * @throws SQLException
 	 */
-	public RecordingFilters() throws SQLException, MalformedURLException {
-		super();
+	public RecordingFilters(SearchDataView sc) throws SQLException, MalformedURLException {
+		super(sc, "recording");
 		type();
 		medley();
 		repetitions();
@@ -39,7 +40,7 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 
 	public void type() throws SQLException{
-		map.put("Type", "");
+		map.put("type", "");
 		// Same as dance type?
 		ResultSet typeSet;
 		typeSet = db.doQuery("SELECT name FROM dancetype");
@@ -53,7 +54,7 @@ public class RecordingFilters extends AdvancedFilters {
 		typeOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Type", typeOptions.getValue());
+				map.put("type", typeOptions.getValue());
 			}
 		});
 		grid.add(type, 0, 0);
@@ -61,7 +62,7 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 	
 	public void medley() throws SQLException{
-		map.put("Medley Type", "");
+		map.put("medleytype", "");
 		// Medley Type
 		ResultSet medleyTypeSet;
 		medleyTypeSet = db.doQuery("SELECT description FROM medleytype");
@@ -75,7 +76,7 @@ public class RecordingFilters extends AdvancedFilters {
 		medleyTypeOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Medley Type", medleyTypeOptions.getValue());
+				map.put("medleytype", medleyTypeOptions.getValue());
 			}
 		});
 		grid.add(medleyType, 0, 1);
@@ -83,7 +84,7 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 	
 	public void repetitions(){
-		map.put("Repetitions", "");
+		map.put("repetitions", "");
 		// Repetitions
 		Label repetitions = new Label("Repetitions");
 		final TextField repetitionsField = new TextField();

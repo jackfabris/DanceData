@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import views.SearchDataView;
 
 /**
  * AlbumFilters is a VBox which is placed on the Search page. It contains
@@ -24,29 +25,29 @@ public class AlbumFilters extends AdvancedFilters {
 	 * @throws SQLException 
 	 * @throws MalformedURLException 
 	 */
-	public AlbumFilters() throws MalformedURLException, SQLException {
-		super();
+	public AlbumFilters(SearchDataView sc) throws MalformedURLException, SQLException {
+		super(sc, "album");
 		artist();
 		year();
 		buttonGrid();
 	}
 	
 	public void artist(){
-		map.put("Artist", "");
+		map.put("artist_id", "");
 		// Artist Name
 		Label artist = new Label("Artist");
 		final TextField artistField = new TextField();
 		artistField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Artist", artistField.getText());
+				map.put("artist_id", artistField.getText());
 				callQuery();
 			}
 		});
         artistField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue.booleanValue())
-                	map.put("Bars", artistField.getText());
+                	map.put("artist_id", artistField.getText());
             }
         });
 		grid.add(artist, 0, 0);
@@ -54,21 +55,21 @@ public class AlbumFilters extends AdvancedFilters {
 	}
 
 	public void year(){
-		map.put("Year", "");
+		map.put("productionyear", "");
 		// Production Year
 		Label year = new Label("Year");
 		final TextField yearField = new TextField();
 		yearField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Year", yearField.getText());
+				map.put("productionyear", yearField.getText());
 				callQuery();
 			}
 		});
         yearField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue.booleanValue())
-                	map.put("Bars", yearField.getText());
+                	map.put("productionyear", yearField.getText());
             }
         });
 		grid.add(year, 0, 1);

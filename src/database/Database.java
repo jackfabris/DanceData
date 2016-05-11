@@ -199,7 +199,7 @@ public class Database {
 			if(ihave) {
 				query += " AND d.ihave=1";
 			}
-			query += "ORDER by name";
+			query += " ORDER by name";
 		} else if(table.equals("album")) {
 			query = "SELECT a.*, p.name as artist FROM album a "
 					+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
@@ -207,14 +207,14 @@ public class Database {
 			if(ihave) {
 				query += " AND a.ihave=1";
 			}
-			query += "ORDER by name";
+			query += " ORDER by name";
 		} else if(table.equals("publication")) {
 			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
 					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id WHERE pb.name like '%" + name + "%'";
 			if(ihave) {
 				query += " AND pb.ihave=1";
 			}
-			query += "ORDER by name";
+			query += " ORDER by name";
 		} else if(table.equals("recording")){
 			query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
 					+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
@@ -225,7 +225,7 @@ public class Database {
 			if(ihave) {
 				query += " AND r.ihave=1";
 			}
-			query += "ORDER by name";
+			query += " ORDER by name";
 		} else {
 			query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
 			if(ihave) {
