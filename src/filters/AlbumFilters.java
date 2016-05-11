@@ -1,6 +1,7 @@
 package filters;
 
 import java.net.MalformedURLException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javafx.beans.value.ChangeListener;
@@ -9,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import tables.RecordTable;
 import views.SearchDataView;
 
 /**
@@ -74,5 +76,17 @@ public class AlbumFilters extends AdvancedFilters {
         });
 		grid.add(year, 0, 1);
 		grid.add(yearField, 1, 1);
+	}
+	
+	@Override
+	public void callQuery(){
+		try {
+			//Result set data = db.advancedTableSearch("album", SearchCollection.getAlbumTitle(), map, SearchCollection.isCollection());
+			ResultSet data = db.searchTableByName("album", "dog", SearchCollection.isCollection());
+			RecordTable albumTable = SearchCollection.getAlbumTable();
+			albumTable.setTableData(albumTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

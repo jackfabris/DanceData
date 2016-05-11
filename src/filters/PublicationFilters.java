@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import tables.RecordTable;
 import views.SearchDataView;
 
 /**
@@ -77,5 +78,17 @@ public class PublicationFilters extends AdvancedFilters {
 		});
 		grid.add(name, 0, 1);
 		grid.add(nameOptions, 1, 1);
+	}
+	
+	@Override
+	public void callQuery(){
+		try {
+			//Result set data = db.advancedTableSearch("publication", SearchCollection.getPublicationTitle(), map, SearchCollection.isCollection());
+			ResultSet data = db.searchTableByName("publication", "dog", SearchCollection.isCollection());
+			RecordTable publicationTable = SearchCollection.getPublicationTable();
+			publicationTable.setTableData(publicationTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
 import tables.RecordTable;
 import views.SearchDataView;
 
-public class AdvancedFilters {
+public abstract class AdvancedFilters {
 
 	protected VBox filtersVBox;
 	protected GridPane grid;
@@ -100,30 +100,31 @@ public class AdvancedFilters {
 		return map;
 	}
 	
-	public void callQuery(){
-		//have sub classes overide call query
-		printMap();
-		String name = "";
-		if(table.equals("dance")) name = SearchCollection.getDanceTitle();
-		else if(table.equals("album")) name = SearchCollection.getAlbumTitle();
-		else if(table.equals("publication")) name = SearchCollection.getPublicationTitle();
-		else if(table.equals("recording")) name = SearchCollection.getRecordingTitle();
-
-		try {
-			//Result set data = db.advancedTableSearch(table, name, map, SearchCollection.isCollection());
-			ResultSet data = db.searchTableByName(table, "dog", SearchCollection.isCollection());
-			RecordTable danceTable = SearchCollection.getDanceTable();
-			RecordTable albumTable = SearchCollection.getAlbumTable();
-			RecordTable publicationTable = SearchCollection.getPublicationTable();
-			RecordTable recordingTable = SearchCollection.getRecordingTable();
-			if(table.equals("dance")) danceTable.setTableData(danceTable.populate(data));
-			else if(table.equals("album")) albumTable.setTableData(albumTable.populate(data));
-			else if(table.equals("publication")) publicationTable.setTableData(publicationTable.populate(data));
-			else if(table.equals("recording")) recordingTable.setTableData(recordingTable.populate(data));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+	public abstract void callQuery();
+//	{
+//		//have sub classes overide call query
+//		printMap();
+//		String name = "";
+//		if(table.equals("dance")) name = SearchCollection.getDanceTitle();
+//		else if(table.equals("album")) name = SearchCollection.getAlbumTitle();
+//		else if(table.equals("publication")) name = SearchCollection.getPublicationTitle();
+//		else if(table.equals("recording")) name = SearchCollection.getRecordingTitle();
+//
+//		try {
+//			//Result set data = db.advancedTableSearch(table, name, map, SearchCollection.isCollection());
+//			ResultSet data = db.searchTableByName(table, "dog", SearchCollection.isCollection());
+//			RecordTable danceTable = SearchCollection.getDanceTable();
+//			RecordTable albumTable = SearchCollection.getAlbumTable();
+//			RecordTable publicationTable = SearchCollection.getPublicationTable();
+//			RecordTable recordingTable = SearchCollection.getRecordingTable();
+//			if(table.equals("dance")) danceTable.setTableData(danceTable.populate(data));
+//			else if(table.equals("album")) albumTable.setTableData(albumTable.populate(data));
+//			else if(table.equals("publication")) publicationTable.setTableData(publicationTable.populate(data));
+//			else if(table.equals("recording")) recordingTable.setTableData(recordingTable.populate(data));
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Get the dance filters VBox

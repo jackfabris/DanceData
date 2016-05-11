@@ -15,6 +15,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import tables.RecordTable;
 import views.SearchDataView;
 
 /**
@@ -315,5 +316,17 @@ public class DanceFilters extends AdvancedFilters {
 			sb+="'" + array[i]+" ";
 		}
 		return sb;
+	}
+	
+	@Override
+	public void callQuery(){
+		try {
+			//Result set data = db.advancedTableSearch("dance", SearchCollection.getDanceTitle(), map, SearchCollection.isCollection());
+			ResultSet data = db.searchTableByName("dance", "dog", SearchCollection.isCollection());
+			RecordTable danceTable = SearchCollection.getDanceTable();
+			danceTable.setTableData(danceTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

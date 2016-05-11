@@ -15,6 +15,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import tables.RecordTable;
 import views.SearchDataView;
 
 /**
@@ -129,5 +130,17 @@ public class RecordingFilters extends AdvancedFilters {
         });
 		grid.add(bars, 0, 3);
 		grid.add(barsField, 1, 3);
+	}
+	
+	@Override
+	public void callQuery(){
+		try {
+			//Result set data = db.advancedTableSearch("recording", SearchCollection.getRecordingTitle(), map, SearchCollection.isCollection());
+			ResultSet data = db.searchTableByName("recording", "dog", SearchCollection.isCollection());
+			RecordTable recordingTable = SearchCollection.getRecordingTable();
+			recordingTable.setTableData(recordingTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
