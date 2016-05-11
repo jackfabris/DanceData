@@ -195,11 +195,11 @@ public class CellInfo extends VBox{
 		grid.add(titleCol, 0, gridY++);
 		grid.add(infoCol, 1, gridY-1);
 		
-//		iterateLists("Dances: ", "", db.getDancesByPerson(id));
-//		iterateLists("Publications: ", "", db.getDancesByPerson(id));
-//		iterateLists("Tunes: ", "", db.getDancesByPerson(id));
-//		iterateLists("Recordings: ", "", db.getDancesByPerson(id));
-//		iterateLists("Albums: ", "", db.getDancesByPerson(id));
+		iterateLists("Dances: ", "dance", db.getDancesByPerson(id));
+		iterateLists("Publications: ", "publication", db.getPublicationsByPerson(id));
+		iterateLists("Tunes: ", "tune", db.getTunesByPerson(id));
+		iterateLists("Recordings: ", "recording", db.getRecordingsByPerson(id));
+		iterateLists("Albums: ", "album", db.getAlbumsByPerson(id));
 	}
 	
 	public void personLink(Label infoCol, ResultSet name) throws SQLException{
