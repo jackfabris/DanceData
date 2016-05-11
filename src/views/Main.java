@@ -37,6 +37,7 @@ public class Main extends Application {
 	private Scene scene;
 	
 	public static ReadOnlyDoubleProperty sceneWidthProp;
+	public static double width;
 	
 	/**
 	 * constructor for Main initializes Grid, Home, Search, and Collection 

@@ -28,9 +28,6 @@ public class CellInfo extends VBox{
 	private GridPane grid;
 	private int gridY, gridX, id, linkId;
 	private Database db;
-	
-	//LL
-	//private RecordTable recTab; //add to constructor
 
 	public CellInfo(double spacing, TableView<Record> table) throws MalformedURLException, SQLException{
 		super(spacing);
@@ -87,15 +84,16 @@ public class CellInfo extends VBox{
 	}
 	
 	public void iterateInfo(LinkedHashMap<String, String> cellInfo) throws SQLException{
+		gridY=3;
 		Iterator<String> i = cellInfo.keySet().iterator();
 		while(i.hasNext()){
 			String col = i.next();
 			String info = set.getString(cellInfo.get(col));
-			Label danceCol = new Label(col);
+			Label titleCol = new Label(col);
 			Label infoCol = new Label(info);
 			//Person Link
 			if(info != null && isPerson(cellInfo.get(col))){
-				linkId = Integer.parseInt(set.getString(cellInfo.get(col)));
+				linkId = Integer.parseInt(info);
 				personLink(infoCol, db.getPerson(linkId));
 			}
 			//1/0 to Yes/No
@@ -103,12 +101,7 @@ public class CellInfo extends VBox{
 				if (info.equals("1")) infoCol.setText("Yes");
 				else infoCol.setText("No");
 			}
-//			//Album Medium //not quite
-//			if(info != null && isMedium(cellInfo.get(col))){
-//				if(cellInfo.get(col).equals("iscd") && info.equals("1")) infoCol.setText("CD");
-//				//2 others
-//			}
-			grid.add(danceCol, 0, gridY++);
+			grid.add(titleCol, 0, gridY++);
 			grid.add(infoCol, 1, gridY-1);
 		}
 	}
@@ -119,81 +112,104 @@ public class CellInfo extends VBox{
 		Label col = new Label(colName);
 		grid.add(col, gridX, gridY++);
 		gridY--;
+		boolean empty = true;
 		while(list.next()){
-			Label infoCol = new Label();
+			empty = false;
+			Label infoCol = new Label(list.getString("name"));
 			linkId = Integer.parseInt(list.getString("id"));
-			recordingLink(infoCol, list.getString("name"));
+			if(!linkType.equals("")) link(infoCol, linkType);
+			grid.add(infoCol, gridX+1, gridY++);
+		}
+		if(empty){
+			Label infoCol = new Label("None");
+			infoCol.setStyle("-fx-text-fill: #b8b8bf;");
 			grid.add(infoCol, gridX+1, gridY++);
 		}
 	}
 
-	private void albumCellInfo() throws SQLException {
-		LinkedHashMap<String, String> albumInfo = new LinkedHashMap<String, String>();
-		albumInfo.put("Name: ", "name");
-		albumInfo.put("Artist: ", "artist_id");	
-		//albumInfo.put("Medium: ", "medium");	//Do it yourself
-		albumInfo.put("Year: ", "productionyear");
-		albumInfo.put("Available: ", "isavailable");
-		
-		iHaveAndTag();
-		iterateInfo(albumInfo);
-		iterateLists("Recordings: ", "recording", db.getRecordingsByAlbum(id));
+	public void link(Label infoCol, String linkType){
+		infoCol.setStyle("-fx-text-fill: blue;");
+		infoCol.setUnderline(true);
+		infoCol.addEventHandler(MouseEvent.MOUSE_CLICKED, new LinkHandler(linkId, db, this, linkType));
 	}
 
-	private boolean isMedium(String medium){
-		return medium.equals("iscd"); //2 others
+	private void albumCellInfo() throws SQLException {
+		db.printResults(db.doQuery("SELECT * FROM album WHERE id=1"));
+		LinkedHashMap<String, String> albumInfo = new LinkedHashMap<String, String>();
+		albumInfo.put("Name: ", "name");
+		albumInfo.put("Year: ", "productionyear");
+		albumInfo.put("Available: ", "isavailable");
+		albumInfo.put("Artist: ", "artist_id");	
+		iHaveAndTag();
+		iterateInfo(albumInfo);
+		
+		Label titleCol = new Label("Medium: ");
+		String medium = "";
+		
+		boolean cd = set.getString("oncd").equals("1");
+		boolean mc = set.getString("onmc").equals("1");
+		boolean lp = set.getString("onlp").equals("1");
+		
+		if(cd) medium+="CD ";
+		else if(mc) medium+="MC ";
+		else if(lp) medium+="LP ";
+		
+		Label infoCol = new Label(medium);
+		grid.add(titleCol, 0, gridY++);
+		grid.add(infoCol, 1, gridY-1);
+
+		iterateLists("Recordings: ", "recording", db.getRecordingsByAlbum(id));
 	}
 	
 	private void danceCellInfo() throws SQLException {
 		LinkedHashMap<String, String> danceInfo = new LinkedHashMap<String, String>();
 		danceInfo.put("Name: ", "name");
 		danceInfo.put("Devised By: ", "devisor_id");
-//		danceInfo.put("Formations: ", value); 	//QN: all of the formations of a given dance id
-//		danceInfo.put("Steps: ", value);		//QN: all of the steps of a given dance id
-//		danceInfo.put("Tunes: ", value);		//QN
-//		danceInfo.put("Recordings: ", value);	//QN
-		
 		iHaveAndTag();
 		iterateInfo(danceInfo);
-		//iterateLists("Formations: ", db.get)
+		iterateLists("Formations: ", "", db.getFormationsByDance(id));
+		iterateLists("Steps: ", "", db.getStepsByDance(id));
+		iterateLists("Tunes: ", "tune", db.getTunesByDance(id));
+		iterateLists("Recordings: ", "recording", db.getRecordingsByDance(id));
 	}
 
 	private void personCellInfo() throws SQLException {
-		//devisor, publisher, composer, recording artist/musician
 		LinkedHashMap<String, String> personInfo = new LinkedHashMap<String, String>();
 		personInfo.put("Name: ", "name");
-//		personInfo.put("Type: ", "name"); //map it yourself
-		
 		iterateInfo(personInfo);
-		//A person should have the things they've "done"
+		
+		Label titleCol = new Label("Type: ");
+		String personType = "";
+		
+		boolean dev = set.getString("isdev").equals("1");
+		boolean pub = set.getString("ispub").equals("1");
+		boolean cmp = set.getString("iscmp").equals("1");
+		boolean mus = set.getString("ismus").equals("1");
+		
+		if(dev) personType+="Devisor ";
+		else if(pub) personType+="Publisher ";
+		else if(cmp) personType+="Composer ";
+		else if(mus) personType+="Musician ";
+		
+		Label infoCol = new Label(personType);
+		
+		grid.add(titleCol, 0, gridY++);
+		grid.add(infoCol, 1, gridY-1);
+		
+//		iterateLists("Dances: ", "", db.getDancesByPerson(id));
+//		iterateLists("Publications: ", "", db.getDancesByPerson(id));
+//		iterateLists("Tunes: ", "", db.getDancesByPerson(id));
+//		iterateLists("Recordings: ", "", db.getDancesByPerson(id));
+//		iterateLists("Albums: ", "", db.getDancesByPerson(id));
 	}
 	
 	public void personLink(Label infoCol, ResultSet name) throws SQLException{
 		infoCol.setText(name.getString("name"));
-		infoCol.setStyle("-fx-text-fill: blue;");
-		infoCol.setUnderline(true);
-		infoCol.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if (event.getClickCount() > 1) {
-					try {
-						ResultSet set = db.getPerson(linkId);
-						set(set, "person");
-						
-						//LL
-						//CellInfo linkCell = new CellInfo(10, table);
-						
-						//LL - malformed
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		});
+		link(infoCol, "person");
 	}
 	
 	public boolean isPerson(String person){
-		return person.equals("devisor_id") || person.equals("artist_id");
+		return person.equals("devisor_id") || person.equals("artist_id") || person.equals("composer_id");
 	}
 	
 	private void publicationCellInfo() throws SQLException {
@@ -203,52 +219,29 @@ public class CellInfo extends VBox{
 		publicationInfo.put("Has Dances: ", "hasdances");
 		publicationInfo.put("Has Tunes: ", "hastunes");
 		publicationInfo.put("On Paper: ", "onpaper");
-		//publicationInfo.put("Dances: ", value); //QN
-		//publicationInfo.put("Tunes: ", value); //QN
-		
 		iHaveAndTag();
 		iterateInfo(publicationInfo);
+		iterateLists("Dances: ", "dance", db.getDancesByPublication(id));
+		iterateLists("Tunes: ", "tune", db.getTunesByPublication(id));
 	}
 
 	private void recordingCellInfo() throws SQLException {
 		LinkedHashMap<String, String> recordingInfo = new LinkedHashMap<String, String>();
 		recordingInfo.put("Name: ", "name");
 		recordingInfo.put("Artist: ", "artist_id");
-//		recordingInfo.put("Two Cords: ", value);
-//		recordingInfo.put("Tunes: ", value); //QN
-//		recordingInfo.put("Album: ", "album"); //QN
 		iHaveAndTag();
 		iterateInfo(recordingInfo);
-		
-	}
-	
-	public void recordingLink(Label infoCol, String name) throws SQLException{
-		infoCol.setText(name);
-		infoCol.setStyle("-fx-text-fill: blue;");
-		infoCol.setUnderline(true);
-		infoCol.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if (event.getClickCount() > 1) {
-					try {
-						ResultSet set = db.getAllByIdFromTable("recording", linkId);
-						set(set, "recording");
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		});
+		iterateLists("Album: ", "album", db.getAlbumByRecording(id));
+		iterateLists("Tunes: ", "tune", db.getTunesByRecording(id));
 	}
 
 	private void tuneCellInfo() throws SQLException {
 		LinkedHashMap<String, String> tuneInfo = new LinkedHashMap<String, String>();
 		tuneInfo.put("Name: ", "name");
-		tuneInfo.put("Composer: ", "cmp");
-//		tuneInfo.put("Dances: ", value);	//QN
-//		tuneInfo.put("Recordings: ", value);	//QN
-		
+		tuneInfo.put("Composer: ", "composer_id");		
 		iterateInfo(tuneInfo);
+		iterateLists("Dances: ", "dance", db.getDancesByTune(id));
+		iterateLists("Recordings: ", "recording", db.getRecordingsByTune(id));
 	}
 	
 	public boolean isYesOrNo(String field){
