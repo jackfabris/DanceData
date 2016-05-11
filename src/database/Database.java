@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.*;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
@@ -198,6 +199,7 @@ public class Database {
 			if(ihave) {
 				query += " AND d.ihave=1";
 			}
+			query += "ORDER by name";
 		} else if(table.equals("album")) {
 			query = "SELECT a.*, p.name as artist FROM album a "
 					+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
@@ -205,12 +207,14 @@ public class Database {
 			if(ihave) {
 				query += " AND a.ihave=1";
 			}
+			query += "ORDER by name";
 		} else if(table.equals("publication")) {
 			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
 					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id WHERE pb.name like '%" + name + "%'";
 			if(ihave) {
 				query += " AND pb.ihave=1";
 			}
+			query += "ORDER by name";
 		} else if(table.equals("recording")){
 			query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
 					+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
@@ -221,12 +225,131 @@ public class Database {
 			if(ihave) {
 				query += " AND r.ihave=1";
 			}
+			query += "ORDER by name";
 		} else {
 			query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
 			if(ihave) {
 				query += " AND ihave=1";
 			}
 		}
+		return stmt.executeQuery(query);
+	}
+	
+	/**
+	 * Search the table with specified advanced search params
+	 * @param table - the table to search in
+	 * @param name - the name to search for
+	 * @param map - the mapping of keys and values in the advanced search
+	 * @param ihave - if true only show what is marked as ihave, otherwise show all results
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
+	
+	public ResultSet advancedTableSearch(String table, String name, Map<String,String> map, boolean ihave) throws SQLException{
+		if(table.equals("dance")) {
+			query = "SELECT d.*, dt.name as type, mt.description as medleytype, s.name as shape, "
+					+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor FROM dance d "
+					+ "LEFT OUTER JOIN dancetype dt ON d.type_id=dt.id "
+					+ "LEFT OUTER JOIN medleytype mt ON d.medleytype_id=mt.id "
+					+ "LEFT OUTER JOIN shape s ON d.shape_id=s.id "
+					+ "LEFT OUTER JOIN couples c ON d.couples_id=c.id "
+					+ "LEFT OUTER JOIN progression p ON d.progression_id=p.id "
+					+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
+					+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
+					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
+					+ "WHERE d.name like '%" + name + "%'";
+			Object[] keys = map.keySet().toArray();
+			for (int i=0; keys.length>i; i++){
+				String param = (String)keys[i];
+				String val = map.get(keys[i]);
+				if(!val.isEmpty()){
+					if (param.equals("bars")){
+						query += " AND d.barsperrepeat"+val;
+					}
+					else if (param.equals("author")){
+						query += " AND d.author like '%"+val+"%'";
+					}
+					else if (val.toLowerCase().contains("or") || val.toLowerCase().contains("and") || val.toLowerCase().contains("not")){
+						int lastChar = val.length(); //index of last character in val string (for substring use)
+						if (val.substring(lastChar-2, lastChar).equals("or")){ //check for extra or
+							query += " AND d.progression=("+val.substring(0, lastChar-2) +")";
+						}
+						else if (val.substring(lastChar-3, lastChar).equals("and") || val.substring(lastChar-3, lastChar).equals("not")){ //check for extra and/not
+							query += " AND d.progression=("+val.substring(0, lastChar-3) +")";
+						}
+						else {
+							query += " AND d.progression='"+val+"'";
+						}
+					}
+					else {
+						query += " AND d."+param+"='"+val+"'";
+					}
+				}
+			}
+			if(ihave) {
+				query += " AND d.ihave=1";
+			}
+		}
+		else if(table.equals("publication")) {
+			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
+					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id WHERE pb.name like '%" + name + "%'";
+			String author = map.get("author");
+			if (!author.isEmpty())
+				query += " AND pb.author='"+author+"'";
+			if(ihave) {
+				query += " AND pb.ihave=1";
+			}
+		}
+		else if(table.equals("recording")){
+			query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
+					+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
+					+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
+					+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
+					+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
+					+ "WHERE r.name like '%" + name + "%'";
+			String type = map.get("type");
+			String medley = map.get("medley type");
+			String repetitions = map.get("repetitions");
+			String bars = map.get("bars");
+			if (!(type == null))
+				if (!type.isEmpty())
+					query += " AND r.type_id='"+type+"'";
+			if (!(medley == null))
+				if (!medley.isEmpty())
+					query += " AND r.medleytype='"+medley+"'";
+			if (!(repetitions == null))
+				if (!repetitions.isEmpty())
+					query += " AND r.repetitions"+repetitions;
+			if (!(bars == null))
+				if (!bars.isEmpty())
+					query += " AND r.barsperrepeat"+bars;
+			if(ihave) {
+				query += " AND r.ihave=1";
+			}
+		} 
+		else if(table.equals("album")) {
+			query = "SELECT a.*, p.name as artist FROM album a "
+					+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
+					+ "WHERE a.name like '%" + name + "%'";
+			String artist = map.get("artist");
+			String year = map.get("year");
+			if (!(artist == null))
+				if(!artist.isEmpty())
+					query += " AND a.artist_id='"+artist+"'";
+			if (!(year == null))
+				if (!year.isEmpty())
+					query += " AND a.creationdate like '%"+year+"%'";
+			if(ihave) {
+				query += " AND a.ihave=1";
+			}
+		}
+		else {
+			query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
+			if(ihave) {
+				query += " AND ihave=1";
+			}
+		}
+		System.out.println(query);
 		return stmt.executeQuery(query);
 	}
 	
