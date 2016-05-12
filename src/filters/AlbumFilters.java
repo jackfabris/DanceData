@@ -85,6 +85,8 @@ public class AlbumFilters extends AdvancedFilters {
 			ResultSet data = db.searchTableByName("album", "dog", SearchCollection.isCollection());
 			RecordTable albumTable = SearchCollection.getAlbumTable();
 			albumTable.setTableData(albumTable.populate(data));
+			albumTable.getCellInfo().setVisible(false);
+			albumTable.getTable().setVisible(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

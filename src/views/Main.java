@@ -170,7 +170,8 @@ public class Main extends Application {
 	 */
 	public void scrollPaneVBox(ScrollPane sp, VBox box, boolean vis){
 		//Home
-		sp.setHbarPolicy(ScrollBarPolicy.NEVER);
+		if(vis) sp.setHbarPolicy(ScrollBarPolicy.NEVER);
+		else sp.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		sp.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 		sp.setContent(box);
 		grid.add(sp, 0, gridY);

@@ -325,6 +325,8 @@ public class DanceFilters extends AdvancedFilters {
 			ResultSet data = db.searchTableByName("dance", "dog", SearchCollection.isCollection());
 			RecordTable danceTable = SearchCollection.getDanceTable();
 			danceTable.setTableData(danceTable.populate(data));
+			danceTable.getCellInfo().setVisible(false);
+			danceTable.getTable().setVisible(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

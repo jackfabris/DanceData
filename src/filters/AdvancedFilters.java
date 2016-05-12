@@ -1,7 +1,6 @@
 package filters;
 
 import java.net.MalformedURLException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -15,7 +14,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import tables.RecordTable;
 import views.SearchDataView;
 
 public abstract class AdvancedFilters {
@@ -58,6 +56,7 @@ public abstract class AdvancedFilters {
 				"-fx-border-width: 1;" +
 				"-fx-border-insets: 5;" +
 				"-fx-border-color: #cfcfcf;");
+		//ENTER KEY
 		filtersVBox.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent arg0){
 				if(arg0.getCode() == KeyCode.ENTER){
@@ -101,30 +100,6 @@ public abstract class AdvancedFilters {
 	}
 	
 	public abstract void callQuery();
-//	{
-//		//have sub classes overide call query
-//		printMap();
-//		String name = "";
-//		if(table.equals("dance")) name = SearchCollection.getDanceTitle();
-//		else if(table.equals("album")) name = SearchCollection.getAlbumTitle();
-//		else if(table.equals("publication")) name = SearchCollection.getPublicationTitle();
-//		else if(table.equals("recording")) name = SearchCollection.getRecordingTitle();
-//
-//		try {
-//			//Result set data = db.advancedTableSearch(table, name, map, SearchCollection.isCollection());
-//			ResultSet data = db.searchTableByName(table, "dog", SearchCollection.isCollection());
-//			RecordTable danceTable = SearchCollection.getDanceTable();
-//			RecordTable albumTable = SearchCollection.getAlbumTable();
-//			RecordTable publicationTable = SearchCollection.getPublicationTable();
-//			RecordTable recordingTable = SearchCollection.getRecordingTable();
-//			if(table.equals("dance")) danceTable.setTableData(danceTable.populate(data));
-//			else if(table.equals("album")) albumTable.setTableData(albumTable.populate(data));
-//			else if(table.equals("publication")) publicationTable.setTableData(publicationTable.populate(data));
-//			else if(table.equals("recording")) recordingTable.setTableData(recordingTable.populate(data));
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 	/**
 	 * Get the dance filters VBox

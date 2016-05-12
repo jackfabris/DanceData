@@ -139,6 +139,8 @@ public class RecordingFilters extends AdvancedFilters {
 			ResultSet data = db.searchTableByName("recording", "dog", SearchCollection.isCollection());
 			RecordTable recordingTable = SearchCollection.getRecordingTable();
 			recordingTable.setTableData(recordingTable.populate(data));
+			recordingTable.getCellInfo().setVisible(false);
+			recordingTable.getTable().setVisible(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

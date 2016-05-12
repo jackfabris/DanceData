@@ -1,4 +1,4 @@
-package views;
+package tests;
 
 import static org.junit.Assert.*;
 
@@ -8,16 +8,16 @@ import java.sql.SQLException;
 import org.junit.Test;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import views.Main;
+import views.SearchDataView;
 
 /*
  * Tests the Search Class and its methods
  */
-public class SearchTest {
+public class CollectionTest {
 	
-	private SearchDataView s;
+	private SearchDataView c;
 	
 	@Test
     public void testA() throws InterruptedException {
@@ -46,32 +46,34 @@ public class SearchTest {
 	 * Tests the constructor for Search
 	 */
 	public void initialSearchTest() throws SQLException, MalformedURLException {
-		s = new SearchDataView(false);
+		c = new SearchDataView(true);
 		//non-primitive reference fields should be initialized and not null
 		//VBox
-		assertNotNull(s.getVBox());
-		assertNotNull(s.getDanceFiltersVBox());
-		assertNotNull(s.getRecordingFiltersVBox());
-		assertNotNull(s.getAlbumFiltersVBox());
-		assertNotNull(s.getPublicationFiltersVBox());
+		assertNotNull(c.getVBox());
+		assertNotNull(c.getDanceFiltersVBox());
+		assertNotNull(c.getRecordingFiltersVBox());
+		assertNotNull(c.getAlbumFiltersVBox());
+		assertNotNull(c.getPublicationFiltersVBox());
 		//Database
-		assertNotNull(s.getDb());
+		assertNotNull(c.getDb());
 		//RecordTable
-		assertNotNull(s.getDanceTable());
-		assertNotNull(s.getPublicationTable());
-		assertNotNull(s.getRecordingTable());
-		assertNotNull(s.getAlbumTable());
+		assertNotNull(c.getDanceTable());
+		assertNotNull(c.getPublicationTable());
+		assertNotNull(c.getRecordingTable());
+		assertNotNull(c.getAlbumTable());
 		//TextField
-		assertNotNull(s.getSearch());
+		assertNotNull(c.getSearch());
 		//RadioButton
-		assertNotNull(s.getAdvSF());
+		assertNotNull(c.getAdvSF());
 		
 		//initial state should be Dance state
-		assertEquals(s.getState(), "d");
-		assertTrue(s.getDanceTable().getTable().isVisible());
-		assertFalse(s.getPublicationTable().getTable().isVisible());
-		assertFalse(s.getAlbumTable().getTable().isVisible());
-		assertFalse(s.getRecordingTable().getTable().isVisible());
+		assertEquals(c.getState(), "d");
+		assertTrue(c.getDanceTable().getTable().isVisible());
+		assertFalse(c.getPublicationTable().getTable().isVisible());
+		assertFalse(c.getAlbumTable().getTable().isVisible());
+		assertFalse(c.getRecordingTable().getTable().isVisible());
+		
+		assertTrue(c.isCollection());
 	}
 	
 	/*
@@ -79,9 +81,9 @@ public class SearchTest {
 	 */
 	@Test
 	public void setUpSearchBarTest() throws SQLException, MalformedURLException{
-		s = new SearchDataView(false);
-		s.setUpSearchBar();
-		assertEquals(s.getSearch().getPromptText(), "Search by Dance Title");
-		assertEquals(s.getSearch().getPrefWidth(), 300, .01);
+		c = new SearchDataView(true);
+		c.setUpSearchBar();
+		assertEquals(c.getSearch().getPromptText(), "Search by Dance Title");
+		assertEquals(c.getSearch().getPrefWidth(), 300, .01);
 	}
 }
