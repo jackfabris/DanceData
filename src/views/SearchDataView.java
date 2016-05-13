@@ -173,7 +173,8 @@ public class SearchDataView {
 				state = "d";
 				searchFiltersVisibility(danceFiltersVBox.isVisible(), false, false, false);
 				tableVisibility(true, false, false, false);
-				cellInfoVisibility(danceTable.getCellInfo().isVisible(), false, false, false);
+				cellInfoVisibility(danceTable.getCellInfo().isVis(), false, false, false);
+				if(danceTable.getCellInfo().isVis()) danceTable.getTable().setVisible(false);
 				if (danceTitle.equals("")) search.setPromptText("Search by Dance Title");
 				else search.setText(danceTitle);
 			}
@@ -191,7 +192,8 @@ public class SearchDataView {
 				state = "p";
 				searchFiltersVisibility(false, publicationFiltersVBox.isVisible(), false, false);
 				tableVisibility(false, true, false, false);
-				cellInfoVisibility(false, publicationTable.getCellInfo().isVisible(), false, false);
+				cellInfoVisibility(false, publicationTable.getCellInfo().isVis(), false, false);
+				if(publicationTable.getCellInfo().isVis()) publicationTable.getTable().setVisible(false);
 				if (publicationTitle.equals("")) search.setPromptText("Search by Publication Title");
 				else search.setText(publicationTitle);
 			}
@@ -209,7 +211,8 @@ public class SearchDataView {
 				state = "r";
 				searchFiltersVisibility(false, false, recordingFiltersVBox.isVisible(), false);
 				tableVisibility(false, false, true, false);
-				cellInfoVisibility(false, false, recordingTable.getCellInfo().isVisible(), false);
+				cellInfoVisibility(false, false, recordingTable.getCellInfo().isVis(), false);
+				if(recordingTable.getCellInfo().isVis()) recordingTable.getTable().setVisible(false);
 				if (recordingTitle.equals("")) search.setPromptText("Search by Recording Title");
 				else search.setText(recordingTitle);
 			}
@@ -227,7 +230,8 @@ public class SearchDataView {
 				state = "a";
 				searchFiltersVisibility(false, false, false, albumFiltersVBox.isVisible());
 				tableVisibility(false, false, false, true);
-				cellInfoVisibility(false, false, false, albumTable.getCellInfo().isVisible());
+				cellInfoVisibility(false, false, false, albumTable.getCellInfo().isVis());
+				if(albumTable.getCellInfo().isVis()) albumTable.getTable().setVisible(false);
 				if (albumTitle.equals("")) search.setPromptText("Search by Album Title");
 				else search.setText(albumTitle);
 			}

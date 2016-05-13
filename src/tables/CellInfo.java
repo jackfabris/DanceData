@@ -28,6 +28,7 @@ public class CellInfo extends VBox{
 	private GridPane grid;
 	private int gridY, gridX, id, linkId;
 	private Database db;
+	private boolean vis;
 
 	public CellInfo(double spacing, TableView<Record> table) throws MalformedURLException, SQLException{
 		super(spacing);
@@ -302,11 +303,20 @@ public class CellInfo extends VBox{
 			public void handle(ActionEvent arg0) {
 				table.setVisible(true);
 				setVisible(false);
+				setVis(false);
 			}
 		});
 	}
 
 	public void setType(String newType){
 		this.type = newType;
+	}
+
+	public boolean isVis() {
+		return vis;
+	}
+
+	public void setVis(boolean vis) {
+		this.vis = vis;
 	}
 }

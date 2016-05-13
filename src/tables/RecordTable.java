@@ -162,6 +162,7 @@ public class RecordTable {
 		        				 if(cell.getItem()!=null) {
 		        					 set = db.getAllByIdFromTable(tableString, r.getId());
 		        					 cellInfo.set(set, tableString);
+		        					 cellInfo.setVis(true);
 		        				 }
 		        				 else cellInfo.set(null, tableString);
 		        			 } catch (SQLException e) {
@@ -290,7 +291,7 @@ public class RecordTable {
 	 * returns the VBox CellInfo of this class
 	 * @return VBox CellInfo of this class
 	 */
-	public VBox getCellInfo(){
+	public CellInfo getCellInfo(){
 		return cellInfo;
 	}
 }
