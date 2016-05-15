@@ -176,6 +176,17 @@ public class Database {
 	}
 	
 	/**
+	 * Get person's name from their id
+	 * @param id
+	 * @return String
+	 * @throws SQLException
+	 */
+	public String getPersonName(int id) throws SQLException {
+		query = "SELECT name FROM person WHERE id=" + id;
+		return stmt.executeQuery(query).getString("name");
+	}
+	
+	/**
 	 * Search the table and return all records where name contains the param name
 	 * @param table - the table to search in
 	 * @param name - the name to search for
@@ -398,7 +409,7 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet getRecordingsByAlbum(int album_id) throws SQLException {
-		query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
+		query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist, tracknumber "
 				+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
 				+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
 				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
@@ -416,7 +427,7 @@ public class Database {
 	 */
 	public ResultSet getFormationsByDance(int dance_id) throws SQLException {
 		query = "SELECT f.* FROM formation f LEFT OUTER JOIN dancesformationsmap dfm "
-				+ "ON f.id=dfm.formation_id WHERE dfm.dance_id=" + dance_id;
+				+ "ON f.id=dfm.formation_id WHERE dfm.dance_id=" + dance_id + " ORDER BY f.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -428,7 +439,7 @@ public class Database {
 	 */
 	public ResultSet getStepsByDance(int dance_id) throws SQLException {
 		query = "SELECT s.* FROM step s LEFT OUTER JOIN dancesstepsmap dsm "
-				+ "ON s.id=dsm.step_id WHERE dsm.dance_id=" + dance_id;
+				+ "ON s.id=dsm.step_id WHERE dsm.dance_id=" + dance_id + " ORDER BY s.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -440,7 +451,7 @@ public class Database {
 	 */
 	public ResultSet getTunesByDance(int dance_id) throws SQLException {
 		query = "SELECT t.*, p.name as composer FROM tune t LEFT OUTER JOIN dancestunesmap dtm ON t.id=dtm.tune_id "
-				+ "LEFT OUTER JOIN person p ON t.composer_id=p.id WHERE dtm.dance_id=" + dance_id;
+				+ "LEFT OUTER JOIN person p ON t.composer_id=p.id WHERE dtm.dance_id=" + dance_id + " ORDER BY t.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -457,7 +468,7 @@ public class Database {
 				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
 				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
 				+ "LEFT OUTER JOIN dancesrecordingsmap drm ON r.id=drm.recording_id "
-				+ "WHERE drm.dance_id=" + dance_id;
+				+ "WHERE drm.dance_id=" + dance_id + " ORDER BY r.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -469,7 +480,7 @@ public class Database {
 	 */
 	public ResultSet getTunesByRecording(int recording_id) throws SQLException {
 		query = "SELECT t.*, p.name as composer FROM tune t LEFT OUTER JOIN tunesrecordingsmap trm ON t.id=trm.tune_id "
-				+ "LEFT OUTER JOIN person p ON t.composer_id=p.id WHERE trm.recording_id=" + recording_id;
+				+ "LEFT OUTER JOIN person p ON t.composer_id=p.id WHERE trm.recording_id=" + recording_id + " ORDER BY t.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -481,7 +492,7 @@ public class Database {
 	 */
 	public ResultSet getAlbumByRecording(int recording_id) throws SQLException {
 		query = "SELECT a.*, p.name as artist FROM album a LEFT OUTER JOIN albumsrecordingsmap arm ON a.id=arm.album_id "
-				+ "LEFT OUTER JOIN person p ON a.artist_id=p.id WHERE arm.recording_id=" + recording_id;
+				+ "LEFT OUTER JOIN person p ON a.artist_id=p.id WHERE arm.recording_id=" + recording_id + " ORDER BY a.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -502,7 +513,7 @@ public class Database {
 				+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
 				+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
 				+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
-				+ "WHERE dpm.publication_id=" + publication_id + " ORDER BY number";
+				+ "WHERE dpm.publication_id=" + publication_id + " ORDER BY d.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -515,7 +526,7 @@ public class Database {
 	public ResultSet getTunesByPublication(int publication_id) throws SQLException {
 		query = "SELECT t.*, p.name as composer FROM tune t LEFT OUTER JOIN tunespublicationsmap tpm "
 				+ "ON t.id=tpm.tune_id LEFT OUTER JOIN person p ON t.composer_id=p.id "
-				+ "WHERE tpm.publication_id=" + publication_id + " ORDER BY number";
+				+ "WHERE tpm.publication_id=" + publication_id + " ORDER BY t.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -537,7 +548,7 @@ public class Database {
 				+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
 				+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
 				+ "LEFT OUTER JOIN dancestunesmap dtm ON d.id=dtm.dance_id "
-				+ "WHERE dtm.tune_id=" + tune_id;
+				+ "WHERE dtm.tune_id=" + tune_id + " ORDER BY d.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -554,7 +565,7 @@ public class Database {
 				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
 				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
 				+ "LEFT OUTER JOIN tunesrecordingsmap trm ON r.id=trm.recording_id "
-				+ "WHERE trm.tune_id=" + tune_id;
+				+ "WHERE trm.tune_id=" + tune_id + " ORDER BY r.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -575,7 +586,7 @@ public class Database {
 				+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
 				+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
 				+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
-				+ "WHERE pn.id=" + person_id;
+				+ "WHERE pn.id=" + person_id + " ORDER BY d.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -588,7 +599,7 @@ public class Database {
 	public ResultSet getPublicationsByPerson(int person_id) throws SQLException {
 		query = "SELECT p.*, pn.name as devisor FROM publication p "
 				+ "LEFT OUTER JOIN person pn ON p.devisor_id=pn.id "
-				+ "WHERE pn.id=" + person_id;
+				+ "WHERE pn.id=" + person_id + " ORDER BY p.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -601,7 +612,7 @@ public class Database {
 	public ResultSet getTunesByPerson(int person_id) throws SQLException {
 		query = "SELECT t.*, p.name as composer FROM tune t "
 				+ "LEFT OUTER JOIN person p ON t.composer_id=p.id "
-				+ "WHERE p.id=" + person_id;
+				+ "WHERE p.id=" + person_id + " ORDER BY t.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -617,7 +628,7 @@ public class Database {
 				+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
 				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
 				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
-				+ "WHERE pn.id=" + person_id;
+				+ "WHERE pn.id=" + person_id + " ORDER BY r.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -630,7 +641,7 @@ public class Database {
 	public ResultSet getAlbumsByPerson(int person_id) throws SQLException {
 		query = "SELECT a.*, p.name as artist FROM album a "
 				+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
-				+ "WHERE p.id=" + person_id;
+				+ "WHERE p.id=" + person_id + " ORDER BY a.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -770,6 +781,12 @@ public class Database {
 		System.out.println("Get Person");
 		ResultSet resultSet = db.getPerson(2975);
 		db.printResults(resultSet);
+		
+		System.out.println("");
+		
+		/* Get person name */
+		System.out.println("Person Name:");
+		System.out.println(db.getPersonName(2975));
 		
 		System.out.println("");
 		
