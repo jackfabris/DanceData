@@ -101,11 +101,6 @@ public class Home {
 		homeTextVBox.getChildren().add(welcome);
 		
 		// Read the content from "home.txt" to display on home screen
-//		String workingDir = System.getProperty("user.dir");
-//		Path path = Paths.get(workingDir + "/src/views/home.txt");
-//		Text text = new Text(readFile(path, Charset.defaultCharset()));
-//		text.wrappingWidthProperty().bind(Main.sceneWidthProp.subtract(15));
-//		homeTextVBox.getChildren().add(text);
 		
 		String workingDir = System.getProperty("user.dir");
 		String path = workingDir + "/src/views/home.txt";

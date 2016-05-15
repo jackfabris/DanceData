@@ -57,7 +57,7 @@ public class TextFormatter {
 			if(ltr == '[') {
 				// check to see if this is a START bold tag
 				if(bufferText.charAt(i+1) == 'b' && bufferText.charAt(i+2) == ']') {
-					// it is! Create a new Text with everything read so far
+					// it is - create a new Text with everything read so far
 					text.setText(tempText);
 					textArrayList.add(text);
 					// now replace it with a blank one for formatted text
@@ -69,7 +69,7 @@ public class TextFormatter {
 				// check to see if this is an END bold tag
 				if(bufferText.charAt(i+1) == '/' && bufferText.charAt(i+2) == 'b' 
 						&& bufferText.charAt(i+3) == ']') {
-					// it is! Add the formatted text to the array
+					// it is - add the formatted text to the array
 					textArrayList.add(text);
 					// create a new text (effectively wiping the current one)
 					text = new Text();
