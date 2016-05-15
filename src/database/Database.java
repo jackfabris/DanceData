@@ -17,7 +17,6 @@ import org.apache.commons.io.FileUtils;
  * in the database folder called scddata.db. It contains many functions for getting
  * the required data from the database to be put on screen. It also contains a
  * function to update the database upon the user request.
- *
  */
 public class Database {
 	
@@ -54,6 +53,17 @@ public class Database {
 	 */
 	private Connection connect() throws SQLException {
 		return DriverManager.getConnection("jdbc:sqlite:database/scddata.db");
+	}
+	
+	/**
+	 * Close down the databases
+	 * @throws SQLException
+	 */
+	public void close() throws SQLException {
+		if(stmt != null)
+			stmt.close();
+		if(connection != null)
+			connection.close();
 	}
 	
 	/**
@@ -943,6 +953,9 @@ public class Database {
 		System.out.println("Last executed query: " + db.query);
 		
 		System.out.println("");
+		
+		System.out.println("Close database");
+		db.close();
 		
 	}
 }
