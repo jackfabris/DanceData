@@ -2,6 +2,7 @@ package views;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import database.Database;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.event.ActionEvent;
@@ -35,9 +36,9 @@ public class Main extends Application {
 	private VBox home, search, collection;
 	private ScrollPane homeSP, searchSP, collectionSP;
 	private Scene scene;
+	private Database db;
 	
 	public static ReadOnlyDoubleProperty sceneWidthProp;
-	public static double width;
 	
 	/**
 	 * constructor for Main initializes Grid, Home, Search, and Collection 
@@ -46,15 +47,16 @@ public class Main extends Application {
 	 * @throws IOException 
 	 */
 	public Main() throws SQLException, IOException {
+		db = new Database();
 		grid = new GridPane();
 		gridY = 0;
 		scene = new Scene(grid);
 		sceneWidthProp = scene.widthProperty();
-		Home h = new Home();
+		Home h = new Home(db);
 		home = h.getHomeVBox();
-		SearchDataView s = new SearchDataView(false);
+		SearchDataView s = new SearchDataView(db, false);
 		search = s.getVBox();
-		SearchDataView c = new SearchDataView(true);
+		SearchDataView c = new SearchDataView(db, true);
 		collection = c.getVBox();
 		homeSP = new ScrollPane();
 		searchSP = new ScrollPane();

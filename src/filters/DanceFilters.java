@@ -15,6 +15,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import tables.RecordTable;
 import views.SearchDataView;
 
@@ -85,8 +87,7 @@ public class DanceFilters extends AdvancedFilters {
 		});
        barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(!newValue.booleanValue())
-                	map.put("bars", barsField.getText());
+                if(!newValue.booleanValue()) map.put("bars", barsField.getText());   
             }
         });
 		grid.add(bars, 0, 1);
@@ -326,6 +327,7 @@ public class DanceFilters extends AdvancedFilters {
 			RecordTable danceTable = SearchCollection.getDanceTable();
 			danceTable.setTableData(danceTable.populate(data));
 			danceTable.getCellInfo().setVisible(false);
+			danceTable.getCellInfo().setVis(false);
 			danceTable.getTable().setVisible(true);
 		} catch (SQLException e) {
 			e.printStackTrace();

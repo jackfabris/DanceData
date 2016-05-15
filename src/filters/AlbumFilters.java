@@ -86,6 +86,7 @@ public class AlbumFilters extends AdvancedFilters {
 			RecordTable albumTable = SearchCollection.getAlbumTable();
 			albumTable.setTableData(albumTable.populate(data));
 			albumTable.getCellInfo().setVisible(false);
+			albumTable.getCellInfo().setVis(false);
 			albumTable.getTable().setVisible(true);
 		} catch (SQLException e) {
 			e.printStackTrace();

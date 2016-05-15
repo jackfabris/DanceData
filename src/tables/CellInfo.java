@@ -95,7 +95,13 @@ public class CellInfo extends VBox{
 			//Person Link
 			if(info != null && isPerson(cellInfo.get(col))){
 				linkId = Integer.parseInt(info);
-				personLink(infoCol, db.getPerson(linkId));
+				Database personDB;
+				try {
+					personDB = new Database();
+					personLink(infoCol, personDB.getPersonName(linkId));
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
 			}
 			//1/0 to Yes/No
 			if(info != null && isYesOrNo(cellInfo.get(col))){
@@ -108,22 +114,25 @@ public class CellInfo extends VBox{
 	}
 
 	public void iterateLists(String colName, String linkType, ResultSet list) throws SQLException{
-		gridY=3;
-		gridX+=2;
-		Label col = new Label(colName);
-		grid.add(col, gridX, gridY++);
-		gridY--;
-		boolean empty = true;
+		boolean firstTime = true;
+		int track = 1;
 		while(list.next()){
-			empty = false;
-			Label infoCol = new Label(list.getString("name"));
+			if(firstTime){
+				gridY=3;
+				gridX+=2;
+				Label col = new Label(colName);
+				grid.add(col, gridX, gridY++);
+				gridY--;
+				firstTime = false;
+			}
+			String name = list.getString("name");
+			if(type.equals("album")) {
+				name = track +". " + name;
+				track++;
+			}
+			Label infoCol = new Label(name);
 			linkId = Integer.parseInt(list.getString("id"));
 			if(!linkType.equals("")) link(infoCol, linkType);
-			grid.add(infoCol, gridX+1, gridY++);
-		}
-		if(empty){
-			Label infoCol = new Label("None");
-			infoCol.setStyle("-fx-text-fill: #b8b8bf;");
 			grid.add(infoCol, gridX+1, gridY++);
 		}
 	}
@@ -137,12 +146,12 @@ public class CellInfo extends VBox{
 	private void albumCellInfo() throws SQLException {
 		LinkedHashMap<String, String> albumInfo = new LinkedHashMap<String, String>();
 		albumInfo.put("Name: ", "name");
-		//albumInfo.put("Artist: ", "artist_id");	
+		albumInfo.put("Artist: ", "artist_id");	
 		albumInfo.put("Year: ", "productionyear");
 		albumInfo.put("Available: ", "isavailable");
-		iHaveAndTag();
-		iterateInfo(albumInfo);
 		
+		iterateInfo(albumInfo);
+		iHaveAndTag();
 		Label titleCol = new Label("Medium: ");
 		String medium = "";
 		
@@ -157,6 +166,12 @@ public class CellInfo extends VBox{
 		Label infoCol = new Label(medium);
 		grid.add(titleCol, 0, gridY++);
 		grid.add(infoCol, 1, gridY-1);
+		
+		
+//		Label artistTitle = new Label("Artist: ");
+//		Label artistInfo = new Label("artist_id");
+//		grid.add(titleCol, 0, gridY++);
+//		grid.add(infoCol, 1, gridY-1);
 
 		iterateLists("Recordings: ", "recording", db.getRecordingsByAlbum(id));
 	}
@@ -165,8 +180,9 @@ public class CellInfo extends VBox{
 		LinkedHashMap<String, String> danceInfo = new LinkedHashMap<String, String>();
 		danceInfo.put("Name: ", "name");
 		danceInfo.put("Devised By: ", "devisor_id");
-		iHaveAndTag();
+		//iHaveAndTag();
 		iterateInfo(danceInfo);
+		iHaveAndTag();
 		iterateLists("Formations: ", "", db.getFormationsByDance(id));
 		iterateLists("Steps: ", "", db.getStepsByDance(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByDance(id));
@@ -203,8 +219,8 @@ public class CellInfo extends VBox{
 		iterateLists("Albums: ", "album", db.getAlbumsByPerson(id));
 	}
 	
-	public void personLink(Label infoCol, ResultSet name) throws SQLException{
-		infoCol.setText(name.getString("name"));
+	public void personLink(Label infoCol, String name) throws SQLException{
+		infoCol.setText(name);
 		link(infoCol, "person");
 	}
 	
@@ -219,8 +235,9 @@ public class CellInfo extends VBox{
 		publicationInfo.put("Has Dances: ", "hasdances");
 		publicationInfo.put("Has Tunes: ", "hastunes");
 		publicationInfo.put("On Paper: ", "onpaper");
-		iHaveAndTag();
+		
 		iterateInfo(publicationInfo);
+		iHaveAndTag();
 		iterateLists("Dances: ", "dance", db.getDancesByPublication(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByPublication(id));
 	}
@@ -229,8 +246,9 @@ public class CellInfo extends VBox{
 		LinkedHashMap<String, String> recordingInfo = new LinkedHashMap<String, String>();
 		recordingInfo.put("Name: ", "name");
 		recordingInfo.put("Artist: ", "artist_id");
-		iHaveAndTag();
+		
 		iterateInfo(recordingInfo);
+		iHaveAndTag();
 		iterateLists("Album: ", "album", db.getAlbumByRecording(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByRecording(id));
 	}

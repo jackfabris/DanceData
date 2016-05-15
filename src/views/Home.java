@@ -26,9 +26,9 @@ public class Home {
 	private Database db;
 	private TextFormatter tf;
 
-	public Home() throws SQLException, IOException{
+	public Home(Database db) throws SQLException, IOException{
 		homeVBox = new VBox(10);
-		db = new Database();
+		this.db = db;
 		tf = new TextFormatter();
 		lastUpdate();
 		setUp();

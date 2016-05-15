@@ -33,7 +33,7 @@ public class SearchDataView {
 	protected String state, danceTitle, publicationTitle, recordingTitle, albumTitle;
 	private boolean isCollection;
 	
-	public SearchDataView(boolean isCollection) throws MalformedURLException, SQLException{
+	public SearchDataView(Database db, boolean isCollection) throws MalformedURLException, SQLException{
 		this.isCollection = isCollection;
 		vBox = new VBox(10);
 		db = new Database();
@@ -99,21 +99,37 @@ public class SearchDataView {
 			danceTitle = title;
 			set = db.searchTableByName("dance",title, isCollection);
 			danceTable.setTableData(danceTable.populate(set));
+			
+			danceTable.getTable().setVisible(true);
+			danceTable.getCellInfo().setVisible(false);
+			danceTable.getCellInfo().setVis(false);
 		}
 		else if(state.equals("p")) {
 			publicationTitle = title;
 			set = db.searchTableByName("publication",title, isCollection);
 			publicationTable.setTableData(publicationTable.populate(set));
+			
+			publicationTable.getTable().setVisible(true);
+			publicationTable.getCellInfo().setVisible(false);
+			publicationTable.getCellInfo().setVis(false);
 		}
 		else if(state.equals("r")) {
 			recordingTitle = title;
 			set = db.searchTableByName("recording",title, isCollection);
 			recordingTable.setTableData(recordingTable.populate(set));
+			
+			recordingTable.getTable().setVisible(true);
+			recordingTable.getCellInfo().setVisible(false);
+			recordingTable.getCellInfo().setVis(false);
 		}
 		else if(state.equals("a")) {
 			albumTitle = title;
 			set = db.searchTableByName("album",title, isCollection);
 			albumTable.setTableData(albumTable.populate(set));
+			
+			albumTable.getTable().setVisible(true);
+			albumTable.getCellInfo().setVisible(false);
+			albumTable.getCellInfo().setVis(false);
 		}
 	}
 	

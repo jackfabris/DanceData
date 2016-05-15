@@ -140,6 +140,7 @@ public class RecordingFilters extends AdvancedFilters {
 			RecordTable recordingTable = SearchCollection.getRecordingTable();
 			recordingTable.setTableData(recordingTable.populate(data));
 			recordingTable.getCellInfo().setVisible(false);
+			recordingTable.getCellInfo().setVis(false);
 			recordingTable.getTable().setVisible(true);
 		} catch (SQLException e) {
 			e.printStackTrace();

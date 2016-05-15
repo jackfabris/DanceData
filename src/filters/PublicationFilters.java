@@ -88,6 +88,7 @@ public class PublicationFilters extends AdvancedFilters {
 			RecordTable publicationTable = SearchCollection.getPublicationTable();
 			publicationTable.setTableData(publicationTable.populate(data));
 			publicationTable.getCellInfo().setVisible(false);
+			publicationTable.getCellInfo().setVis(false);
 			publicationTable.getTable().setVisible(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
