@@ -269,16 +269,30 @@ public class Database {
 					else if (param.equals("author")){
 						query += " AND d.author like '%"+val+"%'";
 					}
+					//parser for formation search
 					else if (val.toLowerCase().contains("or") || val.toLowerCase().contains("and") || val.toLowerCase().contains("not")){
-						int lastChar = val.length(); //index of last character in val string (for substring use)
+						for (int k =0; k+6<val.length();k++){
+							String andCheck = val.substring(k, k+6);
+							String orCheck = val.substring(k, k+5);
+							//System.out.println("andcheck: " + andCheck + " orcheck: " + orCheck);
+							if(andCheck.equals("'and '")){
+								val = val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "d.progression_id='" + val.substring(k+6);
+							}
+							if (orCheck.equals("'or '")){
+								val = val.substring(0, k-1) + "' " + val.substring(k+1);
+								System.out.println(val);
+							}
+						}
+						int lastChar = val.length(); //index of last character in val string (for trailing or/and/nor)
 						if (val.substring(lastChar-2, lastChar).equals("or")){ //check for extra or
-							query += " AND d.progression=("+val.substring(0, lastChar-2) +")";
+							System.out.println(val.substring(lastChar-3, lastChar));
+							query += " AND d.progression_id="+val.substring(0, lastChar-4) +"'";
 						}
 						else if (val.substring(lastChar-3, lastChar).equals("and") || val.substring(lastChar-3, lastChar).equals("not")){ //check for extra and/not
-							query += " AND d.progression=("+val.substring(0, lastChar-3) +")";
+							query += " AND d.progression_id="+val.substring(0, lastChar-5) +"'";
 						}
 						else {
-							query += " AND d.progression='"+val+"'";
+							query += " AND d.progression_id='"+val+"'";
 						}
 					}
 					else {
@@ -311,16 +325,16 @@ public class Database {
 			String medley = map.get("medley type");
 			String repetitions = map.get("repetitions");
 			String bars = map.get("bars");
-			if (!(type == null))
+			if (type != null)
 				if (!type.isEmpty())
 					query += " AND r.type_id='"+type+"'";
-			if (!(medley == null))
+			if (medley != null)
 				if (!medley.isEmpty())
 					query += " AND r.medleytype='"+medley+"'";
-			if (!(repetitions == null))
+			if (repetitions != null)
 				if (!repetitions.isEmpty())
 					query += " AND r.repetitions"+repetitions;
-			if (!(bars == null))
+			if (bars != null)
 				if (!bars.isEmpty())
 					query += " AND r.barsperrepeat"+bars;
 			if(ihave) {
@@ -333,10 +347,10 @@ public class Database {
 					+ "WHERE a.name like '%" + name + "%'";
 			String artist = map.get("artist");
 			String year = map.get("year");
-			if (!(artist == null))
+			if (artist != null)
 				if(!artist.isEmpty())
 					query += " AND a.artist_id='"+artist+"'";
-			if (!(year == null))
+			if (year != null)
 				if (!year.isEmpty())
 					query += " AND a.creationdate like '%"+year+"%'";
 			if(ihave) {
@@ -349,7 +363,7 @@ public class Database {
 				query += " AND ihave=1";
 			}
 		}
-		System.out.println(query);
+		//System.out.println(query);
 		return stmt.executeQuery(query);
 	}
 	
