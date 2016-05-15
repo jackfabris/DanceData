@@ -110,6 +110,7 @@ public class Home {
 		String workingDir = System.getProperty("user.dir");
 		String path = workingDir + "/src/views/home.txt";
 		TextFlow homeTextFlow = tf.createTextFlow(path);
+		homeTextFlow.maxWidthProperty().bind(Main.sceneWidthProp.subtract(34));
 		homeTextVBox.getChildren().add(homeTextFlow);
 		
 		this.getHomeVBox().getChildren().add(homeTextVBox);

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javafx.scene.Node;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -16,6 +17,7 @@ import javafx.scene.text.TextFlow;
  * formatting the text easier (rather than creating numerous Text nodes and
  * styling them manually. Tags should be placed around text.
  * [b][/b] - BOLD
+ * [i][/i] - ITALICS
  * @author Jack
  *
  */
@@ -72,6 +74,24 @@ public class TextFormatter {
 					// create a new text (effectively wiping the current one)
 					text = new Text();
 					text.setFont(Font.font(null, FontWeight.NORMAL, 13));
+					tempText = "";
+					i += 3;
+				}
+				// check to see if this is a START italics tag
+				if(bufferText.charAt(i+1) == 'i' && bufferText.charAt(i+2) == ']') {
+					text.setText(tempText);
+					textArrayList.add(text);
+					text = new Text();
+					text.setFont(Font.font(null, FontPosture.ITALIC, 13));
+					tempText = "";
+					i += 2;
+				}
+				// check to see if this is an END italics tag
+				if(bufferText.charAt(i+1) == '/' && bufferText.charAt(i+2) == 'i'
+						&& bufferText.charAt(i+3) == ']') {
+					textArrayList.add(text);
+					text = new Text();
+					text.setFont(Font.font(null, FontPosture.REGULAR, 13));
 					tempText = "";
 					i += 3;
 				}
