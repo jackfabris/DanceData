@@ -30,13 +30,13 @@ public class CellInfo extends VBox{
 	private Database db;
 	private boolean vis;
 
-	public CellInfo(double spacing, TableView<Record> table) throws MalformedURLException, SQLException{
+	public CellInfo(Database db, double spacing, TableView<Record> table) throws MalformedURLException, SQLException{
 		super(spacing);
 		grid = new GridPane();
 		grid.setHgap(15);
 		grid.setVgap(5);
 		this.table = table;
-		db = new Database();
+		this.db = db;
 	}
 
 	public void format(){

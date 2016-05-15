@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 
+import database.Database;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -36,8 +37,8 @@ public class DanceFilters extends AdvancedFilters {
 	 * Create the VBox which will contain the filters for a dance search
 	 * @throws SQLException
 	 */
-	public DanceFilters(SearchDataView sc) throws SQLException, MalformedURLException {
-		super(sc, "dance");
+	public DanceFilters(Database db, SearchDataView sc) throws SQLException, MalformedURLException {
+		super(db, sc, "dance");
 		type();
 		bars();
 		couples();

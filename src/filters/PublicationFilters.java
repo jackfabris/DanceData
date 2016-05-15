@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 
+import database.Database;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -31,8 +32,8 @@ public class PublicationFilters extends AdvancedFilters {
 	 * @throws SQLException 
 	 * @throws MalformedURLException 
 	 */
-	public PublicationFilters(SearchDataView sc) throws SQLException, MalformedURLException {
-		super(sc, "publication");
+	public PublicationFilters(Database db, SearchDataView sc) throws SQLException, MalformedURLException {
+		super(db, sc, "publication");
 		author();
 		name();
 		buttonGrid();

@@ -36,7 +36,7 @@ public class SearchDataView {
 	public SearchDataView(Database db, boolean isCollection) throws MalformedURLException, SQLException{
 		this.isCollection = isCollection;
 		vBox = new VBox(10);
-		db = new Database();
+		this.db = db;
 		search = new TextField();
 		setUpSearchBar();
 		navigationButtons();
@@ -322,25 +322,25 @@ public class SearchDataView {
 	}
 	
 	public void searchFilters() throws SQLException, MalformedURLException {
-		final DanceFilters df = new DanceFilters(this);
+		final DanceFilters df = new DanceFilters(db,this);
 		danceFiltersVBox = df.getFiltersVBox();
 		this.vBox.getChildren().add(danceFiltersVBox);
 		danceFiltersVBox.managedProperty().bind(danceFiltersVBox.visibleProperty());
 		danceFiltersVBox.setVisible(false);
 
-		final RecordingFilters rf = new RecordingFilters(this);
+		final RecordingFilters rf = new RecordingFilters(db,this);
 		recordingFiltersVBox = rf.getFiltersVBox();
 		this.vBox.getChildren().add(recordingFiltersVBox);
 		recordingFiltersVBox.managedProperty().bind(recordingFiltersVBox.visibleProperty());
 		recordingFiltersVBox.setVisible(false);
 
-		final AlbumFilters af = new AlbumFilters(this);
+		final AlbumFilters af = new AlbumFilters(db,this);
 		albumFiltersVBox = af.getFiltersVBox();
 		this.vBox.getChildren().add(albumFiltersVBox);
 		albumFiltersVBox.managedProperty().bind(albumFiltersVBox.visibleProperty());
 		albumFiltersVBox.setVisible(false);
 
-		final PublicationFilters pf = new PublicationFilters(this);
+		final PublicationFilters pf = new PublicationFilters(db,this);
 		publicationFiltersVBox = pf.getFiltersVBox();
 		this.vBox.getChildren().add(publicationFiltersVBox);
 		publicationFiltersVBox.managedProperty().bind(publicationFiltersVBox.visibleProperty());
@@ -359,13 +359,13 @@ public class SearchDataView {
 	}
 	
 	public void setUpTables() throws MalformedURLException, SQLException{
-		danceTable = new RecordTable("dance", "d");
+		danceTable = new RecordTable(db,"dance", "d");
 		setUpTable(danceTable.getTable(), danceTable.getCellInfo());
-		albumTable = new RecordTable("album", "a");
+		albumTable = new RecordTable(db,"album", "a");
 		setUpTable(albumTable.getTable(), albumTable.getCellInfo());
-		recordingTable = new RecordTable("recording", "r");
+		recordingTable = new RecordTable(db,"recording", "r");
 		setUpTable(recordingTable.getTable(), recordingTable.getCellInfo());
-		publicationTable = new RecordTable("publication", "p");
+		publicationTable = new RecordTable(db,"publication", "p");
 		setUpTable(publicationTable.getTable(), publicationTable.getCellInfo());
 		if(isCollection) showIHave();
 		tableVisibility(true, false, false, false);

@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 
+import database.Database;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -31,8 +32,8 @@ public class RecordingFilters extends AdvancedFilters {
 	 * Create the VBox which will contain the filters for a recording search
 	 * @throws SQLException
 	 */
-	public RecordingFilters(SearchDataView sc) throws SQLException, MalformedURLException {
-		super(sc, "recording");
+	public RecordingFilters(Database db, SearchDataView sc) throws SQLException, MalformedURLException {
+		super(db, sc, "recording");
 		type();
 		medley();
 		repetitions();

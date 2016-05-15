@@ -55,12 +55,12 @@ public class RecordTable {
 	 * @throws SQLException
 	 * @throws MalformedURLException 
 	 */
-	public RecordTable(String tableString, String state) throws SQLException, MalformedURLException {
+	public RecordTable(Database db, String tableString, String state) throws SQLException, MalformedURLException {
 		this.tableString = tableString;
 		this.state = state;
-		db = new Database();
+		this.db = db;
 		table = new TableView<Record>();
-		cellInfo = new CellInfo(10, table);
+		cellInfo = new CellInfo(db, 10, table);
 		cellInfo.setVisible(false);
 		colNameField = new LinkedHashMap<String, String>();
 		mapColumnNameToId();

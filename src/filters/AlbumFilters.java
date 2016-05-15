@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import database.Database;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -27,8 +28,8 @@ public class AlbumFilters extends AdvancedFilters {
 	 * @throws SQLException 
 	 * @throws MalformedURLException 
 	 */
-	public AlbumFilters(SearchDataView sc) throws MalformedURLException, SQLException {
-		super(sc, "album");
+	public AlbumFilters(Database db, SearchDataView sc) throws MalformedURLException, SQLException {
+		super(db, sc, "album");
 		artist();
 		year();
 		buttonGrid();

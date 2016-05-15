@@ -26,13 +26,13 @@ public abstract class AdvancedFilters {
 	protected SearchDataView SearchCollection;
 	protected String table;
 
-	public AdvancedFilters(SearchDataView sc, String table) throws MalformedURLException, SQLException{
+	public AdvancedFilters(Database db, SearchDataView sc, String table) throws MalformedURLException, SQLException{
 		this.SearchCollection = sc;
 		this.table = table;
 		grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
-		db = new Database();
+		this.db = db;
 		map = new LinkedHashMap<String, String>();
 		setUpFilters();
 		searchBool = false;
