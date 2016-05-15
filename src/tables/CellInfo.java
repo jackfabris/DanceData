@@ -95,13 +95,8 @@ public class CellInfo extends VBox{
 			//Person Link
 			if(info != null && isPerson(cellInfo.get(col))){
 				linkId = Integer.parseInt(info);
-				Database personDB;
-				try {
-					personDB = new Database();
-					personLink(infoCol, personDB.getPersonName(linkId));
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
+				//personLink(infoCol, db.getPersonName(linkId));
+				personLink(infoCol, String.valueOf(linkId));
 			}
 			//1/0 to Yes/No
 			if(info != null && isYesOrNo(cellInfo.get(col))){
