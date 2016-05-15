@@ -38,8 +38,9 @@ public class SearchDataView {
 		vBox = new VBox(10);
 		this.db = db;
 		search = new TextField();
-		setUpSearchBar();
+		
 		navigationButtons();
+		setUpSearchBar();
 		advSF = new RadioButton();
 		navSearchFilter();
 		searchFilters();
@@ -359,13 +360,13 @@ public class SearchDataView {
 	}
 	
 	public void setUpTables() throws MalformedURLException, SQLException{
-		danceTable = new RecordTable(db,"dance", "d");
+		danceTable = new RecordTable(db, this, "dance", "d");
 		setUpTable(danceTable.getTable(), danceTable.getCellInfo());
-		albumTable = new RecordTable(db,"album", "a");
+		albumTable = new RecordTable(db, this, "album", "a");
 		setUpTable(albumTable.getTable(), albumTable.getCellInfo());
-		recordingTable = new RecordTable(db,"recording", "r");
+		recordingTable = new RecordTable(db, this, "recording", "r");
 		setUpTable(recordingTable.getTable(), recordingTable.getCellInfo());
-		publicationTable = new RecordTable(db,"publication", "p");
+		publicationTable = new RecordTable(db, this, "publication", "p");
 		setUpTable(publicationTable.getTable(), publicationTable.getCellInfo());
 		if(isCollection) showIHave();
 		tableVisibility(true, false, false, false);

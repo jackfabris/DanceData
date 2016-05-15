@@ -20,11 +20,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import views.Main;
+import views.SearchDataView;
 
 /**
  * 
@@ -45,6 +45,7 @@ public class RecordTable {
 	private CellInfo cellInfo;
 	private LinkedHashMap<String, String> colNameField;
 	private String tableString, state;
+	private SearchDataView sc;
 	
 	public static final int rowsPerPage = 18;
 	
@@ -55,12 +56,13 @@ public class RecordTable {
 	 * @throws SQLException
 	 * @throws MalformedURLException 
 	 */
-	public RecordTable(Database db, String tableString, String state) throws SQLException, MalformedURLException {
+	public RecordTable(Database db, SearchDataView sc, String tableString, String state) throws SQLException, MalformedURLException {
 		this.tableString = tableString;
+		this.sc = sc;
 		this.state = state;
 		this.db = db;
 		table = new TableView<Record>();
-		cellInfo = new CellInfo(db, 10, table);
+		cellInfo = new CellInfo(db, 10, table, this);
 		cellInfo.setVisible(false);
 		colNameField = new LinkedHashMap<String, String>();
 		mapColumnNameToId();
@@ -277,6 +279,15 @@ public class RecordTable {
 	public void setTableData(ObservableList<Record> data){
 		table.setItems(data);
 		setTableHeight();
+	}
+	
+	public void refresh(String table) throws SQLException{
+		ResultSet set = null;
+		if(state.equals("d")) set = db.searchTableByName(table, sc.getDanceTitle(), sc.isCollection());
+		else if(state.equals("a")) set = db.searchTableByName(table, sc.getAlbumTitle(), sc.isCollection());
+		else if(state.equals("p")) set = db.searchTableByName(table, sc.getPublicationTitle(), sc.isCollection());
+		else if(state.equals("r")) set = db.searchTableByName(table, sc.getRecordingTitle(), sc.isCollection());
+		setTableData(populate(set));
 	}
 	
 	/**

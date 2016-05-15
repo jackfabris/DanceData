@@ -29,14 +29,16 @@ public class CellInfo extends VBox{
 	private int gridY, gridX, id, linkId;
 	private Database db;
 	private boolean vis;
+	private RecordTable rt;
 
-	public CellInfo(Database db, double spacing, TableView<Record> table) throws MalformedURLException, SQLException{
+	public CellInfo(Database db, double spacing, TableView<Record> table, RecordTable rt) throws MalformedURLException, SQLException{
 		super(spacing);
 		grid = new GridPane();
 		grid.setHgap(15);
 		grid.setVgap(5);
 		this.table = table;
 		this.db = db;
+		this.rt = rt;
 	}
 
 	public void format(){
@@ -86,6 +88,7 @@ public class CellInfo extends VBox{
 	
 	public void iterateInfo(LinkedHashMap<String, String> cellInfo) throws SQLException{
 		gridY=3;
+		if(type.equals("album")) gridY = 4; 
 		Iterator<String> i = cellInfo.keySet().iterator();
 		while(i.hasNext()){
 			String col = i.next();
@@ -95,8 +98,8 @@ public class CellInfo extends VBox{
 			//Person Link
 			if(info != null && isPerson(cellInfo.get(col))){
 				linkId = Integer.parseInt(info);
-				//personLink(infoCol, db.getPersonName(linkId));
-				personLink(infoCol, String.valueOf(linkId));
+				personLink(infoCol, db.getPersonName(linkId));
+				//personLink(infoCol, String.valueOf(linkId));
 			}
 			//1/0 to Yes/No
 			if(info != null && isYesOrNo(cellInfo.get(col))){
@@ -141,12 +144,12 @@ public class CellInfo extends VBox{
 	private void albumCellInfo() throws SQLException {
 		LinkedHashMap<String, String> albumInfo = new LinkedHashMap<String, String>();
 		albumInfo.put("Name: ", "name");
-		albumInfo.put("Artist: ", "artist_id");	
 		albumInfo.put("Year: ", "productionyear");
 		albumInfo.put("Available: ", "isavailable");
+		albumInfo.put("Artist: ", "artist_id");	
 		
-		iterateInfo(albumInfo);
 		iHaveAndTag();
+		
 		Label titleCol = new Label("Medium: ");
 		String medium = "";
 		
@@ -161,13 +164,8 @@ public class CellInfo extends VBox{
 		Label infoCol = new Label(medium);
 		grid.add(titleCol, 0, gridY++);
 		grid.add(infoCol, 1, gridY-1);
-		
-		
-//		Label artistTitle = new Label("Artist: ");
-//		Label artistInfo = new Label("artist_id");
-//		grid.add(titleCol, 0, gridY++);
-//		grid.add(infoCol, 1, gridY-1);
 
+		iterateInfo(albumInfo);
 		iterateLists("Recordings: ", "recording", db.getRecordingsByAlbum(id));
 	}
 	
@@ -175,9 +173,8 @@ public class CellInfo extends VBox{
 		LinkedHashMap<String, String> danceInfo = new LinkedHashMap<String, String>();
 		danceInfo.put("Name: ", "name");
 		danceInfo.put("Devised By: ", "devisor_id");
-		//iHaveAndTag();
-		iterateInfo(danceInfo);
 		iHaveAndTag();
+		iterateInfo(danceInfo);
 		iterateLists("Formations: ", "", db.getFormationsByDance(id));
 		iterateLists("Steps: ", "", db.getStepsByDance(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByDance(id));
@@ -226,13 +223,13 @@ public class CellInfo extends VBox{
 	private void publicationCellInfo() throws SQLException {
 		LinkedHashMap<String, String> publicationInfo = new LinkedHashMap<String, String>();
 		publicationInfo.put("Name: ", "name");
-		publicationInfo.put("Publisher: ", "devisor_id");
 		publicationInfo.put("Has Dances: ", "hasdances");
 		publicationInfo.put("Has Tunes: ", "hastunes");
 		publicationInfo.put("On Paper: ", "onpaper");
-		
-		iterateInfo(publicationInfo);
+		publicationInfo.put("Publisher: ", "devisor_id");
 		iHaveAndTag();
+		iterateInfo(publicationInfo);
+		
 		iterateLists("Dances: ", "dance", db.getDancesByPublication(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByPublication(id));
 	}
@@ -241,9 +238,9 @@ public class CellInfo extends VBox{
 		LinkedHashMap<String, String> recordingInfo = new LinkedHashMap<String, String>();
 		recordingInfo.put("Name: ", "name");
 		recordingInfo.put("Artist: ", "artist_id");
-		
-		iterateInfo(recordingInfo);
 		iHaveAndTag();
+		iterateInfo(recordingInfo);
+		
 		iterateLists("Album: ", "album", db.getAlbumByRecording(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByRecording(id));
 	}
@@ -273,6 +270,7 @@ public class CellInfo extends VBox{
 				try {
 					if(!old_val && new_val) db.iHave(type, id);
 					else if(old_val && !new_val) db.iDontHave(type, id);
+					rt.refresh(type);
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 				} catch (SQLException e) {
@@ -288,21 +286,8 @@ public class CellInfo extends VBox{
 		final TextField tag = new TextField();
 		if(set.getString("tag") == null) tag.setText("");
 		else tag.setText(set.getString("tag"));
-		tag.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				int id;
-				try {
-					id = Integer.parseInt(set.getString("id"));
-					if(!tag.getText().equals("")) db.addTag(type, id, tag.getText());
-					else db.removeTag(type, id);
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		int id = Integer.parseInt(set.getString("id"));
+		tag.setOnAction(new CellTagHandler(db, tag, type, id, rt));
 		grid.add(tagCol, 0, gridY++);
 		grid.add(tag, 1, gridY-1);
 	}
