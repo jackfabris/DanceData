@@ -36,6 +36,11 @@ public class Database {
 		init();
 	}
 	
+	/**
+	 * Initialize the database connection
+	 * @throws SQLException
+	 * @throws MalformedURLException
+	 */
 	private void init() throws SQLException, MalformedURLException {
 		connection = connect();
 		stmt = connection.createStatement();
@@ -148,6 +153,11 @@ public class Database {
 		}
 	}
 	
+	/**
+	 * After updating the database, load the collection information back into the database
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public void loadIHave() throws IOException, SQLException {
 		Iterator<String> iter = FileUtils.readLines(saveFile).iterator();
 		String line;
