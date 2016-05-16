@@ -2,7 +2,10 @@ package views;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javafx.scene.Node;
 import javafx.scene.text.Font;
@@ -37,20 +40,14 @@ public class TextFormatter {
 	 */
 	@SuppressWarnings("resource")
 	public TextFlow createTextFlow(String path) throws IOException {
-		FileReader inputStream = null;
-		inputStream = new FileReader(path);
+		InputStream is = TextFormatter.class.getResourceAsStream("home.txt");
+		String bufferText = new Scanner(is, "UTF-8").useDelimiter("\\A").next();
 		
 		ArrayList<Node> textArrayList = new ArrayList<Node>();
-		String bufferText = "";
-		
-		int c;
-		while((c = inputStream.read()) != -1) {
-			bufferText += (char)c;
-		}
-		
 		String tempText = "";
 		Text text = new Text();
 		text.setFont(Font.font(null, FontWeight.NORMAL, 13));
+		
 		for(int i=0; i<bufferText.length(); i++) {
 			char ltr = bufferText.charAt(i);
 			// is it potentially the start of a tag?

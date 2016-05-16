@@ -1,15 +1,12 @@
 GhillieTracks is an application designed to help teachers, class managers, and dancers in the Scottish Country Dance community research and manage dance and music resources.
 
-This application was inspired by the GhillieTracks program created by Patty Lindsay. It retains much of the same functionality, but any collections created in that program will need to be recreated by the user in this version.
-
-
 GhillieTracks has 2 main functions: 
 
 [b]DanceData Search[/b] - Search DanceData without being connected to the Internet, allowing access to the data from a laptop in a classroom environment. Also provides the capability of marking dances, publications, albums, and tunes as "I Have" similar to the original DanceData application.
 
 To perform a search, simply press the [i]Search[/i] button at the top of the application. You can then choose to search by dance, publication, recording, or album. Additionally, you can apply advanced search filters in order to find exactly what you're looking for. Hover over any of these additional search fields to see extra information about that filter. You can either press the search button or press enter to submit your query. Once the search has been performed, double click on any of the blue links in the results to see more information about it!
 
-[b]Collections[/b] - View a list of dances, publications, albums, and albums that you have marked as "I Have."
+[b]Collections[/b] - View a list of dances, publications, albums, and albums that you have marked as "I Have." You can also perform a search of your collection. This collection search functionality works the same way as the standard search, but is limited only to any items you have marked as "I Have."
 
 To view your collection, press the [i]Collections[/i] button. You will see a list of any dances, publications, recordings, and albums that you have marked as "I Have."
 
