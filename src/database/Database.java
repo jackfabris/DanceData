@@ -215,6 +215,7 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet searchTableByName(String table, String name, boolean ihave) throws SQLException {
+		name = name.replace("'", "''");
 		if(table.equals("dance")) {
 			query = "SELECT d.*, dt.name as type, mt.description as medleytype, s.name as shape, "
 					+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor FROM dance d "
