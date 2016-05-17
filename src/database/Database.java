@@ -146,6 +146,7 @@ public class Database {
 		while(rs.next()) {
 			info = "album " + rs.getInt("id") + " " + rs.getString("tag");
 			FileUtils.writeStringToFile(saveFile, info, append);
+			append = true;
 			FileUtils.writeStringToFile(saveFile, "\n", append);
 		}
 		
@@ -155,6 +156,7 @@ public class Database {
 		while(rs.next()) {
 			info = "publication " + rs.getInt("id") + " " + rs.getString("tag");
 			FileUtils.writeStringToFile(saveFile, info, append);
+			append = true;
 			FileUtils.writeStringToFile(saveFile, "\n", append);
 		}
 		
@@ -164,6 +166,7 @@ public class Database {
 		while(rs.next()) {
 			info = "recording " + rs.getInt("id") + " " + rs.getString("tag");
 			FileUtils.writeStringToFile(saveFile, info, append);
+			append = true;
 			FileUtils.writeStringToFile(saveFile, "\n", append);
 		}
 	}
