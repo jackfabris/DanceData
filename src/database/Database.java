@@ -259,7 +259,8 @@ public class Database {
 	public ResultSet advancedTableSearch(String table, String name, Map<String,String> map, boolean ihave) throws SQLException{
 		if(table.equals("dance")) {
 			query = "SELECT d.*, dt.name as type, mt.description as medleytype, s.name as shape, "
-					+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor FROM dance d "
+					+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor, "
+					+ "f.name as formations, st.name as steps FROM dance d "
 					+ "LEFT OUTER JOIN dancetype dt ON d.type_id=dt.id "
 					+ "LEFT OUTER JOIN medleytype mt ON d.medleytype_id=mt.id "
 					+ "LEFT OUTER JOIN shape s ON d.shape_id=s.id "
@@ -268,7 +269,15 @@ public class Database {
 					+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
 					+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
 					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
-					+ "WHERE d.name like '%" + name + "%'";
+					+ "LEFT OUTER JOIN dancesformationsmap dfm ON d.id=dfm.dance_id "
+					+ "LEFT OUTER JOIN formation f ON dfm.formation_id=f.id "
+					+ "LEFT OUTER JOIN dancesstepmap dsm ON d.id=dfm.dance_id "
+					+ "LEFT OUTER JOIN step st ON dsm.step=st.id ";
+			//"SELECT f.* FROM formation f LEFT OUTER JOIN dancesformationsmap dfm " + "ON f.id=dfm.formation_id WHERE dfm.dance_id=" + dance_id;
+			if (name.length() != 0)
+				query += "WHERE d.name like '%" + name + "%'";
+			else
+				query += "WHERE d.name like '%%'";
 			Object[] keys = map.keySet().toArray();
 			for (int i=0; keys.length>i; i++){
 				String param = (String)keys[i];
@@ -278,52 +287,132 @@ public class Database {
 						query += " AND d.barsperrepeat"+val;
 					}
 					else if (param.equals("author")){
-						query += " AND d.author like '%"+val+"%'";
+						query += " AND pn.name like '%"+val+"%'";
+					}
+					else if (param.equals("type")){
+						query += " AND dt.name='"+ val +"'";
+					}
+					else if (param.equals("couples")){
+						query += " AND c.name='"+ val +"'";
+					}
+					else if (param.equals("shape")){
+						query += " AND s.name='"+ val +"'";
 					}
 					//parser for formation search
-					else if (val.toLowerCase().contains("or") || val.toLowerCase().contains("and") || val.toLowerCase().contains("not")){
-						for (int k =0; k+6<val.length();k++){
-							String andCheck = val.substring(k, k+6);
-							String orCheck = val.substring(k, k+5);
-							//System.out.println("andcheck: " + andCheck + " orcheck: " + orCheck);
-							if(andCheck.equals("'and '")){
-								val = val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "d.progression_id='" + val.substring(k+6);
-							}
-							if (orCheck.equals("'or '")){
-								val = val.substring(0, k-1) + "' " + val.substring(k+1);
-								System.out.println(val);
-							}
+					else if (param.equals("formation") || param.equals("steps")){
+						boolean threeParams = false; //boolean for situations where there's more than one 
+						//System.out.println(val);
+						//double trailing and/or/not check
+						String doubleCheck = val.substring(val.length()-9);
+						if (doubleCheck.contains("or 'or")){
+							val = val.substring(0, val.length()-8);
 						}
-						int lastChar = val.length(); //index of last character in val string (for trailing or/and/nor)
-						if (val.substring(lastChar-2, lastChar).equals("or")){ //check for extra or
-							System.out.println(val.substring(lastChar-3, lastChar));
-							query += " AND d.progression_id="+val.substring(0, lastChar-4) +"'";
+						if (doubleCheck.contains("or 'and") || doubleCheck.contains("and 'or") || doubleCheck.contains("not 'or") || doubleCheck.contains("or 'not")){
+							val = val.substring(0, val.length()-9);
 						}
-						else if (val.substring(lastChar-3, lastChar).equals("and") || val.substring(lastChar-3, lastChar).equals("not")){ //check for extra and/not
-							query += " AND d.progression_id="+val.substring(0, lastChar-5) +"'";
+						else if (doubleCheck.contains("and 'and") || doubleCheck.contains("not 'and") || doubleCheck.contains("and 'not") || doubleCheck.contains("not 'not")){
+							val = val.substring(0, val.length()-10);
+						}
+						//separator for and/not/or
+						if (val.toLowerCase().contains("'or '") || val.toLowerCase().contains("'and '") || val.toLowerCase().contains("'not '")){
+							for (int k =0; k+6<val.length();k++){
+								String andnotCheck = val.substring(k, k+6);
+								String orCheck = val.substring(k, k+5);
+								if(andnotCheck.equals("'and '")){
+									if (threeParams){
+										if (param.equals("formation"))
+											val = val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "f.name='" + val.substring(k+6,val.length()-1) +")";
+										else { //steps
+											val = val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "st.name='" + val.substring(k+6,val.length()-1) +")";
+										}
+									}
+									else {
+										if (param.equals("formation"))
+											val = "(f.name="+val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "f.name='" + val.substring(k+6,val.length()-1) + "')";
+										else{ //steps
+											val = "(st.name="+val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "st.name='" + val.substring(k+6,val.length()-1) + "')";
+										}
+										threeParams = true;
+									}
+									//System.out.println("1");
+								}
+								if (andnotCheck.equals("'not '")){
+									if (threeParams){
+										if (param.equals("formation"))
+											val = val.substring(0, k-1) + "' and (" + val.substring(k+1, k+5) + "f.name='" + val.substring(k+6,val.length()-1) +"))";
+										else { //steps
+											val = val.substring(0, k-1) + "' and (" + val.substring(k+1, k+5) + "st.name='" + val.substring(k+6,val.length()-1) +"))";
+										}
+									}
+									else {
+										if (param.equals("formation"))
+											val = "(f.name="+val.substring(0, k-1) + "' and " + val.substring(k+1, k+5) + "f.name='" + val.substring(k+6,val.length()-1) + "')";
+										else{ //steps
+											val = "(st.name="+val.substring(0, k-1) + "' and " + val.substring(k+1, k+5) + "st.name='" + val.substring(k+6,val.length()-1) + "')";
+										}
+										threeParams = true;
+									}
+								}
+								if (orCheck.equals("'or '")){
+									if (threeParams)
+										val = val.substring(0, k-1) + "' " + val.substring(k+1, k+4) + "f.name='"+val.substring(k+5,val.length()-1)+")";
+									else {
+										val = "(f.name=" + val.substring(0, k-1) + "' " + val.substring(k+1, k+4) + "f.name='"+val.substring(k+5,val.length()-1)+"')";
+										threeParams = true;
+									}
+								}
+							}
+							System.out.println("Before extra and/or check: " + val);
+						}
+						//check for single trailing and/or/not
+						int lastChar = val.length()-1; //index of last character in val string (for trailing or/and/nor)(-1 due to space)
+						String orCheck1 = val.substring(lastChar-2, lastChar);
+						String orCheck2 = val.substring(lastChar-3, lastChar-1);
+						String andnotCheck1 = val.substring(lastChar-3, lastChar);
+						String andnotCheck2 = val.substring(lastChar-4, lastChar-1);
+						if (orCheck1.equals("or")){ //check for extra or (only one formation param)
+							//System.out.println(val.substring(lastChar-2, lastChar));
+							query += " AND f.name="+val.substring(0, lastChar-4) +"'";
+						}
+						else if (orCheck2.equals("or")){ //check for extra or (multiple formation params)
+							query += " AND "+val.substring(0, lastChar-5) +"')";
+						}
+						else if (andnotCheck1.equals("and") || andnotCheck1.equals("not")){ //check for extra and/not (only one formation param)
+							query += " AND f.name="+val.substring(0, lastChar-5) +"'";
+						}
+						else if (andnotCheck2.equals("and") || andnotCheck2.equals("not")){ //check for extra and/not (multiple formation params)
+							query += " AND "+val.substring(0, lastChar-6) +"')";
 						}
 						else {
-							query += " AND d.progression_id='"+val+"'";
+							if (threeParams)
+								query += " AND " + val;
+							else {
+								System.out.println("1");
+								query += " AND f.name="+val.substring(0, val.length()-1)+"'";
+							}
 						}
-					}
-					else {
-						query += " AND d."+param+"='"+val+"'";
+//					else {
+//						System.out.println("1");
+//						query += " AND f.name="+val.substring(0, val.length()-1)+"'";
+//					}
 					}
 				}
 			}
 			if(ihave) {
 				query += " AND d.ihave=1";
 			}
+			query += " GROUP by d.name, publication";
 		}
 		else if(table.equals("publication")) {
 			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
 					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id WHERE pb.name like '%" + name + "%'";
 			String author = map.get("author");
 			if (!author.isEmpty())
-				query += " AND pb.author='"+author+"'";
+				query += " AND pr.name like '%"+author+"%'";
 			if(ihave) {
 				query += " AND pb.ihave=1";
 			}
+			query += " ORDER by name";
 		}
 		else if(table.equals("recording")){
 			query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
@@ -338,10 +427,10 @@ public class Database {
 			String bars = map.get("bars");
 			if (type != null)
 				if (!type.isEmpty())
-					query += " AND r.type_id='"+type+"'";
+					query += " AND dt.name='"+type+"'";
 			if (medley != null)
 				if (!medley.isEmpty())
-					query += " AND r.medleytype='"+medley+"'";
+					query += " AND mt.description='"+medley+"'";
 			if (repetitions != null)
 				if (!repetitions.isEmpty())
 					query += " AND r.repetitions"+repetitions;
@@ -351,22 +440,24 @@ public class Database {
 			if(ihave) {
 				query += " AND r.ihave=1";
 			}
+			query += " ORDER by name";
 		} 
 		else if(table.equals("album")) {
 			query = "SELECT a.*, p.name as artist FROM album a "
 					+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
 					+ "WHERE a.name like '%" + name + "%'";
-			String artist = map.get("artist");
-			String year = map.get("year");
+			String artist = map.get("artist_id");
+			String year = map.get("productionyear");
 			if (artist != null)
 				if(!artist.isEmpty())
-					query += " AND a.artist_id='"+artist+"'";
+					query += " AND p.name like '%"+artist+"%'";
 			if (year != null)
 				if (!year.isEmpty())
-					query += " AND a.creationdate like '%"+year+"%'";
+					query += " AND a.productionyear="+year;
 			if(ihave) {
 				query += " AND a.ihave=1";
 			}
+			query += " ORDER by name";
 		}
 		else {
 			query = "SELECT * FROM " + table + " WHERE name like '%" + name + "%'";
@@ -374,7 +465,7 @@ public class Database {
 				query += " AND ihave=1";
 			}
 		}
-		//System.out.println(query);
+		System.out.println(query);
 		return stmt.executeQuery(query);
 	}
 	

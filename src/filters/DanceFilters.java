@@ -313,7 +313,8 @@ public class DanceFilters extends AdvancedFilters {
 	public String arrayToString(String[] array){
 		String sb = "";
 		for(int i=0; i < array.length; i++){
-			sb+="'" + array[i]+" ";
+			if (array[i].length() !=0)
+				sb+="'" + array[i]+" ";
 		}
 		return sb;
 	}
@@ -321,8 +322,8 @@ public class DanceFilters extends AdvancedFilters {
 	@Override
 	public void callQuery(){
 		try {
-			//Result set data = db.advancedTableSearch("dance", SearchCollection.getDanceTitle(), map, SearchCollection.isCollection());
-			ResultSet data = db.searchTableByName("dance", "dog", SearchCollection.isCollection());
+			ResultSet data = db.advancedTableSearch("dance", SearchCollection.getDanceTitle(), map, SearchCollection.isCollection());
+			//ResultSet data = db.searchTableByName("dance", "dog", SearchCollection.isCollection());
 			RecordTable danceTable = SearchCollection.getDanceTable();
 			danceTable.setTableData(danceTable.populate(data));
 			danceTable.getCellInfo().setVisible(false);

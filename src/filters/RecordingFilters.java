@@ -101,7 +101,7 @@ public class RecordingFilters extends AdvancedFilters {
         repetitionsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue.booleanValue())
-                	map.put("Repetitions", repetitionsField.getText());
+                	map.put("repetitions", repetitionsField.getText());
             }
         });
 		grid.add(repetitions, 0, 2);
@@ -125,7 +125,7 @@ public class RecordingFilters extends AdvancedFilters {
        barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue.booleanValue())
-                	map.put("Bars", barsField.getText());
+                	map.put("bars", barsField.getText());
             }
         });
 		grid.add(bars, 0, 3);
@@ -135,8 +135,8 @@ public class RecordingFilters extends AdvancedFilters {
 	@Override
 	public void callQuery(){
 		try {
-			//Result set data = db.advancedTableSearch("recording", SearchCollection.getRecordingTitle(), map, SearchCollection.isCollection());
-			ResultSet data = db.searchTableByName("recording", "dog", SearchCollection.isCollection());
+			ResultSet data = db.advancedTableSearch("recording", SearchCollection.getRecordingTitle(), map, SearchCollection.isCollection());
+			//ResultSet data = db.searchTableByName("recording", "dog", SearchCollection.isCollection());
 			RecordTable recordingTable = SearchCollection.getRecordingTable();
 			recordingTable.setTableData(recordingTable.populate(data));
 			recordingTable.getCellInfo().setVisible(false);
