@@ -381,8 +381,8 @@ public class Database {
 					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
 					+ "LEFT OUTER JOIN dancesformationsmap dfm ON d.id=dfm.dance_id "
 					+ "LEFT OUTER JOIN formation f ON dfm.formation_id=f.id "
-					+ "LEFT OUTER JOIN dancesstepmap dsm ON d.id=dfm.dance_id "
-					+ "LEFT OUTER JOIN step st ON dsm.step=st.id ";
+					+ "LEFT OUTER JOIN dancesstepsmap dsm ON d.id=dfm.dance_id "
+					+ "LEFT OUTER JOIN step st ON dsm.step_id=st.id ";
 			//"SELECT f.* FROM formation f LEFT OUTER JOIN dancesformationsmap dfm " + "ON f.id=dfm.formation_id WHERE dfm.dance_id=" + dance_id;
 			if (name.length() != 0)
 				query += "WHERE d.name like '%" + name + "%'";
@@ -408,103 +408,37 @@ public class Database {
 					else if (param.equals("shape")){
 						query += " AND s.name='"+ val +"'";
 					}
-					//parser for formation search
-					else if (param.equals("formation") || param.equals("steps")){
-						boolean threeParams = false; //boolean for situations where there's more than one 
-						//System.out.println(val);
-						//double trailing and/or/not check
-						String doubleCheck = val.substring(val.length()-9);
-						if (doubleCheck.contains("or 'or")){
-							val = val.substring(0, val.length()-8);
-						}
-						if (doubleCheck.contains("or 'and") || doubleCheck.contains("and 'or") || doubleCheck.contains("not 'or") || doubleCheck.contains("or 'not")){
-							val = val.substring(0, val.length()-9);
-						}
-						else if (doubleCheck.contains("and 'and") || doubleCheck.contains("not 'and") || doubleCheck.contains("and 'not") || doubleCheck.contains("not 'not")){
-							val = val.substring(0, val.length()-10);
-						}
-						//separator for and/not/or
-						if (val.toLowerCase().contains("'or '") || val.toLowerCase().contains("'and '") || val.toLowerCase().contains("'not '")){
-							for (int k =0; k+6<val.length();k++){
-								String andnotCheck = val.substring(k, k+6);
-								String orCheck = val.substring(k, k+5);
-								if(andnotCheck.equals("'and '")){
-									if (threeParams){
-										if (param.equals("formation"))
-											val = val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "f.name='" + val.substring(k+6,val.length()-1) +")";
-										else { //steps
-											val = val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "st.name='" + val.substring(k+6,val.length()-1) +")";
-										}
-									}
-									else {
-										if (param.equals("formation"))
-											val = "(f.name="+val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "f.name='" + val.substring(k+6,val.length()-1) + "')";
-										else{ //steps
-											val = "(st.name="+val.substring(0, k-1) + "' " + val.substring(k+1, k+5) + "st.name='" + val.substring(k+6,val.length()-1) + "')";
-										}
-										threeParams = true;
-									}
-									//System.out.println("1");
-								}
-								if (andnotCheck.equals("'not '")){
-									if (threeParams){
-										if (param.equals("formation"))
-											val = val.substring(0, k-1) + "' and (" + val.substring(k+1, k+5) + "f.name='" + val.substring(k+6,val.length()-1) +"))";
-										else { //steps
-											val = val.substring(0, k-1) + "' and (" + val.substring(k+1, k+5) + "st.name='" + val.substring(k+6,val.length()-1) +"))";
-										}
-									}
-									else {
-										if (param.equals("formation"))
-											val = "(f.name="+val.substring(0, k-1) + "' and " + val.substring(k+1, k+5) + "f.name='" + val.substring(k+6,val.length()-1) + "')";
-										else{ //steps
-											val = "(st.name="+val.substring(0, k-1) + "' and " + val.substring(k+1, k+5) + "st.name='" + val.substring(k+6,val.length()-1) + "')";
-										}
-										threeParams = true;
-									}
-								}
-								if (orCheck.equals("'or '")){
-									if (threeParams)
-										val = val.substring(0, k-1) + "' " + val.substring(k+1, k+4) + "f.name='"+val.substring(k+5,val.length()-1)+")";
-									else {
-										val = "(f.name=" + val.substring(0, k-1) + "' " + val.substring(k+1, k+4) + "f.name='"+val.substring(k+5,val.length()-1)+"')";
-										threeParams = true;
-									}
-								}
+					else if (param.equals("formation")){
+						System.out.println(val);
+						String[] formations = new String[5];
+						int len = val.length();
+						for (int k=0,j=0,count=0; k<len; k++){
+							if (val.substring(k,k+1).equals("~")){
+								formations[count] = val.substring(j,k);
+								count++;
+								j=k+1;
 							}
-							System.out.println("Before extra and/or check: " + val);
-						}
-						//check for single trailing and/or/not
-						int lastChar = val.length()-1; //index of last character in val string (for trailing or/and/nor)(-1 due to space)
-						String orCheck1 = val.substring(lastChar-2, lastChar);
-						String orCheck2 = val.substring(lastChar-3, lastChar-1);
-						String andnotCheck1 = val.substring(lastChar-3, lastChar);
-						String andnotCheck2 = val.substring(lastChar-4, lastChar-1);
-						if (orCheck1.equals("or")){ //check for extra or (only one formation param)
-							//System.out.println(val.substring(lastChar-2, lastChar));
-							query += " AND f.name="+val.substring(0, lastChar-4) +"'";
-						}
-						else if (orCheck2.equals("or")){ //check for extra or (multiple formation params)
-							query += " AND "+val.substring(0, lastChar-5) +"')";
-						}
-						else if (andnotCheck1.equals("and") || andnotCheck1.equals("not")){ //check for extra and/not (only one formation param)
-							query += " AND f.name="+val.substring(0, lastChar-5) +"'";
-						}
-						else if (andnotCheck2.equals("and") || andnotCheck2.equals("not")){ //check for extra and/not (multiple formation params)
-							query += " AND "+val.substring(0, lastChar-6) +"')";
-						}
-						else {
-							if (threeParams)
-								query += " AND " + val;
-							else {
-								System.out.println("1");
-								query += " AND f.name="+val.substring(0, val.length()-1)+"'";
+							else if(val.substring(k,k+1).equals("*")){
+								j=k+2;
+								count++;
+							}
+							else if(val.substring(k,k+1).equals("'")){
+								val = val.substring(0,k) + "'" + val.substring(k+1);
 							}
 						}
-//					else {
-//						System.out.println("1");
-//						query += " AND f.name="+val.substring(0, val.length()-1)+"'";
-//					}
+						if (formations[0] != null){
+							query+= " AND (f.name='" + formations[0] + "' ";
+							if (formations[1] != null && formations[2] != null){
+								query+= formations[1] + " f.name='" + formations[2] + "' ";
+								if (formations[3] != null && formations[4] != null)
+									query+= formations[3] + " f.name='" + formations[4] + "')";
+								else
+									query += ")";
+							}
+							else
+								query += ")";
+						}
+						
 					}
 				}
 			}

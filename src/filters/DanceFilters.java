@@ -314,7 +314,9 @@ public class DanceFilters extends AdvancedFilters {
 		String sb = "";
 		for(int i=0; i < array.length; i++){
 			if (array[i].length() !=0)
-				sb+="'" + array[i]+" ";
+				sb+=array[i]+"~";
+			else
+				sb+=" * ";
 		}
 		return sb;
 	}
