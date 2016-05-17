@@ -200,7 +200,11 @@ public class RecordTable {
 								public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
 									try {
 										if(r!=null && !old_val && new_val) db.iHave(tableString, r.getId());
-										else if(r!=null && old_val && !new_val) db.iDontHave(tableString, r.getId());
+										else if(r!=null && old_val && !new_val) {
+											db.iDontHave(tableString, r.getId());
+											db.removeTag(tableString, r.getId());
+											refresh(tableString);
+										}
 									} catch (SQLException e) {
 										e.printStackTrace();
 									}

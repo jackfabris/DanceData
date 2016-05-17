@@ -262,6 +262,8 @@ public class CellInfo extends VBox{
 		//I HAVE
 		Label iHave = new Label("I Have: ");
 		CheckBox cb = new CheckBox();
+		Label tagCol = new Label("Tag: ");
+		final TextField tag = new TextField();
 		if(set.getString("ihave").equals("1")) {
 			cb.setSelected(true);
 		}
@@ -269,7 +271,11 @@ public class CellInfo extends VBox{
 			public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
 				try {
 					if(!old_val && new_val) db.iHave(type, id);
-					else if(old_val && !new_val) db.iDontHave(type, id);
+					else if(old_val && !new_val) {
+						db.iDontHave(type, id);
+						db.removeTag(type, id);
+						tag.clear();
+					}
 					rt.refresh(type);
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
@@ -282,8 +288,6 @@ public class CellInfo extends VBox{
 		grid.add(cb, 1, gridY-1);
 		
 		//TAG
-		Label tagCol = new Label("Tag: ");
-		final TextField tag = new TextField();
 		if(set.getString("tag") == null) tag.setText("");
 		else tag.setText(set.getString("tag"));
 		int id = Integer.parseInt(set.getString("id"));

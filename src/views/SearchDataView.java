@@ -50,6 +50,7 @@ public class SearchDataView {
 		recordingTitle = "";
 		albumTitle = "";
 		setUpTables();
+		exportButton();
 	}
 	
 	/**
@@ -394,6 +395,25 @@ public class SearchDataView {
 		albumTable.setTableData(albumTable.populate(set));
 		set = db.searchTableByName("recording", "", true);
 		recordingTable.setTableData(recordingTable.populate(set));
+	}
+	
+	public void exportButton(){
+		Button export = new Button("Export as PDF");
+		this.vBox.getChildren().add(export);
+		export.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				if(isCollection && (state.equals("a") || state.equals("p"))){
+					ExportPDF epdf = null;
+					if(state.equals("a")) epdf = new ExportPDF(db, "My Albums.pdf", state, "album");
+					else if (state.equals("p")) epdf = new ExportPDF(db, "My Publications.pdf", state, "publication");
+					epdf.createPdf();
+				}
+				else{
+					System.out.println("No.");
+				}
+			}
+		});
 	}
 	
 	public VBox getVBox(){

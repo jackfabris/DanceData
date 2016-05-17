@@ -122,7 +122,7 @@ public class Main extends Application {
 		homeBtn.setId("home-button");
 		ToggleButton searchBtn = new ToggleButton("Search");
 		searchBtn.setId("search-button");
-		ToggleButton collectionBtn = new ToggleButton("Collections");
+		ToggleButton collectionBtn = new ToggleButton("My Collections");
 		collectionBtn.setId("collection-button");
 		ToggleGroup navButtons = new ToggleGroup();
 		homeBtn.setToggleGroup(navButtons);

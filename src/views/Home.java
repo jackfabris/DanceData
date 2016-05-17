@@ -48,7 +48,7 @@ public class Home {
 				"-fx-border-insets: 5 10 5 5;" +
 				"-fx-border-color: #cfcfcf;");
 		//Date String
-		Label date = new Label();
+		final Label date = new Label();
 		String workingDir = System.getProperty("user.dir");
 		Path path = Paths.get(workingDir + "/database/scddata.db");
 		BasicFileAttributes attr;
@@ -71,6 +71,7 @@ public class Home {
 			@Override
 			public void handle(ActionEvent arg0) {
 				db.update();
+				date.setText("It has been 0 days since the database was last updated.");
 			}
 		});
 	}

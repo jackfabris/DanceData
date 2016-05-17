@@ -80,7 +80,7 @@ public abstract class AdvancedFilters {
 	}
 	
 	public void goButton(){
-		Button goBtn = new Button("Advanced Search");
+		Button goBtn = new Button("Submit Search");
 		goBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
