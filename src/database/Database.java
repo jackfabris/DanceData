@@ -17,7 +17,6 @@ import org.apache.commons.io.FileUtils;
  * in the database folder called scddata.db. It contains many functions for getting
  * the required data from the database to be put on screen. It also contains a
  * function to update the database upon the user request.
- *
  */
 public class Database {
 	
@@ -36,6 +35,11 @@ public class Database {
 		init();
 	}
 	
+	/**
+	 * Initialize the database connection
+	 * @throws SQLException
+	 * @throws MalformedURLException
+	 */
 	private void init() throws SQLException, MalformedURLException {
 		connection = connect();
 		stmt = connection.createStatement();
@@ -49,6 +53,17 @@ public class Database {
 	 */
 	private Connection connect() throws SQLException {
 		return DriverManager.getConnection("jdbc:sqlite:database/scddata.db");
+	}
+	
+	/**
+	 * Close down the databases
+	 * @throws SQLException
+	 */
+	public void close() throws SQLException {
+		if(stmt != null)
+			stmt.close();
+		if(connection != null)
+			connection.close();
 	}
 	
 	/**
@@ -148,6 +163,11 @@ public class Database {
 		}
 	}
 	
+	/**
+	 * After updating the database, load the collection information back into the database
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	public void loadIHave() throws IOException, SQLException {
 		Iterator<String> iter = FileUtils.readLines(saveFile).iterator();
 		String line;
@@ -163,6 +183,87 @@ public class Database {
 		}
 	}
 	
+	/**
+	 * Mark as having in personal collection. 
+	 * @param table - the type of thing i have (can be album, recording, publication, or dance)
+	 * @param id - the id 
+	 * @throws SQLException
+	 */
+	public void iHave(String table, int id) throws SQLException {
+		query = "UPDATE " + table + " SET ihave=1 WHERE id=" + id;
+		stmt.execute(query);
+		if(table.equals("publication")) {
+			query = "UPDATE dance SET ihave=1 WHERE id in "
+					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
+			stmt.execute(query);
+		} else if(table.equals("album")) {
+			query = "UPDATE recording SET ihave=1 WHERE id in "
+					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
+			stmt.execute(query);
+		}
+	}
+
+	/**
+	 * Mark as not having in personal collection
+	 * @param table - the type (album, recording, publication, or dance)
+	 * @param id - the id
+	 * @throws SQLException
+	 */
+	public void iDontHave(String table, int id) throws SQLException {
+		query = "UPDATE " + table + " SET ihave=0 WHERE id=" +id;
+		stmt.execute(query);
+		if(table.equals("publication")) {
+			query = "UPDATE dance SET ihave=0 WHERE id in "
+					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
+			stmt.execute(query);
+		} else if(table.equals("album")) {
+			query = "UPDATE recording SET ihave=0 WHERE id in "
+					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
+			stmt.execute(query);
+		}
+	}
+
+	/**
+	 * Give the item a tag
+	 * @param table - the type (album, recording, publication, or dance)
+	 * @param id - the id
+	 * @param tag - the tag string
+	 * @throws SQLException
+	 */
+	public void addTag(String table, int id, String tag) throws SQLException {
+		query = "UPDATE " + table + " SET tag='" + tag + "' WHERE id=" + id;
+		stmt.execute(query);
+		if(table.equals("publication")) {
+			query = "UPDATE dance SET tag='" + tag + "' WHERE id in "
+					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
+			stmt.execute(query);
+		} else if(table.equals("album")) {
+			query = "UPDATE recording SET tag='" + tag + "' WHERE id in "
+					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
+			stmt.execute(query);
+		}
+	}
+
+	/**
+	 * Remove the items tag
+	 * @param table - the type (album, recording, publicaiton, or dance)
+	 * @param id - the id
+	 * @throws SQLException 
+	 */
+	public void removeTag(String table, int id) throws SQLException {
+		query = "UPDATE " + table + " SET tag=null WHERE id=" +id;
+		stmt.execute(query);
+		if(table.equals("publication")) {
+			query = "UPDATE dance SET tag=null WHERE id in "
+					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
+			stmt.execute(query);
+		} else if(table.equals("album")) {
+			query = "UPDATE recording SET tag=null WHERE id in "
+					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
+			stmt.execute(query);
+		}
+	}
+
 	/**
 	 * Gets all information about a person in the database with the given id
 	 * 
@@ -195,6 +296,7 @@ public class Database {
 	 * @throws SQLException
 	 */
 	public ResultSet searchTableByName(String table, String name, boolean ihave) throws SQLException {
+		name = name.replace("'", "''");
 		if(table.equals("dance")) {
 			query = "SELECT d.*, dt.name as type, mt.description as medleytype, s.name as shape, "
 					+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor FROM dance d "
@@ -511,17 +613,55 @@ public class Database {
 	}
 	
 	/**
-	 * Get all the formations for a given dance
+	 * Get all recordings for a given dance
 	 * @param dance_id
 	 * @return ResultSet
 	 * @throws SQLException
 	 */
-	public ResultSet getFormationsByDance(int dance_id) throws SQLException {
-		query = "SELECT f.* FROM formation f LEFT OUTER JOIN dancesformationsmap dfm "
-				+ "ON f.id=dfm.formation_id WHERE dfm.dance_id=" + dance_id + " ORDER BY f.name";
+	public ResultSet getRecordingsByDance(int dance_id) throws SQLException {
+		query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
+				+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
+				+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
+				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
+				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
+				+ "LEFT OUTER JOIN dancesrecordingsmap drm ON r.id=drm.recording_id "
+				+ "WHERE drm.dance_id=" + dance_id + " ORDER BY r.name";
 		return stmt.executeQuery(query);
 	}
-	
+
+	/** 
+	 * Get recordings for the given tune
+	 * @param tune_id
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
+	public ResultSet getRecordingsByTune(int tune_id) throws SQLException {
+		query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
+				+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
+				+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
+				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
+				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
+				+ "LEFT OUTER JOIN tunesrecordingsmap trm ON r.id=trm.recording_id "
+				+ "WHERE trm.tune_id=" + tune_id + " ORDER BY r.name";
+		return stmt.executeQuery(query);
+	}
+
+	/**
+	 * Get all recordings by the artist with person_id
+	 * @param person_id
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
+	public ResultSet getRecordingsByPerson(int person_id) throws SQLException {
+		query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
+				+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
+				+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
+				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
+				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
+				+ "WHERE pn.id=" + person_id + " ORDER BY r.name";
+		return stmt.executeQuery(query);
+	}
+
 	/**
 	 * Get all the steps for a given dance
 	 * @param dance_id
@@ -547,22 +687,31 @@ public class Database {
 	}
 	
 	/**
-	 * Get all recordings for a given dance
-	 * @param dance_id
+	 * Get a list of tues in the publication with publication_id
+	 * @param publication_id
 	 * @return ResultSet
 	 * @throws SQLException
 	 */
-	public ResultSet getRecordingsByDance(int dance_id) throws SQLException {
-		query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
-				+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
-				+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
-				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
-				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
-				+ "LEFT OUTER JOIN dancesrecordingsmap drm ON r.id=drm.recording_id "
-				+ "WHERE drm.dance_id=" + dance_id + " ORDER BY r.name";
+	public ResultSet getTunesByPublication(int publication_id) throws SQLException {
+		query = "SELECT t.*, p.name as composer FROM tune t LEFT OUTER JOIN tunespublicationsmap tpm "
+				+ "ON t.id=tpm.tune_id LEFT OUTER JOIN person p ON t.composer_id=p.id "
+				+ "WHERE tpm.publication_id=" + publication_id + " ORDER BY t.name";
 		return stmt.executeQuery(query);
 	}
-	
+
+	/**
+	 * Get all tunes composed by the person with person_id
+	 * @param person_id
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
+	public ResultSet getTunesByPerson(int person_id) throws SQLException {
+		query = "SELECT t.*, p.name as composer FROM tune t "
+				+ "LEFT OUTER JOIN person p ON t.composer_id=p.id "
+				+ "WHERE p.id=" + person_id + " ORDER BY t.name";
+		return stmt.executeQuery(query);
+	}
+
 	/**
 	 * Get all tunes for a given recording
 	 * @param recording_id
@@ -588,6 +737,19 @@ public class Database {
 	}
 	
 	/**
+	 * Get all albums by the artist with person_id
+	 * @param person_id
+	 * @return ResultSet
+	 * @throws SQLException
+	 */
+	public ResultSet getAlbumsByPerson(int person_id) throws SQLException {
+		query = "SELECT a.*, p.name as artist FROM album a "
+				+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
+				+ "WHERE p.id=" + person_id + " ORDER BY a.name";
+		return stmt.executeQuery(query);
+	}
+
+	/**
 	 * Get a list of dances in the publication with publication_id
 	 * @param publication_id
 	 * @return ResultSet
@@ -605,19 +767,6 @@ public class Database {
 				+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
 				+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
 				+ "WHERE dpm.publication_id=" + publication_id + " ORDER BY d.name";
-		return stmt.executeQuery(query);
-	}
-	
-	/**
-	 * Get a list of tues in the publication with publication_id
-	 * @param publication_id
-	 * @return ResultSet
-	 * @throws SQLException
-	 */
-	public ResultSet getTunesByPublication(int publication_id) throws SQLException {
-		query = "SELECT t.*, p.name as composer FROM tune t LEFT OUTER JOIN tunespublicationsmap tpm "
-				+ "ON t.id=tpm.tune_id LEFT OUTER JOIN person p ON t.composer_id=p.id "
-				+ "WHERE tpm.publication_id=" + publication_id + " ORDER BY t.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -640,23 +789,6 @@ public class Database {
 				+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
 				+ "LEFT OUTER JOIN dancestunesmap dtm ON d.id=dtm.dance_id "
 				+ "WHERE dtm.tune_id=" + tune_id + " ORDER BY d.name";
-		return stmt.executeQuery(query);
-	}
-	
-	/** 
-	 * Get recordings for the given tune
-	 * @param tune_id
-	 * @return ResultSet
-	 * @throws SQLException
-	 */
-	public ResultSet getRecordingsByTune(int tune_id) throws SQLException {
-		query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
-				+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
-				+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
-				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
-				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
-				+ "LEFT OUTER JOIN tunesrecordingsmap trm ON r.id=trm.recording_id "
-				+ "WHERE trm.tune_id=" + tune_id + " ORDER BY r.name";
 		return stmt.executeQuery(query);
 	}
 	
@@ -695,126 +827,34 @@ public class Database {
 	}
 	
 	/**
-	 * Get all tunes composed by the person with person_id
-	 * @param person_id
+	 * Get all publications that the dance is found in
+	 * @param dance_id
 	 * @return ResultSet
 	 * @throws SQLException
 	 */
-	public ResultSet getTunesByPerson(int person_id) throws SQLException {
-		query = "SELECT t.*, p.name as composer FROM tune t "
-				+ "LEFT OUTER JOIN person p ON t.composer_id=p.id "
-				+ "WHERE p.id=" + person_id + " ORDER BY t.name";
+	public ResultSet getPublicationsByDance(int dance_id) throws SQLException {
+		query = "SELECT p.*, pn.name as devisor FROM publication p "
+				+ "LEFT OUTER JOIN person pn ON p.devisor_id=pn.id "
+				+ "LEFT OUTER JOIN dancespublicationsmap dpm ON p.id=dpm.publication_id "
+				+ "WHERE dpm.dance_id=" + dance_id + " ORDER BY p.name";
 		return stmt.executeQuery(query);
 	}
 	
 	/**
-	 * Get all recordings by the artist with person_id
-	 * @param person_id
+	 * Get all the formations for a given dance
+	 * @param dance_id
 	 * @return ResultSet
 	 * @throws SQLException
 	 */
-	public ResultSet getRecordingsByPerson(int person_id) throws SQLException {
-		query = "SELECT r.*, dt.name as type, mt.description as medleytype, p.name as phrasing, pn.name as artist "
-				+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
-				+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
-				+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
-				+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
-				+ "WHERE pn.id=" + person_id + " ORDER BY r.name";
+	public ResultSet getFormationsByDance(int dance_id) throws SQLException {
+		query = "SELECT f.* FROM formation f LEFT OUTER JOIN dancesformationsmap dfm "
+				+ "ON f.id=dfm.formation_id WHERE dfm.dance_id=" + dance_id + " ORDER BY f.name";
 		return stmt.executeQuery(query);
 	}
-	
-	/**
-	 * Get all albums by the artist with person_id
-	 * @param person_id
-	 * @return ResultSet
-	 * @throws SQLException
-	 */
-	public ResultSet getAlbumsByPerson(int person_id) throws SQLException {
-		query = "SELECT a.*, p.name as artist FROM album a "
-				+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
-				+ "WHERE p.id=" + person_id + " ORDER BY a.name";
+
+	public ResultSet doQuery(String s) throws SQLException {
+		query = s;
 		return stmt.executeQuery(query);
-	}
-	
-	/**
-	 * Mark as having in personal collection. 
-	 * @param table - the type of thing i have (can be album, recording, publication, or dance)
-	 * @param id - the id 
-	 * @throws SQLException
-	 */
-	public void iHave(String table, int id) throws SQLException {
-		query = "UPDATE " + table + " SET ihave=1 WHERE id=" + id;
-		stmt.execute(query);
-		if(table.equals("publication")) {
-			query = "UPDATE dance SET ihave=1 WHERE id in "
-					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
-			stmt.execute(query);
-		} else if(table.equals("album")) {
-			query = "UPDATE recording SET ihave=1 WHERE id in "
-					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
-			stmt.execute(query);
-		}
-	}
-	
-	/**
-	 * Mark as not having in personal collection
-	 * @param table - the type (album, recording, publication, or dance)
-	 * @param id - the id
-	 * @throws SQLException
-	 */
-	public void iDontHave(String table, int id) throws SQLException {
-		query = "UPDATE " + table + " SET ihave=0 WHERE id=" +id;
-		stmt.execute(query);
-		if(table.equals("publication")) {
-			query = "UPDATE dance SET ihave=0 WHERE id in "
-					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
-			stmt.execute(query);
-		} else if(table.equals("album")) {
-			query = "UPDATE recording SET ihave=0 WHERE id in "
-					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
-			stmt.execute(query);
-		}
-	}
-	
-	/**
-	 * Give the item a tag
-	 * @param table - the type (album, recording, publication, or dance)
-	 * @param id - the id
-	 * @param tag - the tag string
-	 * @throws SQLException
-	 */
-	public void addTag(String table, int id, String tag) throws SQLException {
-		query = "UPDATE " + table + " SET tag='" + tag + "' WHERE id=" + id;
-		stmt.execute(query);
-		if(table.equals("publication")) {
-			query = "UPDATE dance SET tag='" + tag + "' WHERE id in "
-					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
-			stmt.execute(query);
-		} else if(table.equals("album")) {
-			query = "UPDATE recording SET tag='" + tag + "' WHERE id in "
-					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
-			stmt.execute(query);
-		}
-	}
-	
-	/**
-	 * Remove the items tag
-	 * @param table - the type (album, recording, publicaiton, or dance)
-	 * @param id - the id
-	 * @throws SQLException 
-	 */
-	public void removeTag(String table, int id) throws SQLException {
-		query = "UPDATE " + table + " SET tag=null WHERE id=" +id;
-		stmt.execute(query);
-		if(table.equals("publication")) {
-			query = "UPDATE dance SET tag=null WHERE id in "
-					+ "(SELECT dance_id FROM dancespublicationsmap WHERE publication_id=" + id + ")";
-			stmt.execute(query);
-		} else if(table.equals("album")) {
-			query = "UPDATE recording SET tag=null WHERE id in "
-					+ "(SELECT recording_id FROM albumsrecordingsmap WHERE album_id=" + id + ")";
-			stmt.execute(query);
-		}
 	}
 	
 	/* Use for debugging to print the results of a query */
@@ -832,12 +872,7 @@ public class Database {
 		    count++;
 		}
 	}
-	
-	public ResultSet doQuery(String s) throws SQLException {
-		query = s;
-		return stmt.executeQuery(query);
-	}
-	
+
 	public static void main(String[] args) throws SQLException, IOException {
 		Database db = new Database();
 		
@@ -1034,10 +1069,19 @@ public class Database {
 		db.printResults(resultSet);
 		
 		System.out.println("");
+		
+		System.out.println("Publication by dance:");
+		resultSet = db.getPublicationsByDance(497);
+		db.printResults(resultSet);
+		
+		System.out.println("");
 				
 		System.out.println("Last executed query: " + db.query);
 		
 		System.out.println("");
+		
+		System.out.println("Close database");
+		db.close();
 		
 	}
 }
