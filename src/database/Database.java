@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.net.SocketException;
 import java.sql.*;
 import java.util.Iterator;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class Database {
 	 * Downloads the most recent sqlite db file from the online source
 	 * Add the ihave and tag columns back to the db
 	 * Load the stuff we saved earlier back into the db
-	 * @return 1 on success; 0 when no internet connection; -1 on another error
+	 * @return 1 on success; 0 when no internet connection; -1 on fatal error (app needs to restart)
 	 */
 	public int update() {
 		try {
@@ -80,7 +81,7 @@ public class Database {
 			try {
 				this.saveIHave();
 			} catch (Exception e) {
-				System.out.println("save failed...");
+				return 0;
 			}
 			
 			close();
@@ -89,10 +90,14 @@ public class Database {
 			this.addIHaveTagColumns();
 			this.loadIHave();
 			return 1;
-		} catch(UnknownHostException e) {
+		} catch(UnknownHostException | SocketException e) {
+			try {
+				init();
+			} catch (Exception e1) {
+				return -1;
+			}
 			return 0;
 		} catch(Exception e) {
-			e.printStackTrace();
 			return -1;
 		}
 	}
@@ -801,7 +806,7 @@ public class Database {
 					resultString = "SUCCESS!"; 
 					break;
 				case 0: 
-					resultString = "FAILURE: No internet connection."; 
+					resultString = "FAILURE: No internet connection.";
 					break;
 				case -1:
 				default: 
