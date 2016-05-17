@@ -63,8 +63,10 @@ public class Database {
 	public void close() throws SQLException {
 		if(stmt != null)
 			stmt.close();
+			stmt = null;
 		if(connection != null)
 			connection.close();
+			connection = null;
 	}
 	
 	/**
@@ -72,32 +74,33 @@ public class Database {
 	 * Downloads the most recent sqlite db file from the online source
 	 * Add the ihave and tag columns back to the db
 	 * Load the stuff we saved earlier back into the db
-	 * @return 1 on success; 0 when no internet connection; -1 on fatal error (app needs to restart)
+	 * @return 1 on success; 0 when no internet connection; -1 on error, 
+	 * 		-2 on fatal error (app needs to restart)
 	 */
 	public int update() {
 		try {
-			
-			/* Save what I have */
-			try {
-				this.saveIHave();
-			} catch (Exception e) {
-				return 0;
-			}
-			
+			saveIHave();
 			close();
 			FileUtils.copyURLToFile(dbURL, dbFile);
 			init();
-			this.addIHaveTagColumns();
-			this.loadIHave();
+			addIHaveTagColumns();
+			loadIHave();
 			return 1;
 		} catch(UnknownHostException | SocketException e) {
 			try {
+				close();
 				init();
 			} catch (Exception e1) {
-				return -1;
+				return -2;
 			}
 			return 0;
 		} catch(Exception e) {
+			try {
+				close();
+				init();
+			} catch (Exception e1) {
+				return -2;
+			}
 			return -1;
 		}
 	}

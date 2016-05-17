@@ -70,7 +70,11 @@ public class Home {
 		updateBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				db.update();
+				int result = db.update();
+				//TODO: If result is 1, alert user for success
+				//TODO: If result is 0, alert user to connect to internet
+				//TODO: If result is -1, alert user an error occured
+				//TODO: If result is -2, alert user a fatal error occured and to restart app
 			}
 		});
 	}
