@@ -83,7 +83,7 @@ public class Database {
 				System.out.println("save failed...");
 			}
 			
-			connection.close();
+			close();
 			FileUtils.copyURLToFile(dbURL, dbFile);
 			init();
 			this.addIHaveTagColumns();
