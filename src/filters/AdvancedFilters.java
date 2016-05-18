@@ -9,6 +9,8 @@ import database.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -25,6 +27,7 @@ public abstract class AdvancedFilters {
 	protected boolean searchBool;
 	protected SearchDataView SearchCollection;
 	protected String table;
+	protected int gridY;
 
 	public AdvancedFilters(Database db, SearchDataView sc, String table) throws MalformedURLException, SQLException{
 		this.SearchCollection = sc;
@@ -32,10 +35,12 @@ public abstract class AdvancedFilters {
 		grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
+		gridY = 0;
 		this.db = db;
 		map = new LinkedHashMap<String, String>();
 		setUpFilters();
 		searchBool = false;
+		searchTitle();
 	}
 	
 	public void printMap(){
@@ -46,6 +51,14 @@ public abstract class AdvancedFilters {
 			System.out.println(x+", "+map.get(x));
 		}
 		System.out.println();
+	}
+	
+	public void searchTitle(){
+		map.put("title", "");
+		Label title = new Label("Title");
+		TextField titleField = new TextField();
+		grid.add(title, 0, gridY);
+		grid.add(titleField, 1, gridY);
 	}
 
 	public void setUpFilters(){

@@ -88,14 +88,13 @@ public class RecordTable {
 		}
 		//Publication
 		else if(state.equals("p")){
-			colNameField.put("Author", "devisor");
+			colNameField.put("Devisor", "devisor");
 		}
 		//Recording
 		else{
 			colNameField.put("Type", "type");
 			colNameField.put("Bars", "barsperrepeat");
 			colNameField.put("Artist", "artist");
-			//colNameField.put("Album", "album");
 		}
 		colNameField.put("I Have", "ihave");
 		colNameField.put("Tag", "tag");
@@ -285,7 +284,7 @@ public class RecordTable {
 		setTableHeight();
 	}
 	
-	public void refresh(String table) throws SQLException{
+	public void refresh(String table) throws SQLException{		
 		ResultSet set = null;
 		if(state.equals("d")) set = db.searchTableByName(table, sc.getDanceTitle(), sc.isCollection());
 		else if(state.equals("a")) set = db.searchTableByName(table, sc.getAlbumTitle(), sc.isCollection());

@@ -95,11 +95,15 @@ public class CellInfo extends VBox{
 			String info = set.getString(cellInfo.get(col));
 			Label titleCol = new Label(col);
 			Label infoCol = new Label(info);
+			//Bold Name
+			if(info != null && cellInfo.get(col).equals("name")){
+				infoCol.setStyle("-fx-font-weight: bold;" +
+						"-fx-font-size: 14");
+			}
 			//Person Link
 			if(info != null && isPerson(cellInfo.get(col))){
 				linkId = Integer.parseInt(info);
 				personLink(infoCol, db.getPersonName(linkId));
-				//personLink(infoCol, String.valueOf(linkId));
 			}
 			//1/0 to Yes/No
 			if(info != null && isYesOrNo(cellInfo.get(col))){
@@ -113,9 +117,10 @@ public class CellInfo extends VBox{
 
 	public void iterateLists(String colName, String linkType, ResultSet list) throws SQLException{
 		boolean firstTime = true;
+		boolean stepformcol = true;
 		int track = 1;
 		while(list.next()){
-			if(firstTime){
+			if(firstTime && !linkType.equals("")){
 				gridY=3;
 				gridX+=2;
 				Label col = new Label(colName);
@@ -123,10 +128,30 @@ public class CellInfo extends VBox{
 				gridY--;
 				firstTime = false;
 			}
+			if(linkType.equals("") && stepformcol){
+				Label col = new Label(colName);
+				grid.add(col, gridX, gridY++);
+				gridY--;
+				stepformcol = false;
+			}
 			String name = list.getString("name");
 			if(type.equals("album")) {
 				name = track +". " + name;
 				track++;
+			}
+			if(linkType.equals("recording")){
+				name += " by " + list.getString("artist");
+				if(list.getString("ihave").equals("1")) name += "*";
+			}
+			else if(linkType.equals("dance")){
+				name += " by " + "get Publisher"; //***
+				if(list.getString("ihave").equals("1")) name += "*";
+			}
+			else if(linkType.equals("album")){
+				if(list.getString("ihave").equals("1")) name += "*"; 
+			}
+			else if(linkType.equals("publication")){
+				if(list.getString("ihave").equals("1")) name += "*";
 			}
 			Label infoCol = new Label(name);
 			linkId = Integer.parseInt(list.getString("id"));
@@ -172,11 +197,13 @@ public class CellInfo extends VBox{
 	private void danceCellInfo() throws SQLException {
 		LinkedHashMap<String, String> danceInfo = new LinkedHashMap<String, String>();
 		danceInfo.put("Name: ", "name");
-		danceInfo.put("Devised By: ", "devisor_id");
+		danceInfo.put("Date: ", "lastmod"); //lastmod, creationdate
+		danceInfo.put("Devisor: ", "devisor_id");
 		iHaveAndTag();
 		iterateInfo(danceInfo);
 		iterateLists("Formations: ", "", db.getFormationsByDance(id));
 		iterateLists("Steps: ", "", db.getStepsByDance(id));
+		iterateLists("Publications: ", "publication", db.getPublicationsByDance(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByDance(id));
 		iterateLists("Recordings: ", "recording", db.getRecordingsByDance(id));
 	}
@@ -226,7 +253,7 @@ public class CellInfo extends VBox{
 		publicationInfo.put("Has Dances: ", "hasdances");
 		publicationInfo.put("Has Tunes: ", "hastunes");
 		publicationInfo.put("On Paper: ", "onpaper");
-		publicationInfo.put("Publisher: ", "devisor_id");
+		publicationInfo.put("Devisor: ", "devisor_id");
 		iHaveAndTag();
 		iterateInfo(publicationInfo);
 		

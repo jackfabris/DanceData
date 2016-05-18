@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -44,6 +45,7 @@ public class DanceFilters extends AdvancedFilters {
 		author();
 		formations();
 		steps();
+		RSCDS();
 		buttonGrid();
 	}
 			
@@ -65,8 +67,9 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("type", typeOptions.getValue());
 			}
 		});
-		grid.add(type, 0, 0);
-		grid.add(typeOptions, 1, 0);
+		gridY++;
+		grid.add(type, 0, gridY);
+		grid.add(typeOptions, 1, gridY);
 	}
 	
 	public void bars(){
@@ -89,8 +92,9 @@ public class DanceFilters extends AdvancedFilters {
                 if(!newValue.booleanValue()) map.put("bars", barsField.getText());   
             }
         });
-		grid.add(bars, 0, 1);
-		grid.add(barsField, 1, 1);
+       gridY++;
+		grid.add(bars, 0, gridY);
+		grid.add(barsField, 1, gridY);
 	}
 	
 	public void couples() throws SQLException{
@@ -111,8 +115,9 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("couples", couplesOptions.getValue());
 			}
 		});
-		grid.add(couples, 0, 2);
-		grid.add(couplesOptions, 1, 2);
+		gridY++;
+		grid.add(couples, 0, gridY);
+		grid.add(couplesOptions, 1, gridY);
 	}
 	
 	public void setShape() throws SQLException{
@@ -133,8 +138,9 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("shape", setShapeOptions.getValue());
 			}
 		});
-		grid.add(setShape, 0, 3);
-		grid.add(setShapeOptions, 1, 3);
+		gridY++;
+		grid.add(setShape, 0, gridY);
+		grid.add(setShapeOptions, 1, gridY);
 	}
 	
 	public void author(){
@@ -155,8 +161,9 @@ public class DanceFilters extends AdvancedFilters {
                 	map.put("author", authorField.getText());
             }
         });
-		grid.add(author, 0, 4);
-		grid.add(authorField, 1, 4);
+        gridY++;
+		grid.add(author, 0, gridY);
+		grid.add(authorField, 1, gridY);
 	}
 	
 	public void formations() throws SQLException{
@@ -224,13 +231,15 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
-		
-		grid.add(formations, 0, 5);
-		grid.add(formationOptions1, 1, 5);
-		grid.add(formationBool1, 2, 5);
-		grid.add(formationOptions2, 1, 6);
-		grid.add(formationBool2, 2, 6);
-		grid.add(formationOptions3, 1, 7);
+		gridY++;
+		grid.add(formations, 0, gridY);
+		grid.add(formationOptions1, 1, gridY);
+		grid.add(formationBool1, 2, gridY);
+		gridY++;
+		grid.add(formationOptions2, 1, gridY);
+		grid.add(formationBool2, 2, gridY);
+		gridY++;
+		grid.add(formationOptions3, 1, gridY);
 	}
 	
 	public void steps() throws SQLException{
@@ -297,13 +306,15 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("Steps", arrayToString(stepsStringArray));
 			}
 		});
-		
-		grid.add(steps, 0, 8);
-		grid.add(stepOptions1, 1, 8);
-		grid.add(stepBool1, 2, 8);
-		grid.add(stepOptions2, 1, 9);
-		grid.add(stepBool2, 2, 9);
-		grid.add(stepOptions3, 1, 10);
+		gridY++;
+		grid.add(steps, 0, gridY);
+		grid.add(stepOptions1, 1, gridY);
+		grid.add(stepBool1, 2, gridY);
+		gridY++;
+		grid.add(stepOptions2, 1, gridY);
+		grid.add(stepBool2, 2, gridY);
+		gridY++;
+		grid.add(stepOptions3, 1, gridY);
 	}
 	
 	public void updateString(String[] array, String value, int i){
@@ -316,6 +327,22 @@ public class DanceFilters extends AdvancedFilters {
 			sb+="'" + array[i]+" ";
 		}
 		return sb;
+	}
+	
+	public void RSCDS(){
+		map.put("RSCDS", "0");
+		Label RSCDS = new Label("Only RSCDS Dances ");
+		final CheckBox RSCDSCB = new CheckBox();
+		RSCDSCB.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				if(RSCDSCB.isSelected()) map.put("RSCDS", "1");
+				else if(!RSCDSCB.isSelected()) map.put("RSCDS", "0");
+			}
+		});
+		gridY++;
+		grid.add(RSCDS, 0, gridY);
+		grid.add(RSCDSCB, 1, gridY);
 	}
 	
 	@Override

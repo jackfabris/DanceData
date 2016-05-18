@@ -34,6 +34,7 @@ public class Main extends Application {
 	private GridPane grid;
 	private int gridY;
 	private VBox home, search, collection;
+	public SearchDataView s, c;
 	private ScrollPane homeSP, searchSP, collectionSP;
 	private Scene scene;
 	private Database db;
@@ -54,9 +55,9 @@ public class Main extends Application {
 		sceneWidthProp = scene.widthProperty();
 		Home h = new Home(db);
 		home = h.getHomeVBox();
-		SearchDataView s = new SearchDataView(db, false);
+		s = new SearchDataView(db, this, false);
 		search = s.getVBox();
-		SearchDataView c = new SearchDataView(db, true);
+		c = new SearchDataView(db, this, true);
 		collection = c.getVBox();
 		homeSP = new ScrollPane();
 		searchSP = new ScrollPane();

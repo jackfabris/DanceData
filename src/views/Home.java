@@ -11,6 +11,8 @@ import database.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -66,15 +68,22 @@ public class Home {
 		Button updateBtn = new Button("UPDATE");
 		updateBtn.setId("update");
 		updateVBox.getChildren().add(updateBtn);
+		final Label status = new Label();
+		status.setVisible(false);
+		updateVBox.getChildren().add(status);
 		this.getHomeVBox().getChildren().add(updateVBox);
 		updateBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				int result = db.update();
-				//TODO: If result is 1, alert user for success
-				//TODO: If result is 0, alert user to connect to internet
-				//TODO: If result is -1, alert user an error occured
-				//TODO: If result is -2, alert user a fatal error occured and to restart app
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Status of Database Update");
+				alert.setHeaderText(null);
+				if(result == 1) status.setText("Update Successful!");
+				else if(result == 0) status.setText("Cannot Update. Please connect to Internet and try again.");
+				else if(result == -1) status.setText("An error has occured on update.");
+				else if(result == -2) status.setText("A fatal error has occured. Please restart Ghillie Tracks 2.0");
+				status.setVisible(true);
 				date.setText("It has been 0 days since the database was last updated.");
 			}
 		});

@@ -25,20 +25,23 @@ import tables.RecordTable;
 
 public class SearchDataView {
 
-	protected VBox vBox, danceFiltersVBox, recordingFiltersVBox, albumFiltersVBox, publicationFiltersVBox;
-	protected Database db;
-	protected RecordTable danceTable, publicationTable, recordingTable, albumTable;
-	protected final TextField search;
-	protected RadioButton advSF;
-	protected String state, danceTitle, publicationTitle, recordingTitle, albumTitle;
+	private VBox vBox, danceFiltersVBox, recordingFiltersVBox, albumFiltersVBox, publicationFiltersVBox;
+	private HBox searchBox;
+	private Database db;
+	public Main m;
+	private RecordTable danceTable, publicationTable, recordingTable, albumTable;
+	private final TextField search;
+	private RadioButton advSF;
+	private Button export;
+	private String state, danceTitle, publicationTitle, recordingTitle, albumTitle;
 	private boolean isCollection;
 	
-	public SearchDataView(Database db, boolean isCollection) throws MalformedURLException, SQLException{
+	public SearchDataView(Database db, Main m, boolean isCollection) throws MalformedURLException, SQLException{
+		this.m = m;
 		this.isCollection = isCollection;
 		vBox = new VBox(10);
 		this.db = db;
 		search = new TextField();
-		
 		navigationButtons();
 		setUpSearchBar();
 		advSF = new RadioButton();
@@ -64,7 +67,7 @@ public class SearchDataView {
 		Button searchGoBtn = new Button("Go");
 		searchGoBtn.setPrefWidth(50);
 
-		HBox searchBox = new HBox(10);
+		searchBox = new HBox(10);
 		searchBox.getChildren().add(search);
 		searchBox.getChildren().add(searchGoBtn);
 
@@ -183,12 +186,14 @@ public class SearchDataView {
 			@Override
 			public void handle(ActionEvent arg0) {
 				danceTB.setSelected(true);
-				advSF.setText("Show Advanced Search Options For Dance");
 				if(!state.equals("d")){
+					advSF.setText("Show Advanced Search Options For Dance");
+					searchBox.setVisible(true);
 					advSF.setSelected(false);
 					search.clear();
 				}
 				state = "d";
+				export.setVisible(false);
 				searchFiltersVisibility(danceFiltersVBox.isVisible(), false, false, false);
 				tableVisibility(true, false, false, false);
 				cellInfoVisibility(danceTable.getCellInfo().isVis(), false, false, false);
@@ -202,12 +207,14 @@ public class SearchDataView {
 			@Override
 			public void handle(ActionEvent arg0) {
 				publicationTB.setSelected(true);
-				advSF.setText("Show Advanced Search Options For Publication");
 				if(!state.equals("p")){
+					advSF.setText("Show Advanced Search Options For Publication");
+					searchBox.setVisible(true);
 					advSF.setSelected(false);
 					search.clear();
 				}
 				state = "p";
+				if(isCollection){export.setVisible(true);}
 				searchFiltersVisibility(false, publicationFiltersVBox.isVisible(), false, false);
 				tableVisibility(false, true, false, false);
 				cellInfoVisibility(false, publicationTable.getCellInfo().isVis(), false, false);
@@ -221,12 +228,14 @@ public class SearchDataView {
 			@Override
 			public void handle(ActionEvent arg0) {
 				recordingTB.setSelected(true);
-				advSF.setText("Show Advanced Search Options For Recording");
 				if(!state.equals("r")){
+					advSF.setText("Show Advanced Search Options For Recording");
+					searchBox.setVisible(true);
 					advSF.setSelected(false);
 					search.clear();
 				}
 				state = "r";
+				export.setVisible(false);
 				searchFiltersVisibility(false, false, recordingFiltersVBox.isVisible(), false);
 				tableVisibility(false, false, true, false);
 				cellInfoVisibility(false, false, recordingTable.getCellInfo().isVis(), false);
@@ -240,12 +249,14 @@ public class SearchDataView {
 			@Override
 			public void handle(ActionEvent arg0) {
 				albumTB.setSelected(true);
-				advSF.setText("Show Advanced Search Options For Album");
 				if(!state.equals("a")){
+					advSF.setText("Show Advanced Search Options For Album");
+					searchBox.setVisible(true);
 					advSF.setSelected(false);
 					search.clear();
 				}
 				state = "a";
+				if(isCollection){export.setVisible(true);}
 				searchFiltersVisibility(false, false, false, albumFiltersVBox.isVisible());
 				tableVisibility(false, false, false, true);
 				cellInfoVisibility(false, false, false, albumTable.getCellInfo().isVis());
@@ -299,6 +310,11 @@ public class SearchDataView {
 		advSF.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
+//				if(advSF.isSelected()) searchBox.setVisible(false);
+//				else if(!advSF.isSelected()) searchBox.setVisible(true);
+				
+				searchBox.setVisible(!advSF.isSelected());
+				
 				if(state.equals("d")){
 					if(advSF.isSelected()) advSF.setText("Hide Advanced Search Options For Dance");
 					else advSF.setText("Show Advanced Search Options For Dance");
@@ -398,8 +414,10 @@ public class SearchDataView {
 	}
 	
 	public void exportButton(){
-		Button export = new Button("Export as PDF");
+		export = new Button("Export as PDF");
+		export.setVisible(false);
 		this.vBox.getChildren().add(export);
+		export.managedProperty().bind(export.visibleProperty());
 		export.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {

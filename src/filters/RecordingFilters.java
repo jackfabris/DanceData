@@ -43,7 +43,6 @@ public class RecordingFilters extends AdvancedFilters {
 
 	public void type() throws SQLException{
 		map.put("type", "");
-		// Same as dance type?
 		ResultSet typeSet;
 		typeSet = db.doQuery("SELECT name FROM dancetype");
 		ObservableList<String> typeList = FXCollections.observableArrayList("");
@@ -59,10 +58,11 @@ public class RecordingFilters extends AdvancedFilters {
 				map.put("type", typeOptions.getValue());
 			}
 		});
-		grid.add(type, 0, 0);
-		grid.add(typeOptions, 1, 0);
+		gridY++;
+		grid.add(type, 0, gridY);
+		grid.add(typeOptions, 1, gridY);
 	}
-	
+
 	public void medley() throws SQLException{
 		map.put("medleytype", "");
 		// Medley Type
@@ -81,10 +81,11 @@ public class RecordingFilters extends AdvancedFilters {
 				map.put("medleytype", medleyTypeOptions.getValue());
 			}
 		});
-		grid.add(medleyType, 0, 1);
-		grid.add(medleyTypeOptions, 1, 1);
+		gridY++;
+		grid.add(medleyType, 0, gridY);
+		grid.add(medleyTypeOptions, 1, gridY);
 	}
-	
+
 	public void repetitions(){
 		map.put("repetitions", "");
 		// Repetitions
@@ -99,16 +100,17 @@ public class RecordingFilters extends AdvancedFilters {
 				callQuery();
 			}
 		});
-        repetitionsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(!newValue.booleanValue())
-                	map.put("Repetitions", repetitionsField.getText());
-            }
-        });
-		grid.add(repetitions, 0, 2);
-		grid.add(repetitionsField, 1, 2);
+		repetitionsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(!newValue.booleanValue())
+					map.put("Repetitions", repetitionsField.getText());
+			}
+		});
+		gridY++;
+		grid.add(repetitions, 0, gridY);
+		grid.add(repetitionsField, 1, gridY);
 	}
-	
+
 	public void bars(){
 		map.put("Bars", "");
 		// Bars
@@ -123,16 +125,17 @@ public class RecordingFilters extends AdvancedFilters {
 				callQuery();
 			}
 		});
-       barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(!newValue.booleanValue())
-                	map.put("Bars", barsField.getText());
-            }
-        });
-		grid.add(bars, 0, 3);
-		grid.add(barsField, 1, 3);
+		barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(!newValue.booleanValue())
+					map.put("Bars", barsField.getText());
+			}
+		});
+		gridY++;
+		grid.add(bars, 0, gridY);
+		grid.add(barsField, 1, gridY);
 	}
-	
+
 	@Override
 	public void callQuery(){
 		try {

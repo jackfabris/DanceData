@@ -53,8 +53,9 @@ public class AlbumFilters extends AdvancedFilters {
                 	map.put("artist_id", artistField.getText());
             }
         });
-		grid.add(artist, 0, 0);
-		grid.add(artistField, 1, 0);
+        gridY++;
+		grid.add(artist, 0, gridY);
+		grid.add(artistField, 1, gridY);
 	}
 
 	public void year(){
@@ -75,8 +76,9 @@ public class AlbumFilters extends AdvancedFilters {
                 	map.put("productionyear", yearField.getText());
             }
         });
-		grid.add(year, 0, 1);
-		grid.add(yearField, 1, 1);
+        gridY++;
+		grid.add(year, 0, gridY);
+		grid.add(yearField, 1, gridY);
 	}
 	
 	@Override
