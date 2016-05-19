@@ -17,6 +17,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
@@ -231,6 +232,8 @@ public class RecordTable {
 							@Override
 							public String toString(String arg0) {return arg0;}
 						});
+				cell.setTooltip(new Tooltip("Press Enter to Save the New Tag"));
+				Tooltip.install(cell, cell.getTooltip());
 				return cell;
 			};
 		});

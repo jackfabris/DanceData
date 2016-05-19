@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -29,6 +30,13 @@ import views.SearchDataView;
  */
 public class DanceFilters extends AdvancedFilters {
 
+	
+	private ComboBox<String> typeOptions, couplesOptions, setShapeOptions;
+	private ComboBox<String> formationOptions1, formationOptions2, formationOptions3, formationBool1, formationBool2;
+	private ComboBox<String> stepOptions1, stepOptions2, stepOptions3, stepBool1, stepBool2;
+	private TextField barsField, authorField;
+	private CheckBox RSCDSCB;
+	
 	private String[] formationStringArray = {"", "", "", "", ""};
 	private String[] stepsStringArray = {"", "", "", "", ""};
 	
@@ -46,7 +54,7 @@ public class DanceFilters extends AdvancedFilters {
 		formations();
 		steps();
 		RSCDS();
-		buttonGrid();
+		super.goAndClearButtons();
 	}
 			
 	public void type() throws SQLException{
@@ -60,7 +68,7 @@ public class DanceFilters extends AdvancedFilters {
 		}
 		Collections.sort(typesList);
 		Label type = new Label("Type");
-		final ComboBox<String> typeOptions = new ComboBox<String>(typesList);
+		typeOptions = new ComboBox<String>(typesList);
 		typeOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -76,7 +84,7 @@ public class DanceFilters extends AdvancedFilters {
 		map.put("bars", "");
 		// Bars
 		Label bars = new Label("Bars");
-		final TextField barsField = new TextField();
+		barsField = new TextField();
 		barsField.setTooltip(new Tooltip("Use <, <=, >, >= before the number of bars \n"
 				+ "to indicate less, equal, or more bars"));
 		Tooltip.install(barsField, barsField.getTooltip());
@@ -108,7 +116,7 @@ public class DanceFilters extends AdvancedFilters {
 		}
 		Collections.sort(couplesList);
 		Label couples = new Label("Couples");
-		final ComboBox<String> couplesOptions = new ComboBox<String>(couplesList);
+		couplesOptions = new ComboBox<String>(couplesList);
 		couplesOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -131,7 +139,7 @@ public class DanceFilters extends AdvancedFilters {
 		}
 		Collections.sort(setShapeList);
 		Label setShape = new Label("Set Shape");
-		final ComboBox<String> setShapeOptions = new ComboBox<String>(setShapeList);
+		setShapeOptions = new ComboBox<String>(setShapeList);
 		setShapeOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -144,10 +152,10 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void author(){
-		map.put("author", ""); //devisor_id?
+		map.put("author", "");
 		// Author
 		Label author = new Label("Author");
-		final TextField authorField = new TextField();
+		authorField = new TextField();
 		authorField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -178,7 +186,7 @@ public class DanceFilters extends AdvancedFilters {
 		Collections.sort(formationList);
 		Label formations = new Label("Formations");
 		
-		final ComboBox<String> formationOptions1 = new ComboBox<String>(formationList);
+		formationOptions1 = new ComboBox<String>(formationList);
 		formationOptions1.setTooltip(new Tooltip("Fill out formations in order. \n"
 				+ "If you need to indicate more than one formation, \n"
 				+ "indicate whether you want both formations (and), \n"
@@ -194,8 +202,8 @@ public class DanceFilters extends AdvancedFilters {
 			}
 		});
 		
-		final ComboBox<String> formationBool1 = new ComboBox<String>();
-		formationBool1.getItems().addAll("and", "or", "not");
+		formationBool1 = new ComboBox<String>();
+		formationBool1.getItems().addAll("", "and", "or", "not");
 		formationBool1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -204,7 +212,7 @@ public class DanceFilters extends AdvancedFilters {
 			}
 		});
 		
-		final ComboBox<String> formationOptions2 = new ComboBox<String>(formationList);
+		formationOptions2 = new ComboBox<String>(formationList);
 		formationOptions2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -213,8 +221,8 @@ public class DanceFilters extends AdvancedFilters {
 			}
 		});
 		
-		final ComboBox<String> formationBool2 = new ComboBox<String>();
-		formationBool2.getItems().addAll("and", "or", "not");
+		formationBool2 = new ComboBox<String>();
+		formationBool2.getItems().addAll("", "and", "or", "not");
 		formationBool2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -223,7 +231,7 @@ public class DanceFilters extends AdvancedFilters {
 			}
 		});
 		
-		final ComboBox<String> formationOptions3 = new ComboBox<String>(formationList);
+		formationOptions3 = new ComboBox<String>(formationList);
 		formationOptions3.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -253,7 +261,7 @@ public class DanceFilters extends AdvancedFilters {
 		}
 		Collections.sort(stepList);
 		Label steps = new Label("Steps");
-		final ComboBox<String> stepOptions1 = new ComboBox<String>(stepList);
+		stepOptions1 = new ComboBox<String>(stepList);
 		stepOptions1.setTooltip(new Tooltip("Fill out steps in order. \n"
 				+ "If you need to indicate more than one step, \n"
 				+ "indicate whether you want both steps (and), \n"
@@ -269,8 +277,8 @@ public class DanceFilters extends AdvancedFilters {
 			}
 		});
 		
-		final ComboBox<String> stepBool1 = new ComboBox<String>();
-		stepBool1.getItems().addAll("and", "or", "not");
+		stepBool1 = new ComboBox<String>();
+		stepBool1.getItems().addAll("", "and", "or", "not");
 		stepBool1.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -279,7 +287,7 @@ public class DanceFilters extends AdvancedFilters {
 			}
 		});
 		
-		final ComboBox<String> stepOptions2 = new ComboBox<String>(stepList);
+		stepOptions2 = new ComboBox<String>(stepList);
 		stepOptions2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -288,8 +296,8 @@ public class DanceFilters extends AdvancedFilters {
 			}
 		});
 		
-		final ComboBox<String> stepBool2 = new ComboBox<String>();
-		stepBool2.getItems().addAll("and", "or", "not");
+		stepBool2 = new ComboBox<String>();
+		stepBool2.getItems().addAll("", "and", "or", "not");
 		stepBool2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -298,7 +306,7 @@ public class DanceFilters extends AdvancedFilters {
 			}
 		});
 		
-		final ComboBox<String> stepOptions3 = new ComboBox<String>(stepList);
+		stepOptions3 = new ComboBox<String>(stepList);
 		stepOptions3.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -332,7 +340,7 @@ public class DanceFilters extends AdvancedFilters {
 	public void RSCDS(){
 		map.put("RSCDS", "0");
 		Label RSCDS = new Label("Only RSCDS Dances ");
-		final CheckBox RSCDSCB = new CheckBox();
+		RSCDSCB = new CheckBox();
 		RSCDSCB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -348,7 +356,7 @@ public class DanceFilters extends AdvancedFilters {
 	@Override
 	public void callQuery(){
 		try {
-			//Result set data = db.advancedTableSearch("dance", SearchCollection.getDanceTitle(), map, SearchCollection.isCollection());
+			//Result set data = db.advancedTableSearch("dance", titleField.getText(), map, SearchCollection.isCollection());
 			ResultSet data = db.searchTableByName("dance", "dog", SearchCollection.isCollection());
 			RecordTable danceTable = SearchCollection.getDanceTable();
 			danceTable.setTableData(danceTable.populate(data));
@@ -358,5 +366,33 @@ public class DanceFilters extends AdvancedFilters {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void clearButton(){
+		Button clearBtn = new Button("Clear Fields");
+		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				titleField.clear();
+				typeOptions.setValue("");
+				barsField.clear();
+				couplesOptions.setValue("");
+				setShapeOptions.setValue("");
+				authorField.clear();
+				formationOptions1.setValue("");
+				formationOptions2.setValue("");
+				formationOptions3.setValue("");
+				formationBool1.setValue("");
+				formationBool2.setValue("");
+				stepOptions1.setValue("");
+				stepOptions2.setValue("");
+				stepOptions3.setValue("");
+				stepBool1.setValue("");
+				stepBool2.setValue("");
+				RSCDSCB.setSelected(false);
+			}
+		});
+		grid.add(clearBtn, 1, gridY);
 	}
 }

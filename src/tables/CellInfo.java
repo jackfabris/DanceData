@@ -16,6 +16,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -26,10 +27,11 @@ public class CellInfo extends VBox{
 	private String type;
 	private ResultSet set; 
 	private GridPane grid;
-	private int gridY, gridX, id, linkId;
+	private int gridY, gridX, rscdsY, id, linkId;
 	private Database db;
 	private boolean vis;
 	private RecordTable rt;
+	private boolean rscds;
 
 	public CellInfo(Database db, double spacing, TableView<Record> table, RecordTable rt) throws MalformedURLException, SQLException{
 		super(spacing);
@@ -144,14 +146,16 @@ public class CellInfo extends VBox{
 				if(list.getString("ihave").equals("1")) name += "*";
 			}
 			else if(linkType.equals("dance")){
-				name += " by " + "get Publisher"; //***
+				name += " by " + list.getString("publication");
 				if(list.getString("ihave").equals("1")) name += "*";
 			}
-			else if(linkType.equals("album")){
-				if(list.getString("ihave").equals("1")) name += "*"; 
-			}
-			else if(linkType.equals("publication")){
-				if(list.getString("ihave").equals("1")) name += "*";
+			else if(linkType.equals("album")) if(list.getString("ihave").equals("1")) name += "*"; 
+			else if(linkType.equals("publication")) if(list.getString("ihave").equals("1")) name += "*";
+			if(type.equals("dance") && linkType.equals("publication")){
+				String dev = list.getString("devisor");
+				if(dev.equals("RSCDS") || (dev.length() > 9 && dev.substring(0, 9).equals("RSCDS and"))) { //or RSCDS and
+					rscds = true;
+				}
 			}
 			Label infoCol = new Label(name);
 			linkId = Integer.parseInt(list.getString("id"));
@@ -197,15 +201,19 @@ public class CellInfo extends VBox{
 	private void danceCellInfo() throws SQLException {
 		LinkedHashMap<String, String> danceInfo = new LinkedHashMap<String, String>();
 		danceInfo.put("Name: ", "name");
-		danceInfo.put("Date: ", "lastmod"); //lastmod, creationdate
+		danceInfo.put("Date: ", "creationdate");
 		danceInfo.put("Devisor: ", "devisor_id");
 		iHaveAndTag();
 		iterateInfo(danceInfo);
 		iterateLists("Formations: ", "", db.getFormationsByDance(id));
 		iterateLists("Steps: ", "", db.getStepsByDance(id));
+		rscdsY = gridY;
 		iterateLists("Publications: ", "publication", db.getPublicationsByDance(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByDance(id));
 		iterateLists("Recordings: ", "recording", db.getRecordingsByDance(id));
+		grid.add(new Label("RSCDS: "), 0, rscdsY);
+		if(rscds) grid.add(new Label("Yes"), 1, rscdsY);
+		else grid.add(new Label("No"), 1, rscdsY);
 	}
 
 	private void personCellInfo() throws SQLException {
@@ -319,6 +327,8 @@ public class CellInfo extends VBox{
 		else tag.setText(set.getString("tag"));
 		int id = Integer.parseInt(set.getString("id"));
 		tag.setOnAction(new CellTagHandler(db, tag, type, id, rt));
+		tag.setTooltip(new Tooltip("Press Enter to Save the New Tag"));
+		Tooltip.install(tag, tag.getTooltip());
 		grid.add(tagCol, 0, gridY++);
 		grid.add(tag, 1, gridY-1);
 	}

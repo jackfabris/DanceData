@@ -28,6 +28,7 @@ public abstract class AdvancedFilters {
 	protected SearchDataView SearchCollection;
 	protected String table;
 	protected int gridY;
+	protected TextField titleField;
 
 	public AdvancedFilters(Database db, SearchDataView sc, String table) throws MalformedURLException, SQLException{
 		this.SearchCollection = sc;
@@ -56,7 +57,7 @@ public abstract class AdvancedFilters {
 	public void searchTitle(){
 		map.put("title", "");
 		Label title = new Label("Title");
-		TextField titleField = new TextField();
+		titleField = new TextField();
 		grid.add(title, 0, gridY);
 		grid.add(titleField, 1, gridY);
 	}
@@ -92,6 +93,13 @@ public abstract class AdvancedFilters {
 		});
 	}
 	
+	public void goAndClearButtons(){
+		gridY++;
+		goButton();
+		clearButton();
+		this.filtersVBox.getChildren().add(grid);
+	}
+	
 	public void goButton(){
 		Button goBtn = new Button("Submit Search");
 		goBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -100,13 +108,10 @@ public abstract class AdvancedFilters {
 				callQuery();	
 			}
 		});
-		this.filtersVBox.getChildren().add(goBtn);
+		grid.add(goBtn, 0, gridY);
 	}
 	
-	public void buttonGrid(){
-		this.filtersVBox.getChildren().add(grid);
-		goButton();
-	}
+	public abstract void clearButton();
 	
 	public LinkedHashMap<String, String> getDanceMap() {
 		return map;

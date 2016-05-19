@@ -309,10 +309,7 @@ public class SearchDataView {
 		// the other three search filters box should be hidden
 		advSF.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent arg0) {
-//				if(advSF.isSelected()) searchBox.setVisible(false);
-//				else if(!advSF.isSelected()) searchBox.setVisible(true);
-				
+			public void handle(ActionEvent arg0) {				
 				searchBox.setVisible(!advSF.isSelected());
 				
 				if(state.equals("d")){

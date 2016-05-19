@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -27,6 +28,10 @@ import views.SearchDataView;
  *
  */
 public class PublicationFilters extends AdvancedFilters {
+	
+	private TextField authorField;
+	private ComboBox<String> nameOptions;
+	private CheckBox RSCDSCB;
 
 	/**
 	 * Create the VBox which will contain the filters for a publication search
@@ -38,13 +43,13 @@ public class PublicationFilters extends AdvancedFilters {
 		author();
 		name();
 		RSCDS();
-		buttonGrid();
+		super.goAndClearButtons();
 	}
 
 	public void author(){
-		map.put("author", ""); //artist_id?
+		map.put("author", "");
 		Label author = new Label("Author");
-		final TextField authorField = new TextField();
+		authorField = new TextField();
 		authorField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -73,7 +78,7 @@ public class PublicationFilters extends AdvancedFilters {
 		}
 		Collections.sort(nameList);
 		Label name = new Label("Name");
-		final ComboBox<String> nameOptions = new ComboBox<String>(nameList);
+		nameOptions = new ComboBox<String>(nameList);
 		nameOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -88,7 +93,7 @@ public class PublicationFilters extends AdvancedFilters {
 	public void RSCDS(){
 		map.put("RSCDS", "0");
 		Label RSCDS = new Label("Only RSCDS Publications ");
-		final CheckBox RSCDSCB = new CheckBox();
+		RSCDSCB = new CheckBox();
 		RSCDSCB.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -104,7 +109,7 @@ public class PublicationFilters extends AdvancedFilters {
 	@Override
 	public void callQuery(){
 		try {
-			//Result set data = db.advancedTableSearch("publication", SearchCollection.getPublicationTitle(), map, SearchCollection.isCollection());
+			//Result set data = db.advancedTableSearch("publication", titleField.getText(), map, SearchCollection.isCollection());
 			ResultSet data = db.searchTableByName("publication", "dog", SearchCollection.isCollection());
 			RecordTable publicationTable = SearchCollection.getPublicationTable();
 			publicationTable.setTableData(publicationTable.populate(data));
@@ -114,5 +119,20 @@ public class PublicationFilters extends AdvancedFilters {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void clearButton(){
+		Button clearBtn = new Button("Clear Fields");
+		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				titleField.clear();
+				authorField.clear();
+				nameOptions.setValue("");
+				RSCDSCB.setSelected(false);
+			}
+		});
+		grid.add(clearBtn, 1, gridY);
 	}
 }

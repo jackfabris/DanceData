@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -27,6 +28,9 @@ import views.SearchDataView;
  *
  */
 public class RecordingFilters extends AdvancedFilters {
+	
+	private ComboBox<String> typeOptions, medleyTypeOptions;
+	private TextField repetitionsField, barsField;
 
 	/**
 	 * Create the VBox which will contain the filters for a recording search
@@ -38,7 +42,7 @@ public class RecordingFilters extends AdvancedFilters {
 		medley();
 		repetitions();
 		bars();
-		buttonGrid();
+		super.goAndClearButtons();
 	}
 
 	public void type() throws SQLException{
@@ -51,7 +55,7 @@ public class RecordingFilters extends AdvancedFilters {
 		}
 		Collections.sort(typeList);
 		Label type = new Label("Type");
-		final ComboBox<String> typeOptions = new ComboBox<String>(typeList);
+		typeOptions = new ComboBox<String>(typeList);
 		typeOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -74,7 +78,7 @@ public class RecordingFilters extends AdvancedFilters {
 		}
 		Collections.sort(medleyTypeList);
 		Label medleyType = new Label("Medley Type");
-		final ComboBox<String> medleyTypeOptions = new ComboBox<String>(medleyTypeList);
+		medleyTypeOptions = new ComboBox<String>(medleyTypeList);
 		medleyTypeOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -90,7 +94,7 @@ public class RecordingFilters extends AdvancedFilters {
 		map.put("repetitions", "");
 		// Repetitions
 		Label repetitions = new Label("Repetitions");
-		final TextField repetitionsField = new TextField();
+		repetitionsField = new TextField();
 		repetitionsField.setTooltip(new Tooltip("Use <, <=, >, >= before the number of repetitions \nto indicate less, equal, or more repetitions"));
 		Tooltip.install(repetitionsField, repetitionsField.getTooltip());
 		repetitionsField.setOnAction(new EventHandler<ActionEvent>() {
@@ -115,7 +119,7 @@ public class RecordingFilters extends AdvancedFilters {
 		map.put("Bars", "");
 		// Bars
 		Label bars = new Label("Bars");
-		final TextField barsField = new TextField();
+		barsField = new TextField();
 		barsField.setTooltip(new Tooltip("Use <, <=, >, >= before number of bars \nto indicate less, equal, or more bars"));
 		Tooltip.install(barsField, barsField.getTooltip());
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
@@ -139,7 +143,7 @@ public class RecordingFilters extends AdvancedFilters {
 	@Override
 	public void callQuery(){
 		try {
-			//Result set data = db.advancedTableSearch("recording", SearchCollection.getRecordingTitle(), map, SearchCollection.isCollection());
+			//Result set data = db.advancedTableSearch("recording", titleField.getText(), map, SearchCollection.isCollection());
 			ResultSet data = db.searchTableByName("recording", "dog", SearchCollection.isCollection());
 			RecordTable recordingTable = SearchCollection.getRecordingTable();
 			recordingTable.setTableData(recordingTable.populate(data));
@@ -149,5 +153,21 @@ public class RecordingFilters extends AdvancedFilters {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void clearButton(){
+		Button clearBtn = new Button("Clear Fields");
+		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				titleField.clear();
+				typeOptions.setValue("");
+				medleyTypeOptions.setValue("");
+				repetitionsField.clear();
+				barsField.clear();
+			}
+		});
+		grid.add(clearBtn, 1, gridY);
 	}
 }
