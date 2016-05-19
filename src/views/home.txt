@@ -6,9 +6,11 @@ GhillieTracks has 2 main functions:
 
 To perform a search, simply press the [i]Search[/i] button at the top of the application. You can then choose to search by dance, publication, recording, or album. Additionally, you can apply advanced search filters in order to find exactly what you're looking for. Hover over any of these additional search fields to see extra information about that filter. You can either press the search button or press enter to submit your query. Once the search has been performed, double click on any of the blue links in the results to see more information about it!
 
+When viewing the results of a search or the info about any of the results, you can mark an item as "I Have" and add a tag to it. To save a tag, type it into the text field and press enter.
+
 [b]Collections[/b] - View a list of dances, publications, albums, and albums that you have marked as "I Have." You can also perform a search of your collection. This collection search functionality works the same way as the standard search, but is limited only to any items you have marked as "I Have."
 
-To view your collection, press the [i]Collections[/i] button. You will see a list of any dances, publications, recordings, and albums that you have marked as "I Have."
+To view your collection, press the [i]Collections[/i] button. You will see a list of any dances, publications, recordings, and albums that you have marked as "I Have." If you want to print a list of your albums or publications, simply click the "Export as PDF" button found at the bottom of the [i]Collections[/i] page.
 
 
 [i]Copyright 2016 University of Delaware[/i]
