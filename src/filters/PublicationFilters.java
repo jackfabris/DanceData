@@ -109,8 +109,8 @@ public class PublicationFilters extends AdvancedFilters {
 	@Override
 	public void callQuery(){
 		try {
-			//Result set data = db.advancedTableSearch("publication", titleField.getText(), map, SearchCollection.isCollection());
-			ResultSet data = db.searchTableByName("publication", "dog", SearchCollection.isCollection());
+			ResultSet data = db.advancedTableSearch("publication", titleField.getText(), map, SearchCollection.isCollection());
+			//ResultSet data = db.searchTableByName("publication", "dog", SearchCollection.isCollection());
 			RecordTable publicationTable = SearchCollection.getPublicationTable();
 			publicationTable.setTableData(publicationTable.populate(data));
 			publicationTable.getCellInfo().setVisible(false);

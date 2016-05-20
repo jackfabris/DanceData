@@ -143,8 +143,8 @@ public class RecordingFilters extends AdvancedFilters {
 	@Override
 	public void callQuery(){
 		try {
-			//Result set data = db.advancedTableSearch("recording", titleField.getText(), map, SearchCollection.isCollection());
-			ResultSet data = db.searchTableByName("recording", "dog", SearchCollection.isCollection());
+			ResultSet data = db.advancedTableSearch("recording", titleField.getText(), map, SearchCollection.isCollection());
+			//ResultSet data = db.searchTableByName("recording", "dog", SearchCollection.isCollection());
 			RecordTable recordingTable = SearchCollection.getRecordingTable();
 			recordingTable.setTableData(recordingTable.populate(data));
 			recordingTable.getCellInfo().setVisible(false);

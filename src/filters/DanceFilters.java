@@ -251,7 +251,7 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public void steps() throws SQLException{
-		map.put("Steps", "");
+		map.put("steps", "");
 		// Steps
 		ResultSet stepSet;
 		stepSet = db.doQuery("SELECT name FROM step");
@@ -273,7 +273,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepOptions1.getValue(), 0);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		
@@ -283,7 +283,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepBool1.getValue(), 1);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		
@@ -292,7 +292,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepOptions2.getValue(), 2);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		
@@ -302,7 +302,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepBool2.getValue(), 3);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		
@@ -311,7 +311,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepOptions3.getValue(), 4);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		gridY++;
@@ -330,10 +330,13 @@ public class DanceFilters extends AdvancedFilters {
 	}
 	
 	public String arrayToString(String[] array){
-		String sb = "";
-		for(int i=0; i < array.length; i++){
-			sb+="'" + array[i]+" ";
-		}
+ 		String sb = "";
+ 		for(int i=0; i < array.length; i++){
+ 			if (array[i].length() !=0)
+				sb+=array[i]+"~";
+			else
+				sb+=" * ";
+ 		}
 		return sb;
 	}
 	
@@ -356,8 +359,8 @@ public class DanceFilters extends AdvancedFilters {
 	@Override
 	public void callQuery(){
 		try {
-			//Result set data = db.advancedTableSearch("dance", titleField.getText(), map, SearchCollection.isCollection());
-			ResultSet data = db.searchTableByName("dance", "dog", SearchCollection.isCollection());
+			ResultSet data = db.advancedTableSearch("dance", titleField.getText(), map, SearchCollection.isCollection());
+			//ResultSet data = db.searchTableByName("dance", "dog", SearchCollection.isCollection());
 			RecordTable danceTable = SearchCollection.getDanceTable();
 			danceTable.setTableData(danceTable.populate(data));
 			danceTable.getCellInfo().setVisible(false);

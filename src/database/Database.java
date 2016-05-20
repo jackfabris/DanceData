@@ -502,7 +502,7 @@ public class Database {
 					}
 					else if (param.equals("RSCDS")){
 						if (val.equals("1")){
-							query += " AND d.id IN (SELECT dpm.dance_id FROM dancespublicationsmap dpm WHERE dpm.publication_id)";
+							query += " AND pn.name like '%RSCDS%'";
 						}
 					}
 				}

@@ -87,8 +87,8 @@ public class AlbumFilters extends AdvancedFilters {
 	@Override
 	public void callQuery(){
 		try {
-			//ResultSet data = db.advancedTableSearch("album", titleField.getText(), map, SearchCollection.isCollection());
-			ResultSet data = db.searchTableByName("album", "dog", SearchCollection.isCollection());
+			ResultSet data = db.advancedTableSearch("album", titleField.getText(), map, SearchCollection.isCollection());
+			//ResultSet data = db.searchTableByName("album", "dog", SearchCollection.isCollection());
 			RecordTable albumTable = SearchCollection.getAlbumTable();
 			albumTable.setTableData(albumTable.populate(data));
 			albumTable.getCellInfo().setVisible(false);
