@@ -9,6 +9,8 @@ import database.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -25,17 +27,21 @@ public abstract class AdvancedFilters {
 	protected boolean searchBool;
 	protected SearchDataView SearchCollection;
 	protected String table;
+	protected int gridY;
+	protected TextField titleField;
 
-	public AdvancedFilters(SearchDataView sc, String table) throws MalformedURLException, SQLException{
+	public AdvancedFilters(Database db, SearchDataView sc, String table) throws MalformedURLException, SQLException{
 		this.SearchCollection = sc;
 		this.table = table;
 		grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
-		db = new Database();
+		gridY = 0;
+		this.db = db;
 		map = new LinkedHashMap<String, String>();
 		setUpFilters();
 		searchBool = false;
+		searchTitle();
 	}
 	
 	public void printMap(){
@@ -46,6 +52,14 @@ public abstract class AdvancedFilters {
 			System.out.println(x+", "+map.get(x));
 		}
 		System.out.println();
+	}
+	
+	public void searchTitle(){
+		map.put("title", "");
+		Label title = new Label("Title");
+		titleField = new TextField();
+		grid.add(title, 0, gridY);
+		grid.add(titleField, 1, gridY);
 	}
 
 	public void setUpFilters(){
@@ -79,21 +93,25 @@ public abstract class AdvancedFilters {
 		});
 	}
 	
+	public void goAndClearButtons(){
+		gridY++;
+		goButton();
+		clearButton();
+		this.filtersVBox.getChildren().add(grid);
+	}
+	
 	public void goButton(){
-		Button goBtn = new Button("Advanced Search");
+		Button goBtn = new Button("Submit Search");
 		goBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				callQuery();	
 			}
 		});
-		this.filtersVBox.getChildren().add(goBtn);
+		grid.add(goBtn, 0, gridY);
 	}
 	
-	public void buttonGrid(){
-		this.filtersVBox.getChildren().add(grid);
-		goButton();
-	}
+	public abstract void clearButton();
 	
 	public LinkedHashMap<String, String> getDanceMap() {
 		return map;

@@ -11,9 +11,10 @@ import database.Database;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -26,9 +27,9 @@ public class Home {
 	private Database db;
 	private TextFormatter tf;
 
-	public Home() throws SQLException, IOException{
+	public Home(Database db) throws SQLException, IOException{
 		homeVBox = new VBox(10);
-		db = new Database();
+		this.db = db;
 		tf = new TextFormatter();
 		lastUpdate();
 		setUp();
@@ -49,7 +50,7 @@ public class Home {
 				"-fx-border-insets: 5 10 5 5;" +
 				"-fx-border-color: #cfcfcf;");
 		//Date String
-		Label date = new Label();
+		final Label date = new Label();
 		String workingDir = System.getProperty("user.dir");
 		Path path = Paths.get(workingDir + "/database/scddata.db");
 		BasicFileAttributes attr;
@@ -67,23 +68,25 @@ public class Home {
 		Button updateBtn = new Button("UPDATE");
 		updateBtn.setId("update");
 		updateVBox.getChildren().add(updateBtn);
+		final Label status = new Label();
+		status.setVisible(false);
+		updateVBox.getChildren().add(status);
 		this.getHomeVBox().getChildren().add(updateVBox);
 		updateBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				//updateVBox.getChildren().get(2).setVisible(true);
-				db.update();
-				//updateVBox.getChildren().get(2).setVisible(false);
+				int result = db.update();
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Status of Database Update");
+				alert.setHeaderText(null);
+				if(result == 1) status.setText("Update Successful!");
+				else if(result == 0) status.setText("Cannot Update. Please connect to Internet and try again.");
+				else if(result == -1) status.setText("An error has occured on update.");
+				else if(result == -2) status.setText("A fatal error has occured. Please restart Ghillie Tracks 2.0");
+				status.setVisible(true);
+				date.setText("It has been 0 days since the database was last updated.");
 			}
 		});
-		
-//		//Loading Indicator
-//		ProgressIndicator prog = new ProgressIndicator(-1.0f);
-//		prog.setMinHeight(1);
-//		prog.setMinWidth(prog.getMinHeight());
-//		prog.setStyle("-fx-progress-color: #92cdcf;");
-//		prog.setVisible(false);
-//		updateVBox.getChildren().add(prog);
 	}
 	
 	/**

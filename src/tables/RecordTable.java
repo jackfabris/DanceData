@@ -17,14 +17,15 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import views.Main;
+import views.SearchDataView;
 
 /**
  * 
@@ -45,6 +46,7 @@ public class RecordTable {
 	private CellInfo cellInfo;
 	private LinkedHashMap<String, String> colNameField;
 	private String tableString, state;
+	private SearchDataView sc;
 	
 	public static final int rowsPerPage = 18;
 	
@@ -55,12 +57,13 @@ public class RecordTable {
 	 * @throws SQLException
 	 * @throws MalformedURLException 
 	 */
-	public RecordTable(String tableString, String state) throws SQLException, MalformedURLException {
+	public RecordTable(Database db, SearchDataView sc, String tableString, String state) throws SQLException, MalformedURLException {
 		this.tableString = tableString;
+		this.sc = sc;
 		this.state = state;
-		db = new Database();
+		this.db = db;
 		table = new TableView<Record>();
-		cellInfo = new CellInfo(10, table);
+		cellInfo = new CellInfo(db, 10, table, this);
 		cellInfo.setVisible(false);
 		colNameField = new LinkedHashMap<String, String>();
 		mapColumnNameToId();
@@ -86,14 +89,13 @@ public class RecordTable {
 		}
 		//Publication
 		else if(state.equals("p")){
-			colNameField.put("Author", "devisor");
+			colNameField.put("Devisor", "devisor");
 		}
 		//Recording
 		else{
 			colNameField.put("Type", "type");
 			colNameField.put("Bars", "barsperrepeat");
 			colNameField.put("Artist", "artist");
-			//colNameField.put("Album", "album");
 		}
 		colNameField.put("I Have", "ihave");
 		colNameField.put("Tag", "tag");
@@ -198,7 +200,11 @@ public class RecordTable {
 								public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
 									try {
 										if(r!=null && !old_val && new_val) db.iHave(tableString, r.getId());
-										else if(r!=null && old_val && !new_val) db.iDontHave(tableString, r.getId());
+										else if(r!=null && old_val && !new_val) {
+											db.iDontHave(tableString, r.getId());
+											db.removeTag(tableString, r.getId());
+											refresh(tableString);
+										}
 									} catch (SQLException e) {
 										e.printStackTrace();
 									}
@@ -226,6 +232,8 @@ public class RecordTable {
 							@Override
 							public String toString(String arg0) {return arg0;}
 						});
+				cell.setTooltip(new Tooltip("Press Enter to Save the New Tag"));
+				Tooltip.install(cell, cell.getTooltip());
 				return cell;
 			};
 		});
@@ -277,6 +285,15 @@ public class RecordTable {
 	public void setTableData(ObservableList<Record> data){
 		table.setItems(data);
 		setTableHeight();
+	}
+	
+	public void refresh(String table) throws SQLException{		
+		ResultSet set = null;
+		if(state.equals("d")) set = db.searchTableByName(table, sc.getDanceTitle(), sc.isCollection());
+		else if(state.equals("a")) set = db.searchTableByName(table, sc.getAlbumTitle(), sc.isCollection());
+		else if(state.equals("p")) set = db.searchTableByName(table, sc.getPublicationTitle(), sc.isCollection());
+		else if(state.equals("r")) set = db.searchTableByName(table, sc.getRecordingTitle(), sc.isCollection());
+		setTableData(populate(set));
 	}
 	
 	/**
