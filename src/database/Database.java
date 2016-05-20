@@ -369,8 +369,8 @@ public class Database {
 	public ResultSet advancedTableSearch(String table, String name, Map<String,String> map, boolean ihave) throws SQLException{
 		if(table.equals("dance")) {
 			query = "SELECT d.*, dt.name as type, mt.description as medleytype, s.name as shape, "
-					+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor, "
-					+ "f.name as formations, st.name as steps FROM dance d "
+					+ "c.name as couples, p.name as progression, pb.name as publication, pn.name as devisor "
+					+ "FROM dance d "
 					+ "LEFT OUTER JOIN dancetype dt ON d.type_id=dt.id "
 					+ "LEFT OUTER JOIN medleytype mt ON d.medleytype_id=mt.id "
 					+ "LEFT OUTER JOIN shape s ON d.shape_id=s.id "
@@ -378,14 +378,18 @@ public class Database {
 					+ "LEFT OUTER JOIN progression p ON d.progression_id=p.id "
 					+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
 					+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
-					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id "
-					+ "LEFT OUTER JOIN dancesformationsmap dfm ON d.id=dfm.dance_id "
-					+ "LEFT OUTER JOIN formation f ON dfm.formation_id=f.id "
-					+ "LEFT OUTER JOIN dancesstepsmap dsm ON d.id=dfm.dance_id "
-					+ "LEFT OUTER JOIN step st ON dsm.step_id=st.id ";
-			//"SELECT f.* FROM formation f LEFT OUTER JOIN dancesformationsmap dfm " + "ON f.id=dfm.formation_id WHERE dfm.dance_id=" + dance_id;
-			if (name.length() != 0)
-				query += "WHERE d.name like '%" + name + "%'";
+					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id ";
+//					+ "LEFT OUTER JOIN dancesformationsmap dfm ON d.id=dfm.dance_id "
+//					+ "LEFT OUTER JOIN formation f ON dfm.formation_id=f.id "
+//					+ "LEFT OUTER JOIN dancesstepsmap dsm ON d.id=dfm.dance_id "
+//					+ "LEFT OUTER JOIN step st ON dsm.step_id=st.id ";
+			
+			if (name.length() != 0){
+				if (name.contains("'"))
+					name.replace("'", "''");
+				else
+					query += "WHERE d.name like '%" + name + "%'";
+			}
 			else
 				query += "WHERE d.name like '%%'";
 			Object[] keys = map.keySet().toArray();
@@ -408,13 +412,20 @@ public class Database {
 					else if (param.equals("shape")){
 						query += " AND s.name='"+ val +"'";
 					}
-					else if (param.equals("formation")){
-						System.out.println(val);
+					else if (param.equals("formation") && !(val.contains("*  *  *  *  *"))){
 						String[] formations = new String[5];
 						int len = val.length();
 						for (int k=0,j=0,count=0; k<len; k++){
 							if (val.substring(k,k+1).equals("~")){
-								formations[count] = val.substring(j,k);
+								if (val.substring(j,k).equals("and") || val.substring(j,k).equals("or")){
+									formations[count] = val.substring(j,k);
+								}
+								else if (val.substring(j,k).equals("not")){
+									formations[count] = "and " +val.substring(j,k);
+								}
+								else{
+									formations[count] = stmt.executeQuery("SELECT id FROM formation WHERE name='"+val.substring(j,k)+"'").getString(1);
+								}
 								count++;
 								j=k+1;
 							}
@@ -427,11 +438,15 @@ public class Database {
 							}
 						}
 						if (formations[0] != null){
-							query+= " AND (f.name='" + formations[0] + "' ";
+							query += " AND (d.id IN (SELECT dfm.dance_id FROM dancesformationsmap dfm";
+							
+							query+= " WHERE dfm.formation_id='" + formations[0] +"')";
 							if (formations[1] != null && formations[2] != null){
-								query+= formations[1] + " f.name='" + formations[2] + "' ";
+								query+= " " +formations[1] + " d.id IN (SELECT dfm.dance_id FROM dancesformationsmap dfm"
+										+ " WHERE dfm.formation_id='"+formations[2] +"')";
 								if (formations[3] != null && formations[4] != null)
-									query+= formations[3] + " f.name='" + formations[4] + "')";
+									query+= " "+ formations[3] + " d.id IN (SELECT dfm.dance_id FROM dancesformationsmap dfm"
+											+ " WHERE dfm.formation_id='" + formations[4] +"'))";
 								else
 									query += ")";
 							}
@@ -439,6 +454,53 @@ public class Database {
 								query += ")";
 						}
 						
+					}
+					else if (param.equals("steps")  && !(val.contains("*  *  *  *  *"))){
+						String[] steps = new String[5];
+						int len = val.length();
+						for (int k=0,j=0,count=0; k<len; k++){
+							if (val.substring(k,k+1).equals("~")){
+								if (val.substring(j,k).equals("and") || val.substring(j,k).equals("or")){
+									steps[count] = val.substring(j,k);
+								}
+								else if (val.substring(j,k).equals("not")){
+									steps[count] = "and " +val.substring(j,k);
+								}
+								else{
+									steps[count] = stmt.executeQuery("SELECT id FROM step WHERE name='"+val.substring(j,k)+"'").getString(1);
+								}
+								count++;
+								j=k+1;
+							}
+							else if(val.substring(k,k+1).equals("*")){
+								j=k+2;
+								count++;
+							}
+							else if(val.substring(k,k+1).equals("'")){
+								val = val.substring(0,k) + "'" + val.substring(k+1);
+							}
+						}
+						if (steps[0] != null){
+							query += " AND (d.id IN (SELECT dsm.dance_id FROM dancesstepsmap dsm";
+							
+							query+= " WHERE dsm.step_id='" + steps[0] +"')";
+							if (steps[1] != null && steps[2] != null){
+								query+= " " +steps[1] + " d.id IN (SELECT dsm.dance_id FROM dancesstepsmap dsm"
+										+ " WHERE dsm.step_id='"+steps[2] +"')";
+								if (steps[3] != null && steps[4] != null)
+									query+= " "+ steps[3] + " d.id IN (SELECT dsm.dance_id FROM dancesstepsmap dsm"
+											+ " WHERE dsm.step_id='" + steps[4] +"'))";
+								else
+									query += ")";
+							}
+							else
+								query += ")";
+						}
+					}
+					else if (param.equals("RSCDS")){
+						if (val.equals("1")){
+							query += " AND d.id IN (SELECT dpm.dance_id FROM dancespublicationsmap dpm WHERE dpm.publication_id)";
+						}
 					}
 				}
 			}
@@ -451,8 +513,11 @@ public class Database {
 			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
 					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id WHERE pb.name like '%" + name + "%'";
 			String author = map.get("author");
+			String rscds = map.get("RSCDS");
 			if (!author.isEmpty())
 				query += " AND pr.name like '%"+author+"%'";
+			if (!rscds.isEmpty())
+				query += " AND pr.name like '%RSCDS%'";
 			if(ihave) {
 				query += " AND pb.ihave=1";
 			}

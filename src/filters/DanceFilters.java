@@ -256,7 +256,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepOptions1.getValue(), 0);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		
@@ -266,7 +266,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepBool1.getValue(), 1);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		
@@ -275,7 +275,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepOptions2.getValue(), 2);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		
@@ -285,7 +285,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepBool2.getValue(), 3);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		
@@ -294,7 +294,7 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				updateString(stepsStringArray, stepOptions3.getValue(), 4);
-				map.put("Steps", arrayToString(stepsStringArray));
+				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
 		
