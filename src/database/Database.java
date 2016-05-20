@@ -382,10 +382,6 @@ public class Database {
 					+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
 					+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
 					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id ";
-//					+ "LEFT OUTER JOIN dancesformationsmap dfm ON d.id=dfm.dance_id "
-//					+ "LEFT OUTER JOIN formation f ON dfm.formation_id=f.id "
-//					+ "LEFT OUTER JOIN dancesstepsmap dsm ON d.id=dfm.dance_id "
-//					+ "LEFT OUTER JOIN step st ON dsm.step_id=st.id ";
 			
 			if (name.length() != 0){
 				if (name.contains("'"))
@@ -577,7 +573,7 @@ public class Database {
 				query += " AND ihave=1";
 			}
 		}
-		System.out.println(query);
+		//System.out.println(query);
 		return stmt.executeQuery(query);
 	}
 	
