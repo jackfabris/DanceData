@@ -232,7 +232,7 @@ public class RecordTable {
 							@Override
 							public String toString(String arg0) {return arg0;}
 						});
-				cell.setTooltip(new Tooltip("Press Enter to Save the New Tag"));
+				cell.setTooltip(new Tooltip("Press Enter to Save Tag"));
 				Tooltip.install(cell, cell.getTooltip());
 				return cell;
 			};

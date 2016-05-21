@@ -153,7 +153,7 @@ public class CellInfo extends VBox{
 			else if(linkType.equals("publication")) if(list.getString("ihave").equals("1")) name += "*";
 			if(type.equals("dance") && linkType.equals("publication")){
 				String dev = list.getString("devisor");
-				if(dev.equals("RSCDS") || (dev.length() > 9 && dev.substring(0, 9).equals("RSCDS and"))) { //or RSCDS and
+				if(dev.equals("RSCDS") || (dev.length() > 9 && dev.substring(0, 9).equals("RSCDS and"))) {
 					rscds = true;
 				}
 			}
@@ -238,7 +238,7 @@ public class CellInfo extends VBox{
 		
 		grid.add(titleCol, 0, gridY++);
 		grid.add(infoCol, 1, gridY-1);
-		
+
 		iterateLists("Dances: ", "dance", db.getDancesByPerson(id));
 		iterateLists("Publications: ", "publication", db.getPublicationsByPerson(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByPerson(id));
@@ -263,8 +263,13 @@ public class CellInfo extends VBox{
 		publicationInfo.put("On Paper: ", "onpaper");
 		publicationInfo.put("Devisor: ", "devisor_id");
 		iHaveAndTag();
+//		int devID = Integer.parseInt(set.getString("devisor_id"));
 		iterateInfo(publicationInfo);
 		
+//		grid.add(new Label("RSCDS: "), 0, gridY++);
+//		if(devID == 319 || devID == 10475 || devID == 3330) 
+//			grid.add(new Label("Yes"), 1, gridY-1);
+//		else grid.add(new Label("No"), 1, gridY-1);
 		iterateLists("Dances: ", "dance", db.getDancesByPublication(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByPublication(id));
 	}
@@ -327,7 +332,7 @@ public class CellInfo extends VBox{
 		else tag.setText(set.getString("tag"));
 		int id = Integer.parseInt(set.getString("id"));
 		tag.setOnAction(new CellTagHandler(db, tag, type, id, rt));
-		tag.setTooltip(new Tooltip("Press Enter to Save the New Tag"));
+		tag.setTooltip(new Tooltip("Press Enter to Save Tag"));
 		Tooltip.install(tag, tag.getTooltip());
 		grid.add(tagCol, 0, gridY++);
 		grid.add(tag, 1, gridY-1);
