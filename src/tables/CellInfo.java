@@ -348,6 +348,7 @@ public class CellInfo extends VBox{
 				table.setVisible(true);
 				setVisible(false);
 				setVis(false);
+				rt.getSC().getReset().setVisible(true);
 			}
 		});
 	}

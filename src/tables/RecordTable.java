@@ -165,6 +165,7 @@ public class RecordTable {
 		        					 set = db.getAllByIdFromTable(tableString, r.getId());
 		        					 cellInfo.set(set, tableString);
 		        					 cellInfo.setVis(true);
+		        					 sc.getReset().setVisible(false);
 		        				 }
 		        				 else cellInfo.set(null, tableString);
 		        			 } catch (SQLException e) {
@@ -310,5 +311,9 @@ public class RecordTable {
 	 */
 	public CellInfo getCellInfo(){
 		return cellInfo;
+	}
+	
+	public SearchDataView getSC(){
+		return sc;
 	}
 }

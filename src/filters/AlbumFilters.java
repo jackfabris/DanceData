@@ -3,6 +3,7 @@ package filters;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 
 import database.Database;
 import javafx.beans.value.ChangeListener;
@@ -36,6 +37,12 @@ public class AlbumFilters extends AdvancedFilters {
 		artist();
 		year();
 		super.goAndClearButtons();
+	}
+	
+	@Override
+	public void setTitleText(String text){
+		SearchCollection.setAlbumTitle(text);
+		SearchCollection.getSearch().setText(text);
 	}
 	
 	public void artist(){
@@ -108,6 +115,27 @@ public class AlbumFilters extends AdvancedFilters {
 				titleField.clear();
 				artistField.clear();
 				yearField.clear();
+				
+				SearchCollection.setAlbumTitle("");
+				SearchCollection.getSearch().clear();
+				SearchCollection.getSearch().setPromptText("Search by Album Title");
+				
+				//clear map
+				Iterator<String> i = map.keySet().iterator();
+				while(i.hasNext()){
+					String x = i.next();
+					map.put(x, "");
+				}
+				
+				//reset table
+				ResultSet data;
+				try {
+					data = db.searchTableByName("album", "", SearchCollection.isCollection());
+					RecordTable albumTable = SearchCollection.getAlbumTable();
+					albumTable.setTableData(albumTable.populate(data));
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		grid.add(clearBtn, 1, gridY);

@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Iterator;
 
 import database.Database;
 import javafx.beans.value.ChangeListener;
@@ -46,6 +47,12 @@ public class PublicationFilters extends AdvancedFilters {
 		super.goAndClearButtons();
 	}
 
+	@Override
+	public void setTitleText(String text){
+		SearchCollection.setPublicationTitle(text);
+		SearchCollection.getSearch().setText(text);
+	}
+	
 	public void author(){
 		map.put("author", "");
 		Label author = new Label("Author");
@@ -53,7 +60,7 @@ public class PublicationFilters extends AdvancedFilters {
 		authorField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Author", authorField.getText());
+				map.put("Devisor", authorField.getText());
 				callQuery();
 			}
 		});
@@ -131,6 +138,27 @@ public class PublicationFilters extends AdvancedFilters {
 				authorField.clear();
 				nameOptions.setValue("");
 				RSCDSCB.setSelected(false);
+				
+				SearchCollection.setPublicationTitle("");
+				SearchCollection.getSearch().clear();
+				SearchCollection.getSearch().setPromptText("Search by Publication Title");
+				
+				//clear map
+				Iterator<String> i = map.keySet().iterator();
+				while(i.hasNext()){
+					String x = i.next();
+					map.put(x, "");
+				}
+				
+				//reset table
+				ResultSet data;
+				try {
+					data = db.searchTableByName("publication", "", SearchCollection.isCollection());
+					RecordTable publicationTable = SearchCollection.getPublicationTable();
+					publicationTable.setTableData(publicationTable.populate(data));
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		grid.add(clearBtn, 1, gridY);

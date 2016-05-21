@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Iterator;
 
 import database.Database;
 import javafx.beans.value.ChangeListener;
@@ -43,6 +44,12 @@ public class RecordingFilters extends AdvancedFilters {
 		repetitions();
 		bars();
 		super.goAndClearButtons();
+	}
+	
+	@Override
+	public void setTitleText(String text){
+		SearchCollection.setRecordingTitle(text);
+		SearchCollection.getSearch().setText(text);
 	}
 
 	public void type() throws SQLException{
@@ -95,7 +102,7 @@ public class RecordingFilters extends AdvancedFilters {
 		// Repetitions
 		Label repetitions = new Label("Repetitions");
 		repetitionsField = new TextField();
-		repetitionsField.setTooltip(new Tooltip("Use <, <=, >, >= before the number of repetitions \nto indicate less, equal, or more repetitions"));
+		repetitionsField.setTooltip(new Tooltip("Use <, <=, =, >, >= before the number of repetitions \nto indicate less, equal, or more repetitions"));
 		Tooltip.install(repetitionsField, repetitionsField.getTooltip());
 		repetitionsField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -120,7 +127,7 @@ public class RecordingFilters extends AdvancedFilters {
 		// Bars
 		Label bars = new Label("Bars");
 		barsField = new TextField();
-		barsField.setTooltip(new Tooltip("Use <, <=, >, >= before number of bars \nto indicate less, equal, or more bars"));
+		barsField.setTooltip(new Tooltip("Use <, <=, =, >, >= before number of bars \nto indicate less, equal, or more bars"));
 		Tooltip.install(barsField, barsField.getTooltip());
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -166,6 +173,27 @@ public class RecordingFilters extends AdvancedFilters {
 				medleyTypeOptions.setValue("");
 				repetitionsField.clear();
 				barsField.clear();
+				
+				SearchCollection.setRecordingTitle("");
+				SearchCollection.getSearch().clear();
+				SearchCollection.getSearch().setPromptText("Search by Recording Title");
+				
+				//clear map
+				Iterator<String> i = map.keySet().iterator();
+				while(i.hasNext()){
+					String x = i.next();
+					map.put(x, "");
+				}
+				
+				//reset table
+				ResultSet data;
+				try {
+					data = db.searchTableByName("recording", "", SearchCollection.isCollection());
+					RecordTable recordingTable = SearchCollection.getRecordingTable();
+					recordingTable.setTableData(recordingTable.populate(data));
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		grid.add(clearBtn, 1, gridY);

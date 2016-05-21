@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import database.Database;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -58,9 +60,22 @@ public abstract class AdvancedFilters {
 		map.put("title", "");
 		Label title = new Label("Title");
 		titleField = new TextField();
+		titleField.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				
+			}
+		});
+		titleField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(!newValue.booleanValue()) setTitleText(titleField.getText()); 
+            }
+        });
 		grid.add(title, 0, gridY);
 		grid.add(titleField, 1, gridY);
 	}
+	
+	public abstract void setTitleText(String text);
 
 	public void setUpFilters(){
 		filtersVBox = new VBox(10);
@@ -129,6 +144,10 @@ public abstract class AdvancedFilters {
 	
 	public boolean getSearchBool(){
 		return searchBool;
+	}
+	
+	public void setTitleField(String text){
+		titleField.setText(text);
 	}
 
 }
