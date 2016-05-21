@@ -74,6 +74,6 @@ Color Palette: (darkest to lightest)
 	-fx-text-fill: #4a4a4d;
 }
 
-/*#home {
-	-fx-font-size: 13px;
-}*/
+.table-view {
+	-fx-font-size: 12px;
+}
