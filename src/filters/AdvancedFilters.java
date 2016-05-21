@@ -149,5 +149,14 @@ public abstract class AdvancedFilters {
 	public void setTitleField(String text){
 		titleField.setText(text);
 	}
-
+	
+	public boolean isNumeric(String str)  
+	{  
+	  try  {  
+	    int i = Integer.parseInt(str);  
+	  } catch(NumberFormatException nfe)  {  
+	    return false;  
+	  }  
+	  return true;  
+	}
 }

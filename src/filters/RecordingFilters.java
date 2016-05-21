@@ -107,14 +107,30 @@ public class RecordingFilters extends AdvancedFilters {
 		repetitionsField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Repetitions", repetitionsField.getText());
+				if(repetitionsField.getText().contains("=") || repetitionsField.getText().contains("<") || repetitionsField.getText().contains(">")){
+					String num = repetitionsField.getText().substring(1, repetitionsField.getText().length());
+					if(!isNumeric(num)) map.put("repetitions", "=9999");
+					else map.put("repetitions", repetitionsField.getText());
+				}
+				else {
+					if(!isNumeric(repetitionsField.getText())) map.put("repetitions", "=9999");
+					else map.put("repetitions", "="+repetitionsField.getText());
+				}
 				callQuery();
 			}
 		});
 		repetitionsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if(!newValue.booleanValue())
-					map.put("Repetitions", repetitionsField.getText());
+					if(repetitionsField.getText().contains("=") || repetitionsField.getText().contains("<") || repetitionsField.getText().contains(">")){
+						String num = repetitionsField.getText().substring(1, repetitionsField.getText().length());
+						if(!isNumeric(num)) map.put("repetitions", "=9999");
+						else map.put("repetitions", repetitionsField.getText());
+					}
+					else {
+						if(!isNumeric(repetitionsField.getText())) map.put("repetitions", "=9999");
+						else map.put("repetitions", "="+repetitionsField.getText());
+					}
 			}
 		});
 		gridY++;
@@ -123,7 +139,7 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 
 	public void bars(){
-		map.put("Bars", "");
+		map.put("bars", "");
 		// Bars
 		Label bars = new Label("Bars");
 		barsField = new TextField();
@@ -132,14 +148,30 @@ public class RecordingFilters extends AdvancedFilters {
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Bars", barsField.getText());
+				if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
+					String num = barsField.getText().substring(1, barsField.getText().length());
+					if(!isNumeric(num)) map.put("bars", "=9999");
+					else map.put("bars", barsField.getText());
+				}
+				else {
+					if(!isNumeric(barsField.getText())) map.put("bars", "=9999");
+					else map.put("bars", "="+barsField.getText());
+				}
 				callQuery();
 			}
 		});
 		barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if(!newValue.booleanValue())
-					map.put("Bars", barsField.getText());
+					if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
+						String num = barsField.getText().substring(1, barsField.getText().length());
+						if(!isNumeric(num)) map.put("bars", "=9999");
+						else map.put("bars", barsField.getText());
+					}
+					else {
+						if(!isNumeric(barsField.getText())) map.put("bars", "=9999");
+						else map.put("bars", "="+barsField.getText());
+					}
 			}
 		});
 		gridY++;
@@ -164,7 +196,7 @@ public class RecordingFilters extends AdvancedFilters {
 	
 	@Override
 	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields");
+		Button clearBtn = new Button("Clear Fields and Reset");
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {

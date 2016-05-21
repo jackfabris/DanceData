@@ -130,7 +130,7 @@ public class PublicationFilters extends AdvancedFilters {
 	
 	@Override
 	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields");
+		Button clearBtn = new Button("Clear Fields and Reset");
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {

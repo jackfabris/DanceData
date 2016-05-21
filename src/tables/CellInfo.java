@@ -263,13 +263,7 @@ public class CellInfo extends VBox{
 		publicationInfo.put("On Paper: ", "onpaper");
 		publicationInfo.put("Devisor: ", "devisor_id");
 		iHaveAndTag();
-//		int devID = Integer.parseInt(set.getString("devisor_id"));
 		iterateInfo(publicationInfo);
-		
-//		grid.add(new Label("RSCDS: "), 0, gridY++);
-//		if(devID == 319 || devID == 10475 || devID == 3330) 
-//			grid.add(new Label("Yes"), 1, gridY-1);
-//		else grid.add(new Label("No"), 1, gridY-1);
 		iterateLists("Dances: ", "dance", db.getDancesByPublication(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByPublication(id));
 	}

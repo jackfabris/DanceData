@@ -99,9 +99,14 @@ public class DanceFilters extends AdvancedFilters {
 			@Override
 			public void handle(ActionEvent arg0) {
 				if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
-					map.put("bars", barsField.getText());
+					String num = barsField.getText().substring(1, barsField.getText().length());
+					if(!isNumeric(num)) map.put("bars", "=9999");
+					else map.put("bars", barsField.getText());
 				}
-				else map.put("bars", "="+barsField.getText());
+				else {
+					if(!isNumeric(barsField.getText())) map.put("bars", "=9999");
+					else map.put("bars", "="+barsField.getText());
+				}
 				callQuery();
 			}
 		});
@@ -109,9 +114,14 @@ public class DanceFilters extends AdvancedFilters {
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if(!newValue.booleanValue()){
 					if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
-						map.put("bars", barsField.getText());
+						String num = barsField.getText().substring(1, barsField.getText().length());
+						if(!isNumeric(num)) map.put("bars", "=9999");
+						else map.put("bars", barsField.getText());
 					}
-					else map.put("bars", "="+barsField.getText());
+					else {
+						if(!isNumeric(barsField.getText())) map.put("bars", "=9999");
+						else map.put("bars", "="+barsField.getText());
+					}
 				}
 			}
 		});
@@ -388,7 +398,7 @@ public class DanceFilters extends AdvancedFilters {
 
 	@Override
 	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields");
+		Button clearBtn = new Button("Clear Fields and Reset");
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {

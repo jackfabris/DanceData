@@ -76,14 +76,16 @@ public class AlbumFilters extends AdvancedFilters {
 		yearField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("productionyear", yearField.getText());
+				if(!isNumeric(yearField.getText())) map.put("productionyear", "9999");
+				else map.put("productionyear", yearField.getText());
 				callQuery();
 			}
 		});
         yearField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(!newValue.booleanValue())
-                	map.put("productionyear", yearField.getText());
+                	if(!isNumeric(yearField.getText())) map.put("productionyear", "9999");
+    				else map.put("productionyear", yearField.getText());
             }
         });
         gridY++;
@@ -108,7 +110,7 @@ public class AlbumFilters extends AdvancedFilters {
 	
 	@Override
 	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields");
+		Button clearBtn = new Button("Clear Fields and Reset");
 		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
