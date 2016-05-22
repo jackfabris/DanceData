@@ -1,7 +1,6 @@
 package views;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,6 +20,14 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+/**
+ * Home sets up the home screen of Ghillie Tracks. It contains a VBox that
+ * shows how long it has been since the database was updated (along with a
+ * button to update it) and a body of text which explains the basics of the
+ * application.
+ * @author Jack
+ *
+ */
 public class Home {
 	
 	private VBox homeVBox;
@@ -38,7 +45,7 @@ public class Home {
 	/**
 	 * Display how long it has been since the user's local copy of the
 	 * DanceData database was updated and provide the option (via button)
-	 * for the user to update their copy
+	 * for the user to update their copy.
 	 */
 	public void lastUpdate(){
 		final VBox updateVBox = new VBox(10);
@@ -76,6 +83,7 @@ public class Home {
 			@Override
 			public void handle(ActionEvent arg0) {
 				int result = db.update();
+				// Create an alert to notify the user of the update status
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Status of Database Update");
 				alert.setHeaderText(null);
@@ -91,7 +99,7 @@ public class Home {
 	
 	/**
 	 * Generate the main body of the home page (introduction text, general 
-	 * features, copyright information, etc.)
+	 * features, copyright information, etc.).
 	 * @throws IOException 
 	 */
 	public void setUp() throws IOException {
@@ -107,33 +115,19 @@ public class Home {
 		
 		String workingDir = System.getProperty("user.dir");
 		String path = workingDir + "/src/views/home.txt";
+		// Create a TextFlow using an instance of the TextFormatter class
 		TextFlow homeTextFlow = tf.createTextFlow(path);
-		homeTextFlow.maxWidthProperty().bind(Main.sceneWidthProp.subtract(34));
+		homeTextFlow.maxWidthProperty().bind(Main.sceneWidthProp.subtract(54));
 		homeTextVBox.getChildren().add(homeTextFlow);
 		
 		this.getHomeVBox().getChildren().add(homeTextVBox);
 	}
 
 	/**
-	 * Get the home VBox
+	 * Get the home VBox.
 	 * @return homeVBox
 	 */
 	public VBox getHomeVBox() {
 		return homeVBox;
-	}
-	
-	/**
-	 * Read the contents of a file and return them as a String. This will be
-	 * used to read the contents of the "home.txt" file which will contain
-	 * all of the text that is to be displayed on the GhillieTracks home
-	 * screen (for the sake of easy editing)
-	 * @param path - the path of the file to be read
-	 * @param encoding
-	 * @return String
-	 * @throws IOException
-	 */
-	public String readFile(Path path, Charset encoding) throws IOException {
-		byte[] encoded = Files.readAllBytes(path);
-		return new String(encoded, encoding);
 	}
 }

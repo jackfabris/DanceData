@@ -1,9 +1,7 @@
 package views;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,6 +19,8 @@ import javafx.scene.text.TextFlow;
  * styling them manually. Tags should be placed around text.
  * [b][/b] - BOLD
  * [i][/i] - ITALICS
+ * Tags cannot be nested. [b][i]Hello World[/i][/b] will not make text both
+ * bold and italicized.
  * @author Jack
  *
  */

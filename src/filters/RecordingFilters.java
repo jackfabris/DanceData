@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Iterator;
 
 import database.Database;
 import javafx.beans.value.ChangeListener;
@@ -12,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -28,7 +28,7 @@ import views.SearchDataView;
  *
  */
 public class RecordingFilters extends AdvancedFilters {
-	
+
 	private ComboBox<String> typeOptions, medleyTypeOptions;
 	private TextField repetitionsField, barsField;
 
@@ -45,6 +45,19 @@ public class RecordingFilters extends AdvancedFilters {
 		super.goAndClearButtons();
 	}
 
+	@Override
+	/**
+	 * Sets the text of the Recording Title and Search Bar
+	 */
+	public void setTitleText(String text){
+		SearchCollection.setRecordingTitle(text);
+		SearchCollection.getSearch().setText(text);
+	}
+
+	/**
+	 * Sets up the Type options for Recording
+	 * @throws SQLException
+	 */
 	public void type() throws SQLException{
 		map.put("type", "");
 		ResultSet typeSet;
@@ -67,9 +80,12 @@ public class RecordingFilters extends AdvancedFilters {
 		grid.add(typeOptions, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Medley Type options for Recording
+	 * @throws SQLException
+	 */
 	public void medley() throws SQLException{
 		map.put("medleytype", "");
-		// Medley Type
 		ResultSet medleyTypeSet;
 		medleyTypeSet = db.doQuery("SELECT description FROM medleytype");
 		ObservableList<String> medleyTypeList = FXCollections.observableArrayList("");
@@ -90,24 +106,46 @@ public class RecordingFilters extends AdvancedFilters {
 		grid.add(medleyTypeOptions, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Repetitions options for Recording
+	 */
 	public void repetitions(){
 		map.put("repetitions", "");
-		// Repetitions
 		Label repetitions = new Label("Repetitions");
 		repetitionsField = new TextField();
-		repetitionsField.setTooltip(new Tooltip("Use <, <=, >, >= before the number of repetitions \nto indicate less, equal, or more repetitions"));
+		repetitionsField.setTooltip(new Tooltip("Use <, <=, =, >, >= before the number of repetitions \nto indicate less, equal, or more repetitions"));
 		Tooltip.install(repetitionsField, repetitionsField.getTooltip());
+		//Search on ENTER
 		repetitionsField.setOnAction(new EventHandler<ActionEvent>() {
+			//is numeric check
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Repetitions", repetitionsField.getText());
+				if(repetitionsField.getText().contains("=") || repetitionsField.getText().contains("<") || repetitionsField.getText().contains(">")){
+					String num = repetitionsField.getText().substring(1, repetitionsField.getText().length());
+					if(!isNumeric(num)) map.put("repetitions", "=9999");
+					else map.put("repetitions", repetitionsField.getText());
+				}
+				else {
+					if(!isNumeric(repetitionsField.getText())) map.put("repetitions", "=9999");
+					else map.put("repetitions", "="+repetitionsField.getText());
+				}
 				callQuery();
 			}
 		});
+		//Commit on Leave
 		repetitionsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			//is numeric check
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if(!newValue.booleanValue())
-					map.put("Repetitions", repetitionsField.getText());
+					if(repetitionsField.getText().contains("=") || repetitionsField.getText().contains("<") || repetitionsField.getText().contains(">")){
+						String num = repetitionsField.getText().substring(1, repetitionsField.getText().length());
+						if(!isNumeric(num)) map.put("repetitions", "=9999");
+						else map.put("repetitions", repetitionsField.getText());
+					}
+					else {
+						if(!isNumeric(repetitionsField.getText())) map.put("repetitions", "=9999");
+						else map.put("repetitions", "="+repetitionsField.getText());
+					}
 			}
 		});
 		gridY++;
@@ -115,24 +153,46 @@ public class RecordingFilters extends AdvancedFilters {
 		grid.add(repetitionsField, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Bars options for Recording
+	 */
 	public void bars(){
-		map.put("Bars", "");
-		// Bars
+		map.put("bars", "");
 		Label bars = new Label("Bars");
 		barsField = new TextField();
-		barsField.setTooltip(new Tooltip("Use <, <=, >, >= before number of bars \nto indicate less, equal, or more bars"));
+		barsField.setTooltip(new Tooltip("Use <, <=, =, >, >= before number of bars \nto indicate less, equal, or more bars"));
 		Tooltip.install(barsField, barsField.getTooltip());
+		//Search on ENTER
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
+			//is numeric check
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Bars", barsField.getText());
+				if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
+					String num = barsField.getText().substring(1, barsField.getText().length());
+					if(!isNumeric(num)) map.put("bars", "=9999");
+					else map.put("bars", barsField.getText());
+				}
+				else {
+					if(!isNumeric(barsField.getText())) map.put("bars", "=9999");
+					else map.put("bars", "="+barsField.getText());
+				}
 				callQuery();
 			}
 		});
+		//Commit on Leave
 		barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			//is numeric check
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if(!newValue.booleanValue())
-					map.put("Bars", barsField.getText());
+					if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
+						String num = barsField.getText().substring(1, barsField.getText().length());
+						if(!isNumeric(num)) map.put("bars", "=9999");
+						else map.put("bars", barsField.getText());
+					}
+					else {
+						if(!isNumeric(barsField.getText())) map.put("bars", "=9999");
+						else map.put("bars", "="+barsField.getText());
+					}
 			}
 		});
 		gridY++;
@@ -141,10 +201,13 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 
 	@Override
+	/**
+	 * Call the Advance Search query, populate the table, set visibility so that the 
+	 * Recording table is showing and everything else is hidden
+	 */
 	public void callQuery(){
 		try {
 			ResultSet data = db.advancedTableSearch("recording", titleField.getText(), map, SearchCollection.isCollection());
-			//ResultSet data = db.searchTableByName("recording", "dog", SearchCollection.isCollection());
 			RecordTable recordingTable = SearchCollection.getRecordingTable();
 			recordingTable.setTableData(recordingTable.populate(data));
 			recordingTable.getCellInfo().setVisible(false);
@@ -154,20 +217,38 @@ public class RecordingFilters extends AdvancedFilters {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
-	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields");
-		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				titleField.clear();
-				typeOptions.setValue("");
-				medleyTypeOptions.setValue("");
-				repetitionsField.clear();
-				barsField.clear();
-			}
-		});
-		grid.add(clearBtn, 1, gridY);
+	/**
+	 * Clear the fields, clear the map, reset the titles, reset the table
+	 */
+	public void clear(){
+		//clear fields
+		titleField.clear();
+		typeOptions.setValue("");
+		medleyTypeOptions.setValue("");
+		repetitionsField.clear();
+		barsField.clear();
+
+		SearchCollection.setRecordingTitle("");
+		SearchCollection.getSearch().clear();
+		SearchCollection.getSearch().setPromptText("Search by Recording Title");
+
+		//clear map
+		Iterator<String> i = map.keySet().iterator();
+		while(i.hasNext()){
+			String x = i.next();
+			map.put(x, "");
+		}
+
+		//reset table
+		ResultSet data;
+		try {
+			data = db.searchTableByName("recording", "", SearchCollection.isCollection());
+			RecordTable recordingTable = SearchCollection.getRecordingTable();
+			recordingTable.setTableData(recordingTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

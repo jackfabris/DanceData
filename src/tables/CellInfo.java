@@ -21,6 +21,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+/**
+ * CellInfo is a VBOw that holds the information needed to display individual information about a cell link in the table
+ * as well as controlling the ability to link through all of the other cell Links in each CellInfo.
+ * @author lisaketcham
+ *
+ */
 public class CellInfo extends VBox{
 
 	private TableView<Record> table;
@@ -33,8 +39,16 @@ public class CellInfo extends VBox{
 	private RecordTable rt;
 	private boolean rscds;
 
-	public CellInfo(Database db, double spacing, TableView<Record> table, RecordTable rt) throws MalformedURLException, SQLException{
-		super(spacing);
+	/**
+	 * Constructor for CellInfo that sets up grid and initial display
+	 * @param db - Database instance of this application
+	 * @param table - TableView corresponding to the state, Dance, Publication, Recording, Album
+	 * @param rt - RecordTable corresponding to the state, Dance, Publication, Recording, Album
+	 * @throws MalformedURLException
+	 * @throws SQLException
+	 */
+	public CellInfo(Database db, TableView<Record> table, RecordTable rt) throws MalformedURLException, SQLException{
+		super(10);
 		grid = new GridPane();
 		grid.setHgap(15);
 		grid.setVgap(5);
@@ -43,6 +57,9 @@ public class CellInfo extends VBox{
 		this.rt = rt;
 	}
 
+	/**
+	 * Formats the Box
+	 */
 	public void format(){
 		getChildren().clear();
 		setStyle(
@@ -54,11 +71,10 @@ public class CellInfo extends VBox{
 	}
 
 	/**
-	 * sets this class' cellInfo according to colName and id and 
-	 * creates a button for toggling between table and cellInfo
-	 * @param colName String column name to display
-	 * @param id String id of the column to display
-	 * @throws SQLException 
+	 * Sets the content of the VBox according to the ResultSet and type of cell
+	 * @param set - ResultSet fields of the row that corresponds to the CellInfo
+	 * @param type - a String representing the type of cell 
+	 * @throws SQLException
 	 */
 	public void set(ResultSet set, String type) throws SQLException{
 		format();
@@ -79,6 +95,10 @@ public class CellInfo extends VBox{
 		returnButton();
 	}
 
+	/**
+	 * sets the contents of the VBox according to the type
+	 * @throws SQLException
+	 */
 	public void setSpecificCellInfo() throws SQLException{
 		if(type.equals("album")) albumCellInfo();
 		else if(type.equals("dance")) danceCellInfo();
@@ -88,6 +108,12 @@ public class CellInfo extends VBox{
 		else tuneCellInfo();
 	}
 	
+	/**
+	 * Goes through the given map and creates columns and information 
+	 * based on the displays of the given cellInfo
+	 * @param cellInfo - map of column to information
+	 * @throws SQLException
+	 */
 	public void iterateInfo(LinkedHashMap<String, String> cellInfo) throws SQLException{
 		gridY=3;
 		if(type.equals("album")) gridY = 4; 
@@ -117,11 +143,20 @@ public class CellInfo extends VBox{
 		}
 	}
 
+	/**
+	 * Creates columns and displays the list for each row in the ResultSet 
+	 * and creates a link for each item with a linkType not "".
+	 * @param colName - the name of the column
+	 * @param linkType - the type of cell the link for the list
+	 * @param list - the ResultSet of the query
+	 * @throws SQLException
+	 */
 	public void iterateLists(String colName, String linkType, ResultSet list) throws SQLException{
 		boolean firstTime = true;
 		boolean stepformcol = true;
 		int track = 1;
 		while(list.next()){
+			//move columns over for each list
 			if(firstTime && !linkType.equals("")){
 				gridY=3;
 				gridX+=2;
@@ -130,12 +165,14 @@ public class CellInfo extends VBox{
 				gridY--;
 				firstTime = false;
 			}
+			//put formations and steps in the same column
 			if(linkType.equals("") && stepformcol){
 				Label col = new Label(colName);
 				grid.add(col, gridX, gridY++);
 				gridY--;
 				stepformcol = false;
 			}
+			//customize column display based on type and link type
 			String name = list.getString("name");
 			if(type.equals("album")) {
 				name = track +". " + name;
@@ -151,12 +188,14 @@ public class CellInfo extends VBox{
 			}
 			else if(linkType.equals("album")) if(list.getString("ihave").equals("1")) name += "*"; 
 			else if(linkType.equals("publication")) if(list.getString("ihave").equals("1")) name += "*";
+			//determine if a dance is an RSCDS dance
 			if(type.equals("dance") && linkType.equals("publication")){
 				String dev = list.getString("devisor");
 				if(dev.equals("RSCDS") || (dev.length() > 9 && dev.substring(0, 9).equals("RSCDS and"))) {
 					rscds = true;
 				}
 			}
+			//linking logic
 			Label infoCol = new Label(name);
 			linkId = Integer.parseInt(list.getString("id"));
 			if(!linkType.equals("")) link(infoCol, linkType);
@@ -164,12 +203,21 @@ public class CellInfo extends VBox{
 		}
 	}
 
+	/**
+	 * Create a link and attach a handler to set next CellInfo
+	 * @param infoCol
+	 * @param linkType
+	 */
 	public void link(Label infoCol, String linkType){
 		infoCol.setStyle("-fx-text-fill: blue;");
 		infoCol.setUnderline(true);
 		infoCol.addEventHandler(MouseEvent.MOUSE_CLICKED, new LinkHandler(linkId, db, this, linkType));
 	}
 
+	/**
+	 * Set up the information to display in an Album CellInfo
+	 * @throws SQLException
+	 */
 	private void albumCellInfo() throws SQLException {
 		LinkedHashMap<String, String> albumInfo = new LinkedHashMap<String, String>();
 		albumInfo.put("Name: ", "name");
@@ -198,6 +246,10 @@ public class CellInfo extends VBox{
 		iterateLists("Recordings: ", "recording", db.getRecordingsByAlbum(id));
 	}
 	
+	/**
+	 * Set up the information to display in a Dance CellInfo
+	 * @throws SQLException
+	 */
 	private void danceCellInfo() throws SQLException {
 		LinkedHashMap<String, String> danceInfo = new LinkedHashMap<String, String>();
 		danceInfo.put("Name: ", "name");
@@ -216,6 +268,10 @@ public class CellInfo extends VBox{
 		else grid.add(new Label("No"), 1, rscdsY);
 	}
 
+	/**
+	 * Set up the information to display in a Person CellInfo
+	 * @throws SQLException
+	 */
 	private void personCellInfo() throws SQLException {
 		LinkedHashMap<String, String> personInfo = new LinkedHashMap<String, String>();
 		personInfo.put("Name: ", "name");
@@ -246,15 +302,30 @@ public class CellInfo extends VBox{
 		iterateLists("Albums: ", "album", db.getAlbumsByPerson(id));
 	}
 	
+	/**
+	 * Sets up a link for a person, mapping their id to their name
+	 * @param infoCol - the Label for the information
+	 * @param name - the name of the person
+	 * @throws SQLException
+	 */
 	public void personLink(Label infoCol, String name) throws SQLException{
 		infoCol.setText(name);
 		link(infoCol, "person");
 	}
 	
+	/**
+	 * determines if a database field corresponds to a person
+	 * @param person - database field
+	 * @return true if the field corresponds to a type of person, false otherwise
+	 */
 	public boolean isPerson(String person){
 		return person.equals("devisor_id") || person.equals("artist_id") || person.equals("composer_id");
 	}
 	
+	/**
+	 * Set up the information to display in an Publication CellInfo
+	 * @throws SQLException
+	 */
 	private void publicationCellInfo() throws SQLException {
 		LinkedHashMap<String, String> publicationInfo = new LinkedHashMap<String, String>();
 		publicationInfo.put("Name: ", "name");
@@ -263,17 +334,15 @@ public class CellInfo extends VBox{
 		publicationInfo.put("On Paper: ", "onpaper");
 		publicationInfo.put("Devisor: ", "devisor_id");
 		iHaveAndTag();
-//		int devID = Integer.parseInt(set.getString("devisor_id"));
 		iterateInfo(publicationInfo);
-		
-//		grid.add(new Label("RSCDS: "), 0, gridY++);
-//		if(devID == 319 || devID == 10475 || devID == 3330) 
-//			grid.add(new Label("Yes"), 1, gridY-1);
-//		else grid.add(new Label("No"), 1, gridY-1);
 		iterateLists("Dances: ", "dance", db.getDancesByPublication(id));
 		iterateLists("Tunes: ", "tune", db.getTunesByPublication(id));
 	}
 
+	/**
+	 * Set up the information to display in an Recording CellInfo
+	 * @throws SQLException
+	 */
 	private void recordingCellInfo() throws SQLException {
 		LinkedHashMap<String, String> recordingInfo = new LinkedHashMap<String, String>();
 		recordingInfo.put("Name: ", "name");
@@ -285,6 +354,10 @@ public class CellInfo extends VBox{
 		iterateLists("Tunes: ", "tune", db.getTunesByRecording(id));
 	}
 
+	/**
+	 * Set up the information to display in an Tune CellInfo
+	 * @throws SQLException
+	 */
 	private void tuneCellInfo() throws SQLException {
 		LinkedHashMap<String, String> tuneInfo = new LinkedHashMap<String, String>();
 		tuneInfo.put("Name: ", "name");
@@ -294,10 +367,19 @@ public class CellInfo extends VBox{
 		iterateLists("Recordings: ", "recording", db.getRecordingsByTune(id));
 	}
 	
+	/**
+	 * Checks if the database field corresponds to a boolean
+	 * @param field - database field 
+	 * @return true if the field is based on a boolean value, false otherwise
+	 */
 	public boolean isYesOrNo(String field){
 		return field.equals("isavailable") || field.equals("hasdances") || field.equals("hastunes") || field.equals("onpaper");
 	}
 	
+	/**
+	 * Sets up the I Have and Tag Columns
+	 * @throws SQLException
+	 */
 	public void iHaveAndTag() throws SQLException{
 		//I HAVE
 		Label iHave = new Label("I Have: ");
@@ -338,8 +420,10 @@ public class CellInfo extends VBox{
 		grid.add(tag, 1, gridY-1);
 	}
 
+	/**
+	 * Sets up the button to return to the table results
+	 */
 	public void returnButton(){
-		//return to table
 		Button tableReturn = new Button("BACK TO RESULTS");
 		getChildren().add(tableReturn);
 		tableReturn.setOnAction(new EventHandler<ActionEvent>() {
@@ -348,18 +432,24 @@ public class CellInfo extends VBox{
 				table.setVisible(true);
 				setVisible(false);
 				setVis(false);
+				rt.getSC().getReset().setVisible(true);
 			}
 		});
 	}
 
-	public void setType(String newType){
-		this.type = newType;
-	}
-
+	/**
+	 * Returns the theoretical visibility of the cellInfo, 
+	 * as in what the visibility should be on state change
+	 * @return the theoretical visibility of the CellInfo
+	 */
 	public boolean isVis() {
 		return vis;
 	}
 
+	/**
+	 * Sets whether the CellInfo should be visible on state change
+	 * @param vis
+	 */
 	public void setVis(boolean vis) {
 		this.vis = vis;
 	}

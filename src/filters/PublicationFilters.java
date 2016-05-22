@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Iterator;
 
 import database.Database;
 import javafx.beans.value.ChangeListener;
@@ -12,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -28,7 +28,7 @@ import views.SearchDataView;
  *
  */
 public class PublicationFilters extends AdvancedFilters {
-	
+
 	private TextField authorField;
 	private ComboBox<String> nameOptions;
 	private CheckBox RSCDSCB;
@@ -46,17 +46,31 @@ public class PublicationFilters extends AdvancedFilters {
 		super.goAndClearButtons();
 	}
 
+	@Override
+	/**
+	 * Sets the text of the Publication Title and Search Bar
+	 */
+	public void setTitleText(String text){
+		SearchCollection.setPublicationTitle(text);
+		SearchCollection.getSearch().setText(text);
+	}
+
+	/**
+	 * Sets up the Author (devisor) options for Publication
+	 */
 	public void author(){
 		map.put("author", "");
 		Label author = new Label("Author");
 		authorField = new TextField();
+		//Search on ENTER
 		authorField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("Author", authorField.getText());
+				map.put("Devisor", authorField.getText());
 				callQuery();
 			}
 		});
+		//Commit on Leave
 		authorField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if(!newValue.booleanValue())
@@ -68,6 +82,9 @@ public class PublicationFilters extends AdvancedFilters {
 		grid.add(authorField, 1, gridY);
 	}
 
+	/**
+	 * Sets up the name options for Publication
+	 */
 	public void name() throws SQLException{
 		map.put("name", "");
 		ResultSet nameSet;
@@ -90,6 +107,9 @@ public class PublicationFilters extends AdvancedFilters {
 		grid.add(nameOptions, 1, gridY);
 	}
 
+	/**
+	 * Sets up the RSCDS options for Publication
+	 */
 	public void RSCDS(){
 		map.put("RSCDS", "0");
 		Label RSCDS = new Label("Only RSCDS Publications ");
@@ -107,10 +127,13 @@ public class PublicationFilters extends AdvancedFilters {
 	}
 
 	@Override
+	/**
+	 * Call the Advance Search query, populate the table, set visibility so that the 
+	 * Publication table is showing and everything else is hidden
+	 */
 	public void callQuery(){
 		try {
 			ResultSet data = db.advancedTableSearch("publication", titleField.getText(), map, SearchCollection.isCollection());
-			//ResultSet data = db.searchTableByName("publication", "dog", SearchCollection.isCollection());
 			RecordTable publicationTable = SearchCollection.getPublicationTable();
 			publicationTable.setTableData(publicationTable.populate(data));
 			publicationTable.getCellInfo().setVisible(false);
@@ -120,19 +143,37 @@ public class PublicationFilters extends AdvancedFilters {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
-	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields");
-		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				titleField.clear();
-				authorField.clear();
-				nameOptions.setValue("");
-				RSCDSCB.setSelected(false);
-			}
-		});
-		grid.add(clearBtn, 1, gridY);
+	/**
+	 * Clear the fields, clear the map, reset the titles, reset the table
+	 */
+	public void clear(){
+		//clear fields
+		titleField.clear();
+		authorField.clear();
+		nameOptions.setValue("");
+		RSCDSCB.setSelected(false);
+
+		SearchCollection.setPublicationTitle("");
+		SearchCollection.getSearch().clear();
+		SearchCollection.getSearch().setPromptText("Search by Publication Title");
+
+		//clear map
+		Iterator<String> i = map.keySet().iterator();
+		while(i.hasNext()){
+			String x = i.next();
+			map.put(x, "");
+		}
+
+		//reset table
+		ResultSet data;
+		try {
+			data = db.searchTableByName("publication", "", SearchCollection.isCollection());
+			RecordTable publicationTable = SearchCollection.getPublicationTable();
+			publicationTable.setTableData(publicationTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

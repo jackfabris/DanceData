@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Iterator;
 
 import database.Database;
 import javafx.beans.value.ChangeListener;
@@ -12,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -30,16 +30,16 @@ import views.SearchDataView;
  */
 public class DanceFilters extends AdvancedFilters {
 
-	
+
 	private ComboBox<String> typeOptions, couplesOptions, setShapeOptions;
 	private ComboBox<String> formationOptions1, formationOptions2, formationOptions3, formationBool1, formationBool2;
 	private ComboBox<String> stepOptions1, stepOptions2, stepOptions3, stepBool1, stepBool2;
 	private TextField barsField, authorField;
 	private CheckBox RSCDSCB;
-	
+
 	private String[] formationStringArray = {"", "", "", "", ""};
 	private String[] stepsStringArray = {"", "", "", "", ""};
-	
+
 	/**
 	 * Create the VBox which will contain the filters for a dance search
 	 * @throws SQLException
@@ -56,12 +56,23 @@ public class DanceFilters extends AdvancedFilters {
 		RSCDS();
 		super.goAndClearButtons();
 	}
-			
+
+	/**
+	 * Sets the text of the Dance Title and Search Bar
+	 */
+	@Override
+	public void setTitleText(String text){
+		SearchCollection.setDanceTitle(text);
+		SearchCollection.getSearch().setText(text);
+	}
+
+	/**
+	 * Sets up the Type options for Dance
+	 * @throws SQLException
+	 */
 	public void type() throws SQLException{
 		map.put("type", "");
-		// Type
-		ResultSet typesSet;
-		typesSet = db.doQuery("SELECT name FROM dancetype");
+		ResultSet typesSet = db.doQuery("SELECT name FROM dancetype");
 		ObservableList<String> typesList = FXCollections.observableArrayList("");
 		while(typesSet.next()) {
 			typesList.add(typesSet.getString(1));
@@ -79,32 +90,61 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(type, 0, gridY);
 		grid.add(typeOptions, 1, gridY);
 	}
-	
+
+	/**
+	 * Sets up the Bars options for Dance
+	 */
 	public void bars(){
 		map.put("bars", "");
 		// Bars
 		Label bars = new Label("Bars");
 		barsField = new TextField();
-		barsField.setTooltip(new Tooltip("Use <, <=, >, >= before the number of bars \n"
+		barsField.setTooltip(new Tooltip("Use <, <=, =, >, >= before the number of bars \n"
 				+ "to indicate less, equal, or more bars"));
 		Tooltip.install(barsField, barsField.getTooltip());
+		//search on ENTER
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
+			//check for is numeric
 			@Override
 			public void handle(ActionEvent arg0) {
-				map.put("bars", barsField.getText());
+				if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
+					String num = barsField.getText().substring(1, barsField.getText().length());
+					if(!isNumeric(num)) map.put("bars", "=9999");
+					else map.put("bars", barsField.getText());
+				}
+				else {
+					if(!isNumeric(barsField.getText())) map.put("bars", "=9999");
+					else map.put("bars", "="+barsField.getText());
+				}
 				callQuery();
 			}
 		});
-       barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(!newValue.booleanValue()) map.put("bars", barsField.getText());   
-            }
-        });
-       gridY++;
+		//commit on leave
+		barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			//check for is numeric
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(!newValue.booleanValue()){
+					if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
+						String num = barsField.getText().substring(1, barsField.getText().length());
+						if(!isNumeric(num)) map.put("bars", "=9999");
+						else map.put("bars", barsField.getText());
+					}
+					else {
+						if(!isNumeric(barsField.getText())) map.put("bars", "=9999");
+						else map.put("bars", "="+barsField.getText());
+					}
+				}
+			}
+		});
+		gridY++;
 		grid.add(bars, 0, gridY);
 		grid.add(barsField, 1, gridY);
 	}
-	
+
+	/**
+	 * Sets up the Couples options for Dance
+	 * @throws SQLException
+	 */
 	public void couples() throws SQLException{
 		map.put("couples", "");
 		// Couples
@@ -127,7 +167,11 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(couples, 0, gridY);
 		grid.add(couplesOptions, 1, gridY);
 	}
-	
+
+	/**
+	 * Sets up the Set Shape options for Dance
+	 * @throws SQLException
+	 */
 	public void setShape() throws SQLException{
 		map.put("shape", "");
 		// Set Shape
@@ -150,11 +194,14 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(setShape, 0, gridY);
 		grid.add(setShapeOptions, 1, gridY);
 	}
-	
+
+	/**
+	 * Sets up the Author (Devisor) options for Dance
+	 */
 	public void author(){
 		map.put("author", "");
 		// Author
-		Label author = new Label("Author");
+		Label author = new Label("Devisor");
 		authorField = new TextField();
 		authorField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -163,17 +210,21 @@ public class DanceFilters extends AdvancedFilters {
 				callQuery();
 			}
 		});
-       authorField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(!newValue.booleanValue())
-                	map.put("author", authorField.getText());
-            }
-        });
-        gridY++;
+		authorField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(!newValue.booleanValue())
+					map.put("author", authorField.getText());
+			}
+		});
+		gridY++;
 		grid.add(author, 0, gridY);
 		grid.add(authorField, 1, gridY);
 	}
-	
+
+	/**
+	 * Sets up the Formations options for Dance
+	 * @throws SQLException
+	 */
 	public void formations() throws SQLException{
 		map.put("formation", "");
 		// Formations
@@ -185,7 +236,7 @@ public class DanceFilters extends AdvancedFilters {
 		}
 		Collections.sort(formationList);
 		Label formations = new Label("Formations");
-		
+
 		formationOptions1 = new ComboBox<String>(formationList);
 		formationOptions1.setTooltip(new Tooltip("Fill out formations in order. \n"
 				+ "If you need to indicate more than one formation, \n"
@@ -201,7 +252,7 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
-		
+
 		formationBool1 = new ComboBox<String>();
 		formationBool1.getItems().addAll("", "and", "or", "not");
 		formationBool1.setOnAction(new EventHandler<ActionEvent>() {
@@ -211,7 +262,7 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
-		
+
 		formationOptions2 = new ComboBox<String>(formationList);
 		formationOptions2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -220,7 +271,7 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
-		
+
 		formationBool2 = new ComboBox<String>();
 		formationBool2.getItems().addAll("", "and", "or", "not");
 		formationBool2.setOnAction(new EventHandler<ActionEvent>() {
@@ -230,7 +281,7 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("formation", arrayToString(formationStringArray));
 			}
 		});
-		
+
 		formationOptions3 = new ComboBox<String>(formationList);
 		formationOptions3.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -249,7 +300,11 @@ public class DanceFilters extends AdvancedFilters {
 		gridY++;
 		grid.add(formationOptions3, 1, gridY);
 	}
-	
+
+	/**
+	 * Sets up the Steps options for Dance
+	 * @throws SQLException
+	 */
 	public void steps() throws SQLException{
 		map.put("steps", "");
 		// Steps
@@ -276,7 +331,7 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
-		
+
 		stepBool1 = new ComboBox<String>();
 		stepBool1.getItems().addAll("", "and", "or", "not");
 		stepBool1.setOnAction(new EventHandler<ActionEvent>() {
@@ -286,7 +341,7 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
-		
+
 		stepOptions2 = new ComboBox<String>(stepList);
 		stepOptions2.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -295,7 +350,7 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
-		
+
 		stepBool2 = new ComboBox<String>();
 		stepBool2.getItems().addAll("", "and", "or", "not");
 		stepBool2.setOnAction(new EventHandler<ActionEvent>() {
@@ -305,7 +360,7 @@ public class DanceFilters extends AdvancedFilters {
 				map.put("steps", arrayToString(stepsStringArray));
 			}
 		});
-		
+
 		stepOptions3 = new ComboBox<String>(stepList);
 		stepOptions3.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -324,22 +379,36 @@ public class DanceFilters extends AdvancedFilters {
 		gridY++;
 		grid.add(stepOptions3, 1, gridY);
 	}
-	
+
+	/**
+	 * Place the value in the array at the index
+	 * @param array - array to update
+	 * @param value - value to put in array
+	 * @param i - index or array to put value
+	 */
 	public void updateString(String[] array, String value, int i){
 		array[i] = value;
 	}
-	
+
+	/**
+	 * Convert the array to a string with symbols to help database parse formations
+	 * @param array - array to turn into a string
+	 * @return
+	 */
 	public String arrayToString(String[] array){
- 		String sb = "";
- 		for(int i=0; i < array.length; i++){
- 			if (array[i].length() !=0)
+		String sb = "";
+		for(int i=0; i < array.length; i++){
+			if (array[i].length() !=0)
 				sb+=array[i]+"~";
 			else
 				sb+=" * ";
- 		}
+		}
 		return sb;
 	}
-	
+
+	/**
+	 * Sets up the RSCDS options for Dance
+	 */
 	public void RSCDS(){
 		map.put("RSCDS", "0");
 		Label RSCDS = new Label("Only RSCDS Dances ");
@@ -355,12 +424,15 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(RSCDS, 0, gridY);
 		grid.add(RSCDSCB, 1, gridY);
 	}
-	
+
 	@Override
+	/**
+	 * Call the Advance Search query, populate the table, set visibility so that the 
+	 * Dance table is showing and everything else is hidden
+	 */
 	public void callQuery(){
 		try {
 			ResultSet data = db.advancedTableSearch("dance", titleField.getText(), map, SearchCollection.isCollection());
-			//ResultSet data = db.searchTableByName("dance", "dog", SearchCollection.isCollection());
 			RecordTable danceTable = SearchCollection.getDanceTable();
 			danceTable.setTableData(danceTable.populate(data));
 			danceTable.getCellInfo().setVisible(false);
@@ -370,32 +442,50 @@ public class DanceFilters extends AdvancedFilters {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
-	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields");
-		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				titleField.clear();
-				typeOptions.setValue("");
-				barsField.clear();
-				couplesOptions.setValue("");
-				setShapeOptions.setValue("");
-				authorField.clear();
-				formationOptions1.setValue("");
-				formationOptions2.setValue("");
-				formationOptions3.setValue("");
-				formationBool1.setValue("");
-				formationBool2.setValue("");
-				stepOptions1.setValue("");
-				stepOptions2.setValue("");
-				stepOptions3.setValue("");
-				stepBool1.setValue("");
-				stepBool2.setValue("");
-				RSCDSCB.setSelected(false);
-			}
-		});
-		grid.add(clearBtn, 1, gridY);
+	/**
+	 * Clear the fields, clear the map, reset the titles, reset the table
+	 */
+	public void clear(){
+		//clear fields
+		titleField.clear();
+		typeOptions.setValue("");
+		barsField.clear();
+		couplesOptions.setValue("");
+		setShapeOptions.setValue("");
+		authorField.clear();
+		formationOptions1.setValue("");
+		formationOptions2.setValue("");
+		formationOptions3.setValue("");
+		formationBool1.setValue("");
+		formationBool2.setValue("");
+		stepOptions1.setValue("");
+		stepOptions2.setValue("");
+		stepOptions3.setValue("");
+		stepBool1.setValue("");
+		stepBool2.setValue("");
+		RSCDSCB.setSelected(false);
+
+		SearchCollection.setDanceTitle("");
+		SearchCollection.getSearch().clear();
+		SearchCollection.getSearch().setPromptText("Search by Dance Title");
+
+		//clear map
+		Iterator<String> i = map.keySet().iterator();
+		while(i.hasNext()){
+			String x = i.next();
+			map.put(x, "");
+		}
+
+		//reset table
+		ResultSet data;
+		try {
+			data = db.searchTableByName("dance", "", SearchCollection.isCollection());
+			RecordTable danceTable = SearchCollection.getDanceTable();
+			danceTable.setTableData(danceTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

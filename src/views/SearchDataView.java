@@ -20,19 +20,35 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import tables.RecordTable;
 
+/**
+ * SearchDataView is the main class that holds the information for the Search and Collection Screen. 
+ * This class's VBox contains the search bar, reset Button, navigation buttons, advanced search, 
+ * TableView of Records, and the export PDF button.
+ * 
+ * The navigation buttons of Dance, Publication, Recording, or Album determine the state's changing to 
+ * "d", "p", "r", or "a" respectively.
+ * @author lisaketcham
+ *
+ */
 public class SearchDataView {
 
 	private VBox vBox, danceFiltersVBox, recordingFiltersVBox, albumFiltersVBox, publicationFiltersVBox;
+	private DanceFilters df;
+	private PublicationFilters pf;
+	private RecordingFilters rf;
+	private AlbumFilters af;
 	private HBox searchBox;
 	private Database db;
 	public Main m;
 	private RecordTable danceTable, publicationTable, recordingTable, albumTable;
 	private final TextField search;
 	private RadioButton advSF;
-	private Button export;
+	private Button export, reset;
 	private String state, danceTitle, publicationTitle, recordingTitle, albumTitle;
 	private boolean isCollection;
 	
@@ -60,16 +76,28 @@ public class SearchDataView {
 	 * sets up the search bar and search button, and will search on both
 	 * a button press and 'Enter' or 'Return' key event
 	 */
+	@SuppressWarnings("static-access")
 	public void setUpSearchBar(){
 		//Search Bar
 		search.setPromptText("Search by Dance Title");
 		search.setPrefWidth(300);
+		
 		Button searchGoBtn = new Button("Go");
 		searchGoBtn.setPrefWidth(50);
+		
+		Region r = new Region();
+		
+		reset = new Button("Reset/Refresh Dance Table");
+		reset.setStyle("-fx-alignment: CENTER_RIGHT;");
+		//Pos.
 
 		searchBox = new HBox(10);
+		
 		searchBox.getChildren().add(search);
 		searchBox.getChildren().add(searchGoBtn);
+		searchBox.getChildren().add(r);
+		searchBox.getChildren().add(reset);
+		searchBox.setHgrow(r, Priority.ALWAYS);
 
 		this.vBox.getChildren().add(searchBox);
 		
@@ -94,6 +122,54 @@ public class SearchDataView {
 						e.printStackTrace();
 					}
 				}
+			}
+		});
+		
+		//Reset Button Event
+		reset.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				search.setText("");
+				ResultSet set;
+				//reset table
+				if(state.equals("d")) {
+					danceTitle = "";
+					try {
+						set = db.searchTableByName("dance", "", isCollection);
+						danceTable.setTableData(danceTable.populate(set));
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+				else if(state.equals("p")) {
+					publicationTitle = "";
+					try {
+						set = db.searchTableByName("publication", "", isCollection);
+						publicationTable.setTableData(publicationTable.populate(set));
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+				else if(state.equals("r")) {
+					recordingTitle = "";
+					try {
+						set = db.searchTableByName("recording", "", isCollection);
+						recordingTable.setTableData(recordingTable.populate(set));
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+				else if(state.equals("a")) {
+					albumTitle = "";
+					try {
+						set = db.searchTableByName("album", "", isCollection);
+						albumTable.setTableData(albumTable.populate(set));
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				//visibility? make it disappear on cell info
 			}
 		});
 	}
@@ -191,8 +267,11 @@ public class SearchDataView {
 					searchBox.setVisible(true);
 					advSF.setSelected(false);
 					search.clear();
+					if(!danceTable.getCellInfo().isVis()) reset.setVisible(true);
+					else reset.setVisible(false);
 				}
 				state = "d";
+				reset.setText("Reset/Refresh Dance Table");
 				export.setVisible(false);
 				searchFiltersVisibility(danceFiltersVBox.isVisible(), false, false, false);
 				tableVisibility(true, false, false, false);
@@ -212,8 +291,11 @@ public class SearchDataView {
 					searchBox.setVisible(true);
 					advSF.setSelected(false);
 					search.clear();
+					if(!publicationTable.getCellInfo().isVis()) reset.setVisible(true);
+					else reset.setVisible(false);
 				}
 				state = "p";
+				reset.setText("Reset/Refresh Publication Table");
 				if(isCollection){export.setVisible(true);}
 				searchFiltersVisibility(false, publicationFiltersVBox.isVisible(), false, false);
 				tableVisibility(false, true, false, false);
@@ -233,8 +315,11 @@ public class SearchDataView {
 					searchBox.setVisible(true);
 					advSF.setSelected(false);
 					search.clear();
+					if(!recordingTable.getCellInfo().isVis()) reset.setVisible(true);
+					else reset.setVisible(false);
 				}
 				state = "r";
+				reset.setText("Reset/Refresh Recording Table");
 				export.setVisible(false);
 				searchFiltersVisibility(false, false, recordingFiltersVBox.isVisible(), false);
 				tableVisibility(false, false, true, false);
@@ -254,8 +339,11 @@ public class SearchDataView {
 					searchBox.setVisible(true);
 					advSF.setSelected(false);
 					search.clear();
+					if(!albumTable.getCellInfo().isVis()) reset.setVisible(true);
+					else reset.setVisible(false);
 				}
 				state = "a";
+				reset.setText("Reset/Refresh Album Table");
 				if(isCollection){export.setVisible(true);}
 				searchFiltersVisibility(false, false, false, albumFiltersVBox.isVisible());
 				tableVisibility(false, false, false, true);
@@ -316,46 +404,50 @@ public class SearchDataView {
 					if(advSF.isSelected()) advSF.setText("Hide Advanced Search Options For Dance");
 					else advSF.setText("Show Advanced Search Options For Dance");
 					searchFiltersVisibility(!danceFiltersVBox.isVisible(), false, false, false);
+					df.setTitleField(danceTitle);
 				}
 				else if(state.equals("p")){
 					if(advSF.isSelected()) advSF.setText("Hide Advanced Search Options For Publication");
 					else advSF.setText("Show Advanced Search Options For Publication");
 					searchFiltersVisibility(false, !publicationFiltersVBox.isVisible(), false, false);
+					pf.setTitleField(publicationTitle);
 				}
 				else if(state.equals("r")){
 					if(advSF.isSelected()) advSF.setText("Hide Advanced Search Options For Recording");
 					else advSF.setText("Show Advanced Search Options For Recording");
 					searchFiltersVisibility(false, false, !recordingFiltersVBox.isVisible(), false);
+					rf.setTitleField(recordingTitle);
 				}
 				else{
 					if(advSF.isSelected()) advSF.setText("Hide Advanced Search Options For Album");
 					else advSF.setText("Show Advanced Search Options For Album");
 					searchFiltersVisibility(false, false, false, !albumFiltersVBox.isVisible());
+					af.setTitleField(albumTitle);
 				}
 			}
 		});
 	}
 	
 	public void searchFilters() throws SQLException, MalformedURLException {
-		final DanceFilters df = new DanceFilters(db,this);
+		df = new DanceFilters(db,this);
 		danceFiltersVBox = df.getFiltersVBox();
 		this.vBox.getChildren().add(danceFiltersVBox);
 		danceFiltersVBox.managedProperty().bind(danceFiltersVBox.visibleProperty());
 		danceFiltersVBox.setVisible(false);
 
-		final RecordingFilters rf = new RecordingFilters(db,this);
+		rf = new RecordingFilters(db,this);
 		recordingFiltersVBox = rf.getFiltersVBox();
 		this.vBox.getChildren().add(recordingFiltersVBox);
 		recordingFiltersVBox.managedProperty().bind(recordingFiltersVBox.visibleProperty());
 		recordingFiltersVBox.setVisible(false);
 
-		final AlbumFilters af = new AlbumFilters(db,this);
+		af = new AlbumFilters(db,this);
 		albumFiltersVBox = af.getFiltersVBox();
 		this.vBox.getChildren().add(albumFiltersVBox);
 		albumFiltersVBox.managedProperty().bind(albumFiltersVBox.visibleProperty());
 		albumFiltersVBox.setVisible(false);
 
-		final PublicationFilters pf = new PublicationFilters(db,this);
+		pf = new PublicationFilters(db,this);
 		publicationFiltersVBox = pf.getFiltersVBox();
 		this.vBox.getChildren().add(publicationFiltersVBox);
 		publicationFiltersVBox.managedProperty().bind(publicationFiltersVBox.visibleProperty());
@@ -453,10 +545,30 @@ public class SearchDataView {
 		return albumTitle;
 	}
 
+	public void setDanceTitle(String danceTitle) {
+		this.danceTitle = danceTitle;
+	}
+
+	public void setPublicationTitle(String publicationTitle) {
+		this.publicationTitle = publicationTitle;
+	}
+
+	public void setRecordingTitle(String recordingTitle) {
+		this.recordingTitle = recordingTitle;
+	}
+
+	public void setAlbumTitle(String albumTitle) {
+		this.albumTitle = albumTitle;
+	}
+	
 	public boolean isCollection() {
 		return isCollection;
 	}
-
+	
+	public Button getReset(){
+		return reset;
+	}
+	
 	public VBox getRecordingFiltersVBox() {return recordingFiltersVBox;}
 	public VBox getAlbumFiltersVBox() {return albumFiltersVBox;}
 	public VBox getPublicationFiltersVBox() {return publicationFiltersVBox;}

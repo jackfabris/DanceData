@@ -1,17 +1,21 @@
-GhillieTracks is an application designed to help teachers, class managers, and dancers in the Scottish Country Dance community research and manage dance and music resources.
+Ghillie Tracks 2.0 is an application designed to help teachers, class managers, and dancers in the Scottish Country Dance community research and manage dance and music resources.
 
-GhillieTracks has 2 main functions: 
+Ghillie Tracks 2.0 has two main functions: 
 
-[b]DanceData Search[/b] - Search DanceData without being connected to the Internet, allowing access to the data from a laptop in a classroom environment. Also provides the capability of marking dances, publications, albums, and tunes as "I Have" similar to the original DanceData application.
+[b]DanceData Search[/b] - Search a local version of the Scottish Country Dance database without being connected to the Internet, allowing access to the data from a laptop in a classroom environment. It also provides the capability of marking dances, publications, recordings, and albums as "I Have."
 
-To perform a search, simply press the [i]Search[/i] button at the top of the application. You can then choose to search by dance, publication, recording, or album. Additionally, you can apply advanced search filters in order to find exactly what you're looking for. Hover over any of these additional search fields to see extra information about that filter. You can either press the search button or press enter to submit your query. Once the search has been performed, double click on any of the blue links in the results to see more information about it!
+Before conducting a search, users should update their copy of the database by pressing the "Update" button on the home screen. This will download the database from the [i]strathspey.org[/i] server. To perform a search, simply press the [i]Search[/i] button at the top of the application. You can then choose to search by dance, publication, recording, or album. Additionally, you can apply advanced search filters in order to find exactly what you're looking for. Hover over any of these additional search fields to see extra information about that filter. You can either press the search button or press enter to submit your query. Once the search has been performed, double click on any of the blue links in the results to see more information about it!
 
 When viewing the results of a search or the info about any of the results, you can mark an item as "I Have" and add a tag to it. To save a tag, type it into the text field and press enter.
 
-[b]Collections[/b] - View a list of dances, publications, albums, and albums that you have marked as "I Have." You can also perform a search of your collection. This collection search functionality works the same way as the standard search, but is limited only to any items you have marked as "I Have."
+* A note about using punctuation while searching: punctuation is included in the search string. If you search for "Mrs." it will only return items with "Mrs." in the name. Searching for "Mrs" will return everything that's either "Mrs" or "Mrs." Apostrophes are important too - "Threes" and "Three's" will return different results.
+
+[b]Collections[/b] - View a list of dances, publications, recordings, and albums that you have marked as "I Have." You can also perform a search of your collection. This collection search functionality works the same way as the standard search, but is limited only to any items you have marked as "I Have."
 
 To view your collection, press the [i]Collections[/i] button. You will see a list of any dances, publications, recordings, and albums that you have marked as "I Have." If you want to print a list of your albums or publications, simply click the "Export as PDF" button found at the bottom of the [i]Collections[/i] page.
 
+* A note to users of the original Ghillie Tracks application: existing meta data files for "I Have" cannot be imported into this application. You will need to manually mark which items you have in your collection.
+
 
 [i]Copyright 2016 University of Delaware[/i]
-GhillieTracks is free software developed by students at the University of Delaware in Newark, DE.
+Ghillie Tracks 2.0 is free software developed by students at the University of Delaware in Newark, DE. It was inspired by Patty Lindsay's "Ghillie Tracks" program and uses the name with Patty's permission. There are currently no plans to update or maintain the application. However, this application is open source. Anyone who wishes to modify it can find the source code at...

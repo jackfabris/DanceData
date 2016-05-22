@@ -14,7 +14,7 @@ import javafx.scene.control.CheckBox;
  *  - 	The fields of this class must be all of the fields desired to be shown in any of the columns of any table,
  * 		even if the fields are shared by multiple tables. 
  * 
- * 	-	The names of the fields must be identical to the fields of the schema in the table.
+ * 	-	The names of the fields must be identical to the fields of the query that is populating the table.
  * 
  * 	-	Each field must be used by a getter that returns the value of that field, 
  * 		whose name must also match the format getField_name() for any field field_name.
@@ -34,7 +34,7 @@ public class Record {
 
 	/**
 	 * Creates a Record based on the given ResultSet pointer and the collection of field names
-	 * that should be set for the particular Record. Fields ihave and tag are special cases that cannot be set by Reflection.
+	 * that should be set for the particular Record. Fields ihave and tag are special cases that should not be set by Reflection.
 	 * @param set - ResultSet containing the pointer of the row to be made into a record
 	 * @param fieldNames - Collection of Strings that represent which fields should be set for the Record
 	 * @throws SQLException

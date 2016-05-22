@@ -382,7 +382,6 @@ public class Database {
 					+ "LEFT OUTER JOIN dancespublicationsmap dpm ON d.id=dpm.dance_id "
 					+ "LEFT OUTER JOIN publication pb ON dpm.publication_id=pb.id "
 					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id ";
-			
 			if (name.length() != 0){
 				if (name.contains("'"))
 					name.replace("'", "''");
@@ -396,6 +395,7 @@ public class Database {
 				String param = (String)keys[i];
 				String val = map.get(keys[i]);
 				if(!val.isEmpty()){
+					val.replace("'", "''");
 					if (param.equals("bars")){
 						query += " AND d.barsperrepeat"+val;
 					}
@@ -512,7 +512,9 @@ public class Database {
 			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
 					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id WHERE pb.name like '%" + name + "%'";
 			String author = map.get("author");
+			author = author.replace("'", "''");
 			String rscds = map.get("RSCDS");
+			rscds = rscds.replace("'", "''");
 			if (!author.isEmpty())
 				query += " AND pr.name like '%"+author+"%'";
 			if (!rscds.isEmpty())
@@ -530,9 +532,13 @@ public class Database {
 					+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
 					+ "WHERE r.name like '%" + name + "%'";
 			String type = map.get("type");
+			type= type.replace("'", "''");
 			String medley = map.get("medley type");
+			medley = medley.replace("'", "''");
 			String repetitions = map.get("repetitions");
+			repetitions= repetitions.replace("'", "''");
 			String bars = map.get("bars");
+			bars = bars.replace("'", "''");
 			if (type != null)
 				if (!type.isEmpty())
 					query += " AND dt.name='"+type+"'";
@@ -555,7 +561,9 @@ public class Database {
 					+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
 					+ "WHERE a.name like '%" + name + "%'";
 			String artist = map.get("artist_id");
+			artist = artist.replace("'", "''");
 			String year = map.get("productionyear");
+			year = year.replace("'", "''");
 			if (artist != null)
 				if(!artist.isEmpty())
 					query += " AND p.name like '%"+artist+"%'";
@@ -573,7 +581,7 @@ public class Database {
 				query += " AND ihave=1";
 			}
 		}
-		//System.out.println(query);
+		System.out.println(query);
 		return stmt.executeQuery(query);
 	}
 	
