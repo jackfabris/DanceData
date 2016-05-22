@@ -3,18 +3,14 @@ package filters;
 import java.net.MalformedURLException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Iterator;
 
 import database.Database;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import tables.RecordTable;
@@ -30,7 +26,6 @@ import views.SearchDataView;
 public class PublicationFilters extends AdvancedFilters {
 
 	private TextField authorField;
-	private ComboBox<String> nameOptions;
 	private CheckBox RSCDSCB;
 
 	/**
@@ -41,7 +36,6 @@ public class PublicationFilters extends AdvancedFilters {
 	public PublicationFilters(Database db, SearchDataView sc) throws SQLException, MalformedURLException {
 		super(db, sc, "publication");
 		author();
-		name();
 		RSCDS();
 		super.goAndClearButtons();
 	}
@@ -80,31 +74,6 @@ public class PublicationFilters extends AdvancedFilters {
 		gridY++;
 		grid.add(author, 0, gridY);
 		grid.add(authorField, 1, gridY);
-	}
-
-	/**
-	 * Sets up the name options for Publication
-	 */
-	public void name() throws SQLException{
-		map.put("name", "");
-		ResultSet nameSet;
-		nameSet = db.doQuery("SELECT name FROM publication");
-		ObservableList<String> nameList = FXCollections.observableArrayList("");
-		while(nameSet.next()) {
-			nameList.add(nameSet.getString(1));
-		}
-		Collections.sort(nameList);
-		Label name = new Label("Name");
-		nameOptions = new ComboBox<String>(nameList);
-		nameOptions.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				map.put("name", nameOptions.getValue());
-			}
-		});
-		gridY++;
-		grid.add(name, 0, gridY);
-		grid.add(nameOptions, 1, gridY);
 	}
 
 	/**
@@ -152,7 +121,6 @@ public class PublicationFilters extends AdvancedFilters {
 		//clear fields
 		titleField.clear();
 		authorField.clear();
-		nameOptions.setValue("");
 		RSCDSCB.setSelected(false);
 
 		SearchCollection.setPublicationTitle("");
