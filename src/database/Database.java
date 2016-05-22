@@ -30,7 +30,7 @@ public class Database {
 	
 	public Database() throws SQLException, MalformedURLException {
 		query = "";
-		dbURL = new URL("http://media.strathspey.org/scddata/scddata.db");
+		dbURL = new URL("http://media.strathspey.org/scddata/scddata-2.0.db");
 		dbFile = new File("database/scddata.db");
 		saveFile = new File("database/ihave.txt");
 		init();

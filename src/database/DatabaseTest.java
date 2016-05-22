@@ -183,7 +183,7 @@ public class DatabaseTest {
 			System.out.print("Testing getPublicationsByDance... ");
 			Database db = new Database();
 			int dance_id = 497;
-			List<Integer> publication_ids = Arrays.asList(818, 191, 74, 954, 803, 405, 179, 814);
+			List<Integer> publication_ids = Arrays.asList(818, 191, 74, 954, 803, 405, 179, 814, 1282);
 			ResultSet rs = db.getPublicationsByDance(dance_id);
 			while(rs.next()) {
 				assertTrue(publication_ids.contains(Integer.parseInt(rs.getString("id"))));
@@ -520,7 +520,7 @@ public class DatabaseTest {
 			System.out.print("Testing getRecordingsByTune... ");
 			Database db = new Database();
 			int tune_id = 41;
-			List<Integer> recording_ids = Arrays.asList(1783, 1974, 2153, 2381, 3003, 4579, 4697, 4977, 8295, 8533, 8737, 1077, 5622, 94, 3155, 1178, 5059, 3877);
+			List<Integer> recording_ids = Arrays.asList(1783, 1974, 2153, 2381, 4579, 3003, 4977, 8295, 8533, 8737, 9636, 4697, 1077, 5622, 94, 3155, 2595, 1178, 5059, 3877);
 			ResultSet rs = db.getRecordingsByTune(tune_id);
 			while(rs.next()) {
 				assertTrue(recording_ids.contains(Integer.parseInt(rs.getString("id"))));
