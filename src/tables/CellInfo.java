@@ -253,7 +253,7 @@ public class CellInfo extends VBox{
 	private void danceCellInfo() throws SQLException {
 		LinkedHashMap<String, String> danceInfo = new LinkedHashMap<String, String>();
 		danceInfo.put("Name: ", "name");
-		danceInfo.put("Date: ", "creationdate");
+		danceInfo.put("Date: ", "created");
 		danceInfo.put("Devisor: ", "devisor_id");
 		iHaveAndTag();
 		iterateInfo(danceInfo);
