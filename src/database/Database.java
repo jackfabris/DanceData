@@ -516,7 +516,7 @@ public class Database {
 		}
 		else if(table.equals("publication")) {
 			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
-					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id";
+					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id ";
 			if (name.length() != 0){
 				if (name.contains("'"))
 					query += "WHERE pb.name like '%" + name.replace("'", "''") + "%'";
@@ -602,7 +602,7 @@ public class Database {
 				query += " AND ihave=1";
 			}
 		}
-		System.out.println(query);
+		//System.out.println(query);
 		return stmt.executeQuery(query);
 	}
 	
