@@ -24,9 +24,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * 
  * Main runs the entire application and holds information regarding the three main screens
- * which are represented as VBoxes for the classes Home, Search, and Collection
+ * which are represented as VBoxes for the classes Home and SearchDataView (which represent
+ * the home screen, search screen, and collections screen).
  * 
  */
 public class Main extends Application {
@@ -89,7 +89,7 @@ public class Main extends Application {
 	}
 	
 	/**
-	 * sets up the grid
+	 * Sets up the grid which contains the body of the application.
 	 */
 	public void setUpGrid(){
 		grid.setHgap(5);
@@ -102,7 +102,7 @@ public class Main extends Application {
 	}
 	
 	/**
-	 * sets up the header
+	 * Sets up the header text (Ghillie Tracks 2.0).
 	 */
 	public void setUpHeader(){
 		Text gtText = new Text("Ghillie Tracks 2.0");
@@ -113,8 +113,8 @@ public class Main extends Application {
 	}
 	
 	/**
-	 * creates the toggle navigation buttons for home, search, 
-	 * and collection and changes VBox visibility 
+	 * Creates the toggle navigation buttons for home, search, 
+	 * and my collections and changes VBox visibility 
 	 * of each respectively depending on the button action
 	 */
 	@SuppressWarnings("static-access")
@@ -170,7 +170,7 @@ public class Main extends Application {
 	}
 	
 	/**
-	 * takes this classes VBoxes and put them in a Scroll Pane
+	 * Takes this class's VBoxes and puts them in a ScrollPane.
 	 */
 	public void scrollPaneVBox(ScrollPane sp, VBox box, boolean vis){
 		//Home
