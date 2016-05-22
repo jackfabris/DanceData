@@ -138,6 +138,11 @@ public class CellInfo extends VBox{
 				if (info.equals("1")) infoCol.setText("Yes");
 				else infoCol.setText("No");
 			}
+			//RSCDS Dance
+			if(info != null && cellInfo.get(col).equals("rscds")){
+				if (info.equals("1")) infoCol.setText("Yes");
+				else infoCol.setText("No");
+			}
 			grid.add(titleCol, 0, gridY++);
 			grid.add(infoCol, 1, gridY-1);
 		}
@@ -190,8 +195,8 @@ public class CellInfo extends VBox{
 			else if(linkType.equals("publication")) if(list.getString("ihave").equals("1")) name += "*";
 			//determine if a dance is an RSCDS dance
 			if(type.equals("dance") && linkType.equals("publication")){
-				String dev = list.getString("devisor");
-				if(dev.equals("RSCDS") || (dev.length() > 9 && dev.substring(0, 9).equals("RSCDS and"))) {
+				String rscdsBool = list.getString("rscds");
+				if(rscdsBool.equals("1")) {
 					rscds = true;
 				}
 			}
@@ -222,26 +227,8 @@ public class CellInfo extends VBox{
 		LinkedHashMap<String, String> albumInfo = new LinkedHashMap<String, String>();
 		albumInfo.put("Name: ", "name");
 		albumInfo.put("Year: ", "productionyear");
-		albumInfo.put("Available: ", "isavailable");
-		albumInfo.put("Artist: ", "artist_id");	
-		
+		albumInfo.put("Artist: ", "artist_id");		
 		iHaveAndTag();
-		
-		Label titleCol = new Label("Medium: ");
-		String medium = "";
-		
-		boolean cd = set.getString("oncd").equals("1");
-		boolean mc = set.getString("onmc").equals("1");
-		boolean lp = set.getString("onlp").equals("1");
-		
-		if(cd) medium+="CD ";
-		else if(mc) medium+="MC ";
-		else if(lp) medium+="LP ";
-		
-		Label infoCol = new Label(medium);
-		grid.add(titleCol, 0, gridY++);
-		grid.add(infoCol, 1, gridY-1);
-
 		iterateInfo(albumInfo);
 		iterateLists("Recordings: ", "recording", db.getRecordingsByAlbum(id));
 	}
@@ -332,7 +319,9 @@ public class CellInfo extends VBox{
 		publicationInfo.put("Has Dances: ", "hasdances");
 		publicationInfo.put("Has Tunes: ", "hastunes");
 		publicationInfo.put("On Paper: ", "onpaper");
+		publicationInfo.put("RSCDS: ", "rscds");
 		publicationInfo.put("Devisor: ", "devisor_id");
+		
 		iHaveAndTag();
 		iterateInfo(publicationInfo);
 		iterateLists("Dances: ", "dance", db.getDancesByPublication(id));
