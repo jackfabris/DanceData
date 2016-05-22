@@ -63,7 +63,7 @@ public class RecordTable {
 		this.state = state;
 		this.db = db;
 		table = new TableView<Record>();
-		cellInfo = new CellInfo(db, 10, table, this);
+		cellInfo = new CellInfo(db, table, this);
 		cellInfo.setVisible(false);
 		colNameField = new LinkedHashMap<String, String>();
 		mapColumnNameToId();
@@ -197,7 +197,6 @@ public class RecordTable {
 						else{
 							final Record r = (Record) ((this.getTableRow()!=null) ? this.getTableRow().getItem() : null);
 							cBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-								//changed is called twice - problem?
 								public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
 									try {
 										if(r!=null && !old_val && new_val) db.iHave(tableString, r.getId());
@@ -270,6 +269,9 @@ public class RecordTable {
 		return data;
 	}
 	
+	/**
+	 * sets the height of the table according to the number of rows per page
+	 */
 	public void setTableHeight(){
 		table.setFixedCellSize(25);
 		if(table.getItems().isEmpty()) table.prefHeightProperty().bind(table.fixedCellSizeProperty().multiply(2.01));
@@ -288,6 +290,11 @@ public class RecordTable {
 		setTableHeight();
 	}
 	
+	/**
+	 * refreshes the table
+	 * @param table
+	 * @throws SQLException
+	 */
 	public void refresh(String table) throws SQLException{		
 		ResultSet set = null;
 		if(state.equals("d")) set = db.searchTableByName(table, sc.getDanceTitle(), sc.isCollection());
@@ -313,6 +320,10 @@ public class RecordTable {
 		return cellInfo;
 	}
 	
+	/**
+	 * return the SearchDataView of this RecordTable
+	 * @return the Search or Collection of the SearchDataView
+	 */
 	public SearchDataView getSC(){
 		return sc;
 	}

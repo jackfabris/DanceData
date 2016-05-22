@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -58,17 +57,22 @@ public class DanceFilters extends AdvancedFilters {
 		super.goAndClearButtons();
 	}
 
+	/**
+	 * Sets the text of the Dance Title and Search Bar
+	 */
 	@Override
 	public void setTitleText(String text){
 		SearchCollection.setDanceTitle(text);
 		SearchCollection.getSearch().setText(text);
 	}
 
+	/**
+	 * Sets up the Type options for Dance
+	 * @throws SQLException
+	 */
 	public void type() throws SQLException{
 		map.put("type", "");
-		// Type
-		ResultSet typesSet;
-		typesSet = db.doQuery("SELECT name FROM dancetype");
+		ResultSet typesSet = db.doQuery("SELECT name FROM dancetype");
 		ObservableList<String> typesList = FXCollections.observableArrayList("");
 		while(typesSet.next()) {
 			typesList.add(typesSet.getString(1));
@@ -87,6 +91,9 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(typeOptions, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Bars options for Dance
+	 */
 	public void bars(){
 		map.put("bars", "");
 		// Bars
@@ -95,7 +102,9 @@ public class DanceFilters extends AdvancedFilters {
 		barsField.setTooltip(new Tooltip("Use <, <=, =, >, >= before the number of bars \n"
 				+ "to indicate less, equal, or more bars"));
 		Tooltip.install(barsField, barsField.getTooltip());
+		//search on ENTER
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
+			//check for is numeric
 			@Override
 			public void handle(ActionEvent arg0) {
 				if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
@@ -110,7 +119,9 @@ public class DanceFilters extends AdvancedFilters {
 				callQuery();
 			}
 		});
+		//commit on leave
 		barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			//check for is numeric
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if(!newValue.booleanValue()){
 					if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
@@ -130,6 +141,10 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(barsField, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Couples options for Dance
+	 * @throws SQLException
+	 */
 	public void couples() throws SQLException{
 		map.put("couples", "");
 		// Couples
@@ -153,6 +168,10 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(couplesOptions, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Set Shape options for Dance
+	 * @throws SQLException
+	 */
 	public void setShape() throws SQLException{
 		map.put("shape", "");
 		// Set Shape
@@ -176,6 +195,9 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(setShapeOptions, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Author (Devisor) options for Dance
+	 */
 	public void author(){
 		map.put("author", "");
 		// Author
@@ -199,6 +221,10 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(authorField, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Formations options for Dance
+	 * @throws SQLException
+	 */
 	public void formations() throws SQLException{
 		map.put("formation", "");
 		// Formations
@@ -275,6 +301,10 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(formationOptions3, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Steps options for Dance
+	 * @throws SQLException
+	 */
 	public void steps() throws SQLException{
 		map.put("steps", "");
 		// Steps
@@ -350,10 +380,21 @@ public class DanceFilters extends AdvancedFilters {
 		grid.add(stepOptions3, 1, gridY);
 	}
 
+	/**
+	 * Place the value in the array at the index
+	 * @param array - array to update
+	 * @param value - value to put in array
+	 * @param i - index or array to put value
+	 */
 	public void updateString(String[] array, String value, int i){
 		array[i] = value;
 	}
 
+	/**
+	 * Convert the array to a string with symbols to help database parse formations
+	 * @param array - array to turn into a string
+	 * @return
+	 */
 	public String arrayToString(String[] array){
 		String sb = "";
 		for(int i=0; i < array.length; i++){
@@ -365,6 +406,9 @@ public class DanceFilters extends AdvancedFilters {
 		return sb;
 	}
 
+	/**
+	 * Sets up the RSCDS options for Dance
+	 */
 	public void RSCDS(){
 		map.put("RSCDS", "0");
 		Label RSCDS = new Label("Only RSCDS Dances ");
@@ -382,10 +426,13 @@ public class DanceFilters extends AdvancedFilters {
 	}
 
 	@Override
+	/**
+	 * Call the Advance Search query, populate the table, set visibility so that the 
+	 * Dance table is showing and everything else is hidden
+	 */
 	public void callQuery(){
 		try {
 			ResultSet data = db.advancedTableSearch("dance", titleField.getText(), map, SearchCollection.isCollection());
-			//ResultSet data = db.searchTableByName("dance", "dog", SearchCollection.isCollection());
 			RecordTable danceTable = SearchCollection.getDanceTable();
 			danceTable.setTableData(danceTable.populate(data));
 			danceTable.getCellInfo().setVisible(false);
@@ -397,52 +444,48 @@ public class DanceFilters extends AdvancedFilters {
 	}
 
 	@Override
-	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields and Reset");
-		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				//clear fields
-				titleField.clear();
-				typeOptions.setValue("");
-				barsField.clear();
-				couplesOptions.setValue("");
-				setShapeOptions.setValue("");
-				authorField.clear();
-				formationOptions1.setValue("");
-				formationOptions2.setValue("");
-				formationOptions3.setValue("");
-				formationBool1.setValue("");
-				formationBool2.setValue("");
-				stepOptions1.setValue("");
-				stepOptions2.setValue("");
-				stepOptions3.setValue("");
-				stepBool1.setValue("");
-				stepBool2.setValue("");
-				RSCDSCB.setSelected(false);
+	/**
+	 * Clear the fields, clear the map, reset the titles, reset the table
+	 */
+	public void clear(){
+		//clear fields
+		titleField.clear();
+		typeOptions.setValue("");
+		barsField.clear();
+		couplesOptions.setValue("");
+		setShapeOptions.setValue("");
+		authorField.clear();
+		formationOptions1.setValue("");
+		formationOptions2.setValue("");
+		formationOptions3.setValue("");
+		formationBool1.setValue("");
+		formationBool2.setValue("");
+		stepOptions1.setValue("");
+		stepOptions2.setValue("");
+		stepOptions3.setValue("");
+		stepBool1.setValue("");
+		stepBool2.setValue("");
+		RSCDSCB.setSelected(false);
 
-				SearchCollection.setDanceTitle("");
-				SearchCollection.getSearch().clear();
-				SearchCollection.getSearch().setPromptText("Search by Dance Title");
+		SearchCollection.setDanceTitle("");
+		SearchCollection.getSearch().clear();
+		SearchCollection.getSearch().setPromptText("Search by Dance Title");
 
-				//clear map
-				Iterator<String> i = map.keySet().iterator();
-				while(i.hasNext()){
-					String x = i.next();
-					map.put(x, "");
-				}
+		//clear map
+		Iterator<String> i = map.keySet().iterator();
+		while(i.hasNext()){
+			String x = i.next();
+			map.put(x, "");
+		}
 
-				//reset table
-				ResultSet data;
-				try {
-					data = db.searchTableByName("dance", "", SearchCollection.isCollection());
-					RecordTable danceTable = SearchCollection.getDanceTable();
-					danceTable.setTableData(danceTable.populate(data));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		grid.add(clearBtn, 1, gridY);
+		//reset table
+		ResultSet data;
+		try {
+			data = db.searchTableByName("dance", "", SearchCollection.isCollection());
+			RecordTable danceTable = SearchCollection.getDanceTable();
+			danceTable.setTableData(danceTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

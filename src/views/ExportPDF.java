@@ -28,11 +28,18 @@ import database.Database;
  *
  */
 public class ExportPDF {
-	String fileName;
-	Database db;
-	String state;
-	String table;
+	private String fileName;
+	private Database db;
+	private String state;
+	private String table;
 
+	/**
+	 * Constructor for ExportPDF with the proper information
+	 * @param db - the database instance for this application
+	 * @param fileName - the name of the file to export the list to
+	 * @param state - the state to indicate which list to export
+	 * @param table - the table of the list to export
+	 */
 	public ExportPDF(Database db, String fileName, String state, String table){
 		this.fileName = fileName;
 		this.db = db;

@@ -10,7 +10,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import tables.RecordTable;
@@ -24,7 +23,7 @@ import views.SearchDataView;
  *
  */
 public class AlbumFilters extends AdvancedFilters {
-	
+
 	private TextField artistField, yearField;
 
 	/**
@@ -38,18 +37,24 @@ public class AlbumFilters extends AdvancedFilters {
 		year();
 		super.goAndClearButtons();
 	}
-	
+
 	@Override
+	/**
+	 * Sets the text of the Album Title and Search Bar
+	 */
 	public void setTitleText(String text){
 		SearchCollection.setAlbumTitle(text);
 		SearchCollection.getSearch().setText(text);
 	}
-	
+
+	/**
+	 * Sets up the Artist options for Album
+	 */
 	public void artist(){
 		map.put("artist_id", "");
-		// Artist Name
 		Label artist = new Label("Artist");
 		artistField = new TextField();
+		//Search on ENTER
 		artistField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -57,22 +62,26 @@ public class AlbumFilters extends AdvancedFilters {
 				callQuery();
 			}
 		});
-        artistField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(!newValue.booleanValue())
-                	map.put("artist_id", artistField.getText());
-            }
-        });
-        gridY++;
+		//Commit on Leave
+		artistField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(!newValue.booleanValue())
+					map.put("artist_id", artistField.getText());
+			}
+		});
+		gridY++;
 		grid.add(artist, 0, gridY);
 		grid.add(artistField, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Year options for Album
+	 */
 	public void year(){
 		map.put("productionyear", "");
-		// Production Year
 		Label year = new Label("Year");
 		yearField = new TextField();
+		//Search on ENTER
 		yearField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -81,23 +90,27 @@ public class AlbumFilters extends AdvancedFilters {
 				callQuery();
 			}
 		});
-        yearField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(!newValue.booleanValue())
-                	if(!isNumeric(yearField.getText())) map.put("productionyear", "9999");
-    				else map.put("productionyear", yearField.getText());
-            }
-        });
-        gridY++;
+		//Commit on Leave
+		yearField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(!newValue.booleanValue())
+					if(!isNumeric(yearField.getText())) map.put("productionyear", "9999");
+					else map.put("productionyear", yearField.getText());
+			}
+		});
+		gridY++;
 		grid.add(year, 0, gridY);
 		grid.add(yearField, 1, gridY);
 	}
-	
+
 	@Override
+	/**
+	 * Call the Advance Search query, populate the table, set visibility so that the 
+	 * Album table is showing and everything else is hidden
+	 */
 	public void callQuery(){
 		try {
 			ResultSet data = db.advancedTableSearch("album", titleField.getText(), map, SearchCollection.isCollection());
-			//ResultSet data = db.searchTableByName("album", "dog", SearchCollection.isCollection());
 			RecordTable albumTable = SearchCollection.getAlbumTable();
 			albumTable.setTableData(albumTable.populate(data));
 			albumTable.getCellInfo().setVisible(false);
@@ -107,39 +120,36 @@ public class AlbumFilters extends AdvancedFilters {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
-	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields and Reset");
-		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				titleField.clear();
-				artistField.clear();
-				yearField.clear();
-				
-				SearchCollection.setAlbumTitle("");
-				SearchCollection.getSearch().clear();
-				SearchCollection.getSearch().setPromptText("Search by Album Title");
-				
-				//clear map
-				Iterator<String> i = map.keySet().iterator();
-				while(i.hasNext()){
-					String x = i.next();
-					map.put(x, "");
-				}
-				
-				//reset table
-				ResultSet data;
-				try {
-					data = db.searchTableByName("album", "", SearchCollection.isCollection());
-					RecordTable albumTable = SearchCollection.getAlbumTable();
-					albumTable.setTableData(albumTable.populate(data));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		grid.add(clearBtn, 1, gridY);
+	/**
+	 * Clear the fields, clear the map, reset the titles, reset the table
+	 */
+	public void clear(){
+		//clear fields
+		titleField.clear();
+		artistField.clear();
+		yearField.clear();
+
+		SearchCollection.setAlbumTitle("");
+		SearchCollection.getSearch().clear();
+		SearchCollection.getSearch().setPromptText("Search by Album Title");
+
+		//clear map
+		Iterator<String> i = map.keySet().iterator();
+		while(i.hasNext()){
+			String x = i.next();
+			map.put(x, "");
+		}
+
+		//reset table
+		ResultSet data;
+		try {
+			data = db.searchTableByName("album", "", SearchCollection.isCollection());
+			RecordTable albumTable = SearchCollection.getAlbumTable();
+			albumTable.setTableData(albumTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

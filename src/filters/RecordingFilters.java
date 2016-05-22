@@ -13,7 +13,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -29,7 +28,7 @@ import views.SearchDataView;
  *
  */
 public class RecordingFilters extends AdvancedFilters {
-	
+
 	private ComboBox<String> typeOptions, medleyTypeOptions;
 	private TextField repetitionsField, barsField;
 
@@ -45,13 +44,20 @@ public class RecordingFilters extends AdvancedFilters {
 		bars();
 		super.goAndClearButtons();
 	}
-	
+
 	@Override
+	/**
+	 * Sets the text of the Recording Title and Search Bar
+	 */
 	public void setTitleText(String text){
 		SearchCollection.setRecordingTitle(text);
 		SearchCollection.getSearch().setText(text);
 	}
 
+	/**
+	 * Sets up the Type options for Recording
+	 * @throws SQLException
+	 */
 	public void type() throws SQLException{
 		map.put("type", "");
 		ResultSet typeSet;
@@ -74,9 +80,12 @@ public class RecordingFilters extends AdvancedFilters {
 		grid.add(typeOptions, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Medley Type options for Recording
+	 * @throws SQLException
+	 */
 	public void medley() throws SQLException{
 		map.put("medleytype", "");
-		// Medley Type
 		ResultSet medleyTypeSet;
 		medleyTypeSet = db.doQuery("SELECT description FROM medleytype");
 		ObservableList<String> medleyTypeList = FXCollections.observableArrayList("");
@@ -97,14 +106,18 @@ public class RecordingFilters extends AdvancedFilters {
 		grid.add(medleyTypeOptions, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Repetitions options for Recording
+	 */
 	public void repetitions(){
 		map.put("repetitions", "");
-		// Repetitions
 		Label repetitions = new Label("Repetitions");
 		repetitionsField = new TextField();
 		repetitionsField.setTooltip(new Tooltip("Use <, <=, =, >, >= before the number of repetitions \nto indicate less, equal, or more repetitions"));
 		Tooltip.install(repetitionsField, repetitionsField.getTooltip());
+		//Search on ENTER
 		repetitionsField.setOnAction(new EventHandler<ActionEvent>() {
+			//is numeric check
 			@Override
 			public void handle(ActionEvent arg0) {
 				if(repetitionsField.getText().contains("=") || repetitionsField.getText().contains("<") || repetitionsField.getText().contains(">")){
@@ -119,7 +132,9 @@ public class RecordingFilters extends AdvancedFilters {
 				callQuery();
 			}
 		});
+		//Commit on Leave
 		repetitionsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			//is numeric check
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if(!newValue.booleanValue())
 					if(repetitionsField.getText().contains("=") || repetitionsField.getText().contains("<") || repetitionsField.getText().contains(">")){
@@ -138,14 +153,18 @@ public class RecordingFilters extends AdvancedFilters {
 		grid.add(repetitionsField, 1, gridY);
 	}
 
+	/**
+	 * Sets up the Bars options for Recording
+	 */
 	public void bars(){
 		map.put("bars", "");
-		// Bars
 		Label bars = new Label("Bars");
 		barsField = new TextField();
 		barsField.setTooltip(new Tooltip("Use <, <=, =, >, >= before number of bars \nto indicate less, equal, or more bars"));
 		Tooltip.install(barsField, barsField.getTooltip());
+		//Search on ENTER
 		barsField.setOnAction(new EventHandler<ActionEvent>() {
+			//is numeric check
 			@Override
 			public void handle(ActionEvent arg0) {
 				if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
@@ -160,7 +179,9 @@ public class RecordingFilters extends AdvancedFilters {
 				callQuery();
 			}
 		});
+		//Commit on Leave
 		barsField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			//is numeric check
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if(!newValue.booleanValue())
 					if(barsField.getText().contains("=") || barsField.getText().contains("<") || barsField.getText().contains(">")){
@@ -180,10 +201,13 @@ public class RecordingFilters extends AdvancedFilters {
 	}
 
 	@Override
+	/**
+	 * Call the Advance Search query, populate the table, set visibility so that the 
+	 * Recording table is showing and everything else is hidden
+	 */
 	public void callQuery(){
 		try {
 			ResultSet data = db.advancedTableSearch("recording", titleField.getText(), map, SearchCollection.isCollection());
-			//ResultSet data = db.searchTableByName("recording", "dog", SearchCollection.isCollection());
 			RecordTable recordingTable = SearchCollection.getRecordingTable();
 			recordingTable.setTableData(recordingTable.populate(data));
 			recordingTable.getCellInfo().setVisible(false);
@@ -193,41 +217,38 @@ public class RecordingFilters extends AdvancedFilters {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
-	public void clearButton(){
-		Button clearBtn = new Button("Clear Fields and Reset");
-		clearBtn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				titleField.clear();
-				typeOptions.setValue("");
-				medleyTypeOptions.setValue("");
-				repetitionsField.clear();
-				barsField.clear();
-				
-				SearchCollection.setRecordingTitle("");
-				SearchCollection.getSearch().clear();
-				SearchCollection.getSearch().setPromptText("Search by Recording Title");
-				
-				//clear map
-				Iterator<String> i = map.keySet().iterator();
-				while(i.hasNext()){
-					String x = i.next();
-					map.put(x, "");
-				}
-				
-				//reset table
-				ResultSet data;
-				try {
-					data = db.searchTableByName("recording", "", SearchCollection.isCollection());
-					RecordTable recordingTable = SearchCollection.getRecordingTable();
-					recordingTable.setTableData(recordingTable.populate(data));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		grid.add(clearBtn, 1, gridY);
+	/**
+	 * Clear the fields, clear the map, reset the titles, reset the table
+	 */
+	public void clear(){
+		//clear fields
+		titleField.clear();
+		typeOptions.setValue("");
+		medleyTypeOptions.setValue("");
+		repetitionsField.clear();
+		barsField.clear();
+
+		SearchCollection.setRecordingTitle("");
+		SearchCollection.getSearch().clear();
+		SearchCollection.getSearch().setPromptText("Search by Recording Title");
+
+		//clear map
+		Iterator<String> i = map.keySet().iterator();
+		while(i.hasNext()){
+			String x = i.next();
+			map.put(x, "");
+		}
+
+		//reset table
+		ResultSet data;
+		try {
+			data = db.searchTableByName("recording", "", SearchCollection.isCollection());
+			RecordTable recordingTable = SearchCollection.getRecordingTable();
+			recordingTable.setTableData(recordingTable.populate(data));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -25,6 +25,16 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import tables.RecordTable;
 
+/**
+ * SearchDataView is the main class that holds the information for the Search and Collection Screen. 
+ * This class's VBox contains the search bar, reset Button, navigation buttons, advanced search, 
+ * TableView of Records, and the export PDF button.
+ * 
+ * The navigation buttons of Dance, Publication, Recording, or Album determine the state's changing to 
+ * "d", "p", "r", or "a" respectively.
+ * @author lisaketcham
+ *
+ */
 public class SearchDataView {
 
 	private VBox vBox, danceFiltersVBox, recordingFiltersVBox, albumFiltersVBox, publicationFiltersVBox;
@@ -66,6 +76,7 @@ public class SearchDataView {
 	 * sets up the search bar and search button, and will search on both
 	 * a button press and 'Enter' or 'Return' key event
 	 */
+	@SuppressWarnings("static-access")
 	public void setUpSearchBar(){
 		//Search Bar
 		search.setPromptText("Search by Dance Title");
@@ -76,7 +87,7 @@ public class SearchDataView {
 		
 		Region r = new Region();
 		
-		reset = new Button("Reset Dance Table");
+		reset = new Button("Reset/Refresh Dance Table");
 		reset.setStyle("-fx-alignment: CENTER_RIGHT;");
 		//Pos.
 
@@ -260,7 +271,7 @@ public class SearchDataView {
 					else reset.setVisible(false);
 				}
 				state = "d";
-				reset.setText("Reset Dance Table");
+				reset.setText("Reset/Refresh Dance Table");
 				export.setVisible(false);
 				searchFiltersVisibility(danceFiltersVBox.isVisible(), false, false, false);
 				tableVisibility(true, false, false, false);
@@ -284,7 +295,7 @@ public class SearchDataView {
 					else reset.setVisible(false);
 				}
 				state = "p";
-				reset.setText("Reset Publication Table");
+				reset.setText("Reset/Refresh Publication Table");
 				if(isCollection){export.setVisible(true);}
 				searchFiltersVisibility(false, publicationFiltersVBox.isVisible(), false, false);
 				tableVisibility(false, true, false, false);
@@ -308,7 +319,7 @@ public class SearchDataView {
 					else reset.setVisible(false);
 				}
 				state = "r";
-				reset.setText("Reset Recording Table");
+				reset.setText("Reset/Refresh Recording Table");
 				export.setVisible(false);
 				searchFiltersVisibility(false, false, recordingFiltersVBox.isVisible(), false);
 				tableVisibility(false, false, true, false);
@@ -332,7 +343,7 @@ public class SearchDataView {
 					else reset.setVisible(false);
 				}
 				state = "a";
-				reset.setText("Reset Album Table");
+				reset.setText("Reset/Refresh Album Table");
 				if(isCollection){export.setVisible(true);}
 				searchFiltersVisibility(false, false, false, albumFiltersVBox.isVisible());
 				tableVisibility(false, false, false, true);
