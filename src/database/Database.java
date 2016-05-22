@@ -79,7 +79,11 @@ public class Database {
 	 */
 	public int update() {
 		try {
-			saveIHave();
+			try {
+				saveIHave();
+			} catch(Exception e) {
+				System.out.println("Save failed");
+			}
 			close();
 			FileUtils.copyURLToFile(dbURL, dbFile);
 			init();
@@ -777,6 +781,10 @@ public class Database {
 		return stmt.executeQuery(query);
 	}
 	
+	public String getQuery() {
+		return query;
+	}
+	
 	/* Use for debugging to print the results of a query */
 	public void printResults(ResultSet resultSet) throws SQLException {
 		ResultSetMetaData rsmd = resultSet.getMetaData();
@@ -979,7 +987,7 @@ public class Database {
 		System.out.println("");
 		
 		System.out.println("Recordings by person:");
-		resultSet = db.getRecordingsByPerson(3056);
+		resultSet = db.getRecordingsByPerson(1456);
 		db.printResults(resultSet);
 		
 		System.out.println("");
