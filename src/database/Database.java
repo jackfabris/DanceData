@@ -523,6 +523,8 @@ public class Database {
 				else
 					query += "WHERE pb.name like '%" + name + "%'";
 			}
+			else
+				query += "WHERE pb.name like '%%'";
 			String author = map.get("author");
 			author = author.replace("'", "''");
 			String rscds = map.get("RSCDS");
@@ -547,6 +549,8 @@ public class Database {
 				else
 					query += "WHERE r.name like '%" + name + "%'";
 			}
+			else
+				query += "WHERE r.name like '%%'";
 			String type = map.get("type");
 			type= type.replace("'", "''");
 			String medley = map.get("medley type");
@@ -581,6 +585,8 @@ public class Database {
 				else
 					query += "WHERE a.name like '%" + name + "%'";
 			}
+			else
+				query += "WHERE a.name like '%%'";
 			String artist = map.get("artist_id");
 			artist = artist.replace("'", "''");
 			String year = map.get("productionyear");
