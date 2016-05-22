@@ -384,7 +384,7 @@ public class Database {
 					+ "LEFT OUTER JOIN person pn ON d.devisor_id=pn.id ";
 			if (name.length() != 0){
 				if (name.contains("'"))
-					name.replace("'", "''");
+					query += "WHERE d.name like '%" + name.replace("'", "''") + "%'";
 				else
 					query += "WHERE d.name like '%" + name + "%'";
 			}
@@ -498,7 +498,9 @@ public class Database {
 					}
 					else if (param.equals("RSCDS")){
 						if (val.equals("1")){
-							query += " AND pn.name like '%RSCDS%'";
+							query += " AND d.id IN (SELECT dpm.dance_id FROM dancespublicationsmap dpm "
+									+ "LEFT OUTER JOIN publication pb "
+									+ "WHERE dpm.publication_id=pb.id AND pb.shortname like '%RSCDS%')";
 						}
 					}
 				}
@@ -510,14 +512,19 @@ public class Database {
 		}
 		else if(table.equals("publication")) {
 			query = "SELECT pb.*, pr.name as devisor FROM publication pb "
-					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id WHERE pb.name like '%" + name + "%'";
+					+ "LEFT OUTER JOIN person pr ON pb.devisor_id=pr.id";
+			if (name.length() != 0){
+				if (name.contains("'"))
+					query += "WHERE pb.name like '%" + name.replace("'", "''") + "%'";
+				else
+					query += "WHERE pb.name like '%" + name + "%'";
+			}
 			String author = map.get("author");
 			author = author.replace("'", "''");
 			String rscds = map.get("RSCDS");
-			rscds = rscds.replace("'", "''");
 			if (!author.isEmpty())
 				query += " AND pr.name like '%"+author+"%'";
-			if (!rscds.isEmpty())
+			if (rscds.equals("1"))
 				query += " AND pr.name like '%RSCDS%'";
 			if(ihave) {
 				query += " AND pb.ihave=1";
@@ -529,8 +536,13 @@ public class Database {
 					+ "FROM recording r LEFT OUTER JOIN dancetype dt ON r.type_id=dt.id "
 					+ "LEFT OUTER JOIN medleytype mt ON r.medleytype_id=mt.id "
 					+ "LEFT OUTER JOIN phrasing p ON r.phrasing_id=p.id "
-					+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id "
-					+ "WHERE r.name like '%" + name + "%'";
+					+ "LEFT OUTER JOIN person pn ON r.artist_id=pn.id ";
+			if (name.length() != 0){
+				if (name.contains("'"))
+					query += "WHERE r.name like '%" + name.replace("'", "''") + "%'";
+				else
+					query += "WHERE r.name like '%" + name + "%'";
+			}
 			String type = map.get("type");
 			type= type.replace("'", "''");
 			String medley = map.get("medley type");
@@ -558,8 +570,13 @@ public class Database {
 		} 
 		else if(table.equals("album")) {
 			query = "SELECT a.*, p.name as artist FROM album a "
-					+ "LEFT OUTER JOIN person p ON a.artist_id=p.id "
-					+ "WHERE a.name like '%" + name + "%'";
+					+ "LEFT OUTER JOIN person p ON a.artist_id=p.id ";
+			if (name.length() != 0){
+				if (name.contains("'"))
+					query += "WHERE a.name like '%" + name.replace("'", "''") + "%'";
+				else
+					query += "WHERE a.name like '%" + name + "%'";
+			}
 			String artist = map.get("artist_id");
 			artist = artist.replace("'", "''");
 			String year = map.get("productionyear");
