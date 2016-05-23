@@ -531,7 +531,7 @@ public class Database {
 			if (!author.isEmpty())
 				query += " AND pr.name like '%"+author+"%'";
 			if (rscds.equals("1"))
-				query += " AND pr.name like '%RSCDS%'";
+				query += " AND pb.rscds";
 			if(ihave) {
 				query += " AND pb.ihave=1";
 			}
@@ -608,7 +608,7 @@ public class Database {
 				query += " AND ihave=1";
 			}
 		}
-		//System.out.println(query);
+		System.out.println(query);
 		return stmt.executeQuery(query);
 	}
 	
